@@ -1,5 +1,5 @@
 definitions:
-  CreatePlainAwsSessionRequest:
+  CreateAwsIamUserSessionRequest:
     properties:
       accountNumber:
         description: the account number of the aws account related to the role
@@ -34,7 +34,7 @@ definitions:
     - region
     type: object
     x-go-package: leapp_daemon/interface/http/controller/dto/request_dto/plain_aws_session_dto
-  CreateTrustedAwsSessionRequestDto:
+  CreateAwsIamRoleChainedSessionRequestDto:
     properties:
       accountName:
         description: the name which will be displayed
@@ -65,7 +65,7 @@ definitions:
     - roleName
     type: object
     x-go-package: leapp_daemon/interface/http/controller/dto/request_dto/trusted_aws_session_dto
-  EditTrustedAwsSessionRequestDto:
+  EditAwsIamRoleChainedSessionRequestDto:
     properties:
       accountName:
         description: the name which will be displayed
@@ -91,10 +91,10 @@ definitions:
         x-go-name: RoleName
     type: object
     x-go-package: leapp_daemon/interface/http/controller/dto/request_dto/trusted_aws_session_dto
-  GetPlainAwsSessionResponse:
+  GetAwsIamUserSessionResponse:
     properties:
       Data:
-        $ref: '#/definitions/PlainAwsSession'
+        $ref: '#/definitions/AwsIamUserSession'
       Message:
         type: string
     type: object
@@ -117,7 +117,7 @@ definitions:
         type: string
     type: object
     x-go-package: leapp_daemon/domain/session
-  PlainAwsSession:
+  AwsIamUserSession:
     properties:
       Account:
         $ref: '#/definitions/PlainAwsAccount'
@@ -157,7 +157,7 @@ definitions:
         type: string
     type: object
     x-go-package: leapp_daemon/domain/session
-  TrustedAwsSession:
+  AwsIamRoleChainedSession:
     properties:
       Account:
         $ref: '#/definitions/TrustedAwsAccount'
@@ -171,7 +171,7 @@ definitions:
         $ref: '#/definitions/Status'
     type: object
     x-go-package: leapp_daemon/domain/session
-  UpdatePlainAwsSessionRequest:
+  UpdateAwsIamUserSessionRequest:
     properties:
       accountNumber:
         type: string
@@ -199,16 +199,16 @@ definitions:
         x-go-name: User
     type: object
     x-go-package: leapp_daemon/interface/http/controller/dto/request_dto/plain_aws_session_dto
-  UpdatePlainAwsSessionUriRequest:
+  UpdateAwsIamUserSessionUriRequest:
     properties:
       Id:
         type: string
     type: object
     x-go-package: leapp_daemon/interface/http/controller/dto/request_dto/plain_aws_session_dto
-  getTrustedAwsSessionResponse:
+  getAwsIamRoleChainedSessionResponse:
     properties:
       Data:
-        $ref: '#/definitions/TrustedAwsSession'
+        $ref: '#/definitions/AwsIamRoleChainedSession'
       Message:
         type: string
     type: object
@@ -216,79 +216,79 @@ definitions:
 paths:
   /session/plain:
     post:
-      description: Create a new Plain AWS Session
-      operationId: createPlainAwsSession
+      description: Create a new AWS Iam User Session
+      operationId: createAwsIamUserSession
       parameters:
-      - description: plain aws session create body
+      - description: AWS Iam User session create body
         in: body
         name: Body
         schema:
-          $ref: '#/definitions/CreatePlainAwsSessionRequest'
+          $ref: '#/definitions/CreateAwsIamUserSessionRequest'
       responses:
         "200":
           description: MessageResponse
           schema:
             $ref: '#/definitions/MessageResponse'
       tags:
-      - plainAwsSession
+      - awsIamUserSession
   /session/plain/{id}:
     delete:
-      description: Delete a Plain AWS Session
-      operationId: deletePlainAwsSession
+      description: Delete a AWS Iam User Session
+      operationId: deleteAwsIamUserSession
       responses:
         "200":
           description: MessageResponse
           schema:
             $ref: '#/definitions/MessageResponse'
       tags:
-      - plainAwsSession
+      - awsIamUserSession
     get:
-      description: Get a Plain AWS Session
-      operationId: getPlainAwsSession
+      description: Get a AWS Iam User Session
+      operationId: getAwsIamUserSession
       responses:
         "200":
-          description: GetPlainAwsSessionResponse
+          description: GetAwsIamUserSessionResponse
           schema:
-            $ref: '#/definitions/GetPlainAwsSessionResponse'
+            $ref: '#/definitions/GetAwsIamUserSessionResponse'
       tags:
-      - plainAwsSession
+      - awsIamUserSession
     put:
-      description: Edit a Plain AWS Session
-      operationId: updatePlainAwsSession
+      description: Edit a AWS Iam User Session
+      operationId: updateAwsIamUserSession
       parameters:
-      - description: plain aws session update uri body
+      - description: AWS Iam User session update uri body
         in: body
         name: Body
         schema:
-          $ref: '#/definitions/UpdatePlainAwsSessionRequest'
+          $ref: '#/definitions/UpdateAwsIamUserSessionRequest'
       responses:
         "200":
           description: MessageResponse
           schema:
             $ref: '#/definitions/MessageResponse'
       tags:
-      - plainAwsSession
+      - awsIamUserSession
   /session/plain/{id}/start:
     post:
-      description: Start a Plain AWS Session
-      operationId: startPlainAwsSession
+      description: Start a AWS Iam User Session
+      operationId: startAwsIamUserSession
       responses:
         "200":
           description: MessageResponse
           schema:
             $ref: '#/definitions/MessageResponse'
       tags:
-      - plainAwsSession
+      - awsIamUserSession
   /session/trusted:
     post:
       description: Create a new trusted aws session
-      operationId: createTrustedAwsSession
+      operationId: createAwsIamRoleChainedSession
       parameters:
       - description: This text will appear as description of your request body.
         in: body
         name: Body
         schema:
-          $ref: '#/definitions/CreateTrustedAwsSessionRequestDto'
+          $ref: '#/definitions/CreateAwsIamRoleChainedSessionRequestDto'
       responses:
         "200":
           $ref: '#/responses/messageResponse'
@@ -297,7 +297,7 @@ paths:
   /session/trusted/{id}:
     delete:
       description: Delete a Trusted AWS Session
-      operationId: deleteTrustedAwsSession
+      operationId: deleteAwsIamRoleChainedSession
       parameters:
       - description: the id of the trusted aws session
         in: path
@@ -311,7 +311,7 @@ paths:
       - session-trusted-aws
     get:
       description: Get a Trusted AWS Session
-      operationId: getTrustedAwsSession
+      operationId: getAwsIamRoleChainedSession
       parameters:
       - description: the id of the trusted aws session
         in: path
@@ -320,18 +320,18 @@ paths:
         type: string
       responses:
         "200":
-          $ref: '#/responses/getTrustedAwsSessionResponse'
+          $ref: '#/responses/getAwsIamRoleChainedSessionResponse'
       tags:
       - session-trusted-aws
     put:
       description: Edit a Trusted AWS Session
-      operationId: editTrustedAwsSession
+      operationId: editAwsIamRoleChainedSession
       parameters:
       - description: This text will appear as description of your request body.
         in: body
         name: Body
         schema:
-          $ref: '#/definitions/EditTrustedAwsSessionRequestDto'
+          $ref: '#/definitions/EditAwsIamRoleChainedSessionRequestDto'
       - description: the id of the trusted aws session
         in: path
         name: Id
@@ -343,14 +343,14 @@ paths:
       tags:
       - session-trusted-aws
 responses:
-  getPlainAwsSessionResponse:
+  getAwsIamUserSessionResponse:
     description: ""
     schema:
-      $ref: '#/definitions/GetPlainAwsSessionResponse'
-  getTrustedAwsSessionResponse:
+      $ref: '#/definitions/GetAwsIamUserSessionResponse'
+  getAwsIamRoleChainedSessionResponse:
     description: ""
     schema:
-      $ref: '#/definitions/getTrustedAwsSessionResponse'
+      $ref: '#/definitions/getAwsIamRoleChainedSessionResponse'
   messageResponse:
     description: ""
     schema:

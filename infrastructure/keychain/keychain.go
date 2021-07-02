@@ -29,7 +29,15 @@ func (keychain *Keychain) GetSecret(label string) (string, error) {
 	return secret, nil
 }
 
-func (keychain *Keychain) DoesSecretExist(label string) (bool, error) {
+func(keychain *Keychain) DeleteSecret(label string) error {
+  err := keyring.Delete(ServiceName, label)
+  if err != nil {
+    return http_error.NewNotFoundError(err)
+  }
+  return nil
+}
+
+func(keychain *Keychain) DoesSecretExist(label string) (bool, error) {
 	_, err := keyring.Get(ServiceName, label)
 	if err != nil {
 		if err.Error() == "secret not found in keyring" {
@@ -38,12 +46,4 @@ func (keychain *Keychain) DoesSecretExist(label string) (bool, error) {
 		return false, http_error.NewUnprocessableEntityError(err)
 	}
 	return true, nil
-}
-
-func (keychain *Keychain) DeleteSecret(label string) error {
-	err := keyring.Delete(ServiceName, label)
-	if err != nil {
-		return http_error.NewUnprocessableEntityError(err)
-	}
-	return nil
 }

@@ -8,21 +8,16 @@ import (
 	"leapp_daemon/infrastructure/http/http_error"
 )
 
-type Repository interface {
-	CreateConfiguration(Configuration) error
-	GetConfiguration() (Configuration, error)
-	UpdateConfiguration(Configuration) error
-}
-
 type Configuration struct {
-	ProxyConfiguration       ProxyConfiguration
-	PlainAwsSessions         []session.PlainAwsSession
-	FederatedAwsSessions     []session.FederatedAwsSession
-	TrustedAwsSessions       []session.TrustedAwsSession
-	PlainAlibabaSessions     []session.PlainAlibabaSession
-	FederatedAlibabaSessions []session.FederatedAlibabaSession
-	TrustedAlibabaSessions   []session.TrustedAlibabaSession
-	NamedProfiles            []named_profile.NamedProfile
+	ProxyConfiguration              ProxyConfiguration
+	AwsIamUserSessions              []session.AwsIamUserSession
+	AwsIamRoleFederatedSessions     []session.AwsIamRoleFederatedSession
+	AwsIamRoleChainedSessions       []session.AwsIamRoleChainedSession
+	GcpIamUserAccountOauthSessions  []session.GcpIamUserAccountOauthSession
+	AlibabaRamUserSessions          []session.AlibabaRamUserSession
+	AlibabaRamRoleFederatedSessions []session.AlibabaRamRoleFederatedSession
+	AlibabaRamRoleChainedSessions   []session.AlibabaRamRoleChainedSession
+	NamedProfiles                   []named_profile.NamedProfile
 }
 
 type ProxyConfiguration struct {
@@ -33,7 +28,7 @@ type ProxyConfiguration struct {
 	Password      string
 }
 
-func GetInitialConfiguration() Configuration {
+func GetDefaultConfiguration() Configuration {
 	return Configuration{
 		ProxyConfiguration: ProxyConfiguration{
 			ProxyProtocol: "https",
@@ -42,54 +37,56 @@ func GetInitialConfiguration() Configuration {
 			Username:      "",
 			Password:      "",
 		},
-		FederatedAwsSessions: make([]session.FederatedAwsSession, 0),
-		PlainAwsSessions:     make([]session.PlainAwsSession, 0),
+		AwsIamRoleFederatedSessions:    make([]session.AwsIamRoleFederatedSession, 0),
+		AwsIamUserSessions:             make([]session.AwsIamUserSession, 0),
+		GcpIamUserAccountOauthSessions: make([]session.GcpIamUserAccountOauthSession, 0),
+		AlibabaRamUserSessions:         make([]session.AlibabaRamUserSession, 0),
 	}
 }
 
-func UnmarshalConfiguration(configurationJson string) Configuration {
+func FromJson(configurationJson string) Configuration {
 	var config Configuration
 	_ = json.Unmarshal([]byte(configurationJson), &config)
 	return config
 }
 
-func (config *Configuration) AddPlainAwsSession(plainAwsSession session.PlainAwsSession) error {
-	sessions, err := config.GetAllPlainAwsSessions()
+func (config *Configuration) AddAwsIamUserSession(awsIamUserSession session.AwsIamUserSession) error {
+	sessions, err := config.GetAllAwsIamUserSessions()
 	if err != nil {
 		return err
 	}
 
 	for _, sess := range sessions {
-		if plainAwsSession.Id == sess.Id {
-			return http_error.NewConflictError(fmt.Errorf("a PlainAwsSession with id " + plainAwsSession.Id +
+		if awsIamUserSession.Id == sess.Id {
+			return http_error.NewConflictError(fmt.Errorf("a AwsIamUserSession with id " + awsIamUserSession.Id +
 				" is already present"))
 		}
 	}
 
-	sessions = append(sessions, plainAwsSession)
-	config.PlainAwsSessions = sessions
+	sessions = append(sessions, awsIamUserSession)
+	config.AwsIamUserSessions = sessions
 
 	return nil
 }
 
-func (config *Configuration) GetAllPlainAwsSessions() ([]session.PlainAwsSession, error) {
-	return config.PlainAwsSessions, nil
+func (config *Configuration) GetAllAwsIamUserSessions() ([]session.AwsIamUserSession, error) {
+	return config.AwsIamUserSessions, nil
 }
 
-func (config *Configuration) RemovePlainAwsSession(plainAwsSession session.PlainAwsSession) error {
-	sessions, err := config.GetAllPlainAwsSessions()
+func (config *Configuration) RemoveAwsIamUserSession(awsIamUserSession session.AwsIamUserSession) error {
+	sessions, err := config.GetAllAwsIamUserSessions()
 	if err != nil {
 		return err
 	}
 
 	for i, sess := range sessions {
-		if plainAwsSession.Id == sess.Id {
-			config.PlainAwsSessions = append(config.PlainAwsSessions[:i], config.PlainAwsSessions[i+1:]...)
+		if awsIamUserSession.Id == sess.Id {
+			config.AwsIamUserSessions = append(config.AwsIamUserSessions[:i], config.AwsIamUserSessions[i+1:]...)
 			return nil
 		}
 	}
 
-	return http_error.NewNotFoundError(fmt.Errorf("PlainAwsSession with id " + plainAwsSession.Id +
+	return http_error.NewNotFoundError(fmt.Errorf("AwsIamUserSession with id " + awsIamUserSession.Id +
 		" not found"))
 }
 
@@ -130,7 +127,7 @@ func (config *Configuration) DoesNamedProfileExist(name string) bool {
 var configurationFileMutex sync.Mutex
 
 func CreateConfiguration() error {
-	configuration := GetInitialConfiguration()
+	configuration := GetDefaultConfiguration()
 	err := UpdateConfiguration(configuration, true)
 	if err != nil { return err }
 	return nil
@@ -150,7 +147,7 @@ func ReadConfiguration() (*Configuration, error) {
 	plainText, err := encryption.Decrypt(string(encryptedText))
 	if err != nil { return nil, err }
 
-	return UnmarshalConfiguration(plainText), nil
+	return FromJson(plainText), nil
 }
 
 func UpdateConfiguration(configuration *Configuration, deleteExistingFile bool) error {
@@ -191,21 +188,21 @@ func (config *Configuration) Update() error {
   return nil
 }
 
-func (config *Configuration) GetFederatedAwsSessions() ([]*session.FederatedAwsSession, error) {
-	return config.FederatedAwsSessions, nil
+func (config *Configuration) AwsGetIamRoleFederatedSessions() ([]*session.AwsIamRoleFederatedSession, error) {
+	return config.AwsIamRoleFederatedSessions, nil
 }
 
-func (config *Configuration) SetFederatedAwsSessions(federatedAwsSessions []*session.FederatedAwsSession) error {
-	config.FederatedAwsSessions = federatedAwsSessions
+func (config *Configuration) SetFederatedAwsSessions(federatedAwsSessions []*session.AwsIamRoleFederatedSession) error {
+	config.AwsIamRoleFederatedSessions = federatedAwsSessions
 	return nil
 }
 
-func (config *Configuration) GetTrustedAwsSessions() ([]*session.TrustedAwsSession, error) {
-  return config.TrustedAwsSessions, nil
+func (config *Configuration) GetAwsIamRoleChainedSessions() ([]*session.AwsIamRoleChainedSession, error) {
+  return config.AwsIamRoleChainedSessions, nil
 }
 
-func (config *Configuration) SetTrustedAwsSessions(trustedAwsSessions []*session.TrustedAwsSession) error {
-  config.TrustedAwsSessions = trustedAwsSessions
+func (config *Configuration) SetAwsIamRoleChainedSessions(trustedAwsSessions []*session.AwsIamRoleChainedSession) error {
+  config.AwsIamRoleChainedSessions = trustedAwsSessions
   return nil
 }
 
@@ -221,13 +218,13 @@ func (config *Configuration) SetNamedProfiles(namedProfiles []*named_profile.Nam
 func (config *Configuration) GetAllSessions() []session.Rotatable {
   sessions := make([]session.Rotatable, 0)
 
-  for i := range config.plainAwsSessions {
-    sess := config.plainAwsSessions[i]
+  for i := range config.awsIamUserSessions {
+    sess := config.awsIamUserSessions[i]
     sessions = append(sessions, sess)
   }
 
-  for i := range config.FederatedAwsSessions {
-    sess := config.FederatedAwsSessions[i]
+  for i := range config.AwsIamRoleFederatedSessions {
+    sess := config.AwsIamRoleFederatedSessions[i]
     sessions = append(sessions, sess)
   }
 

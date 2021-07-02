@@ -1,14 +1,14 @@
 package controller
 
 import (
-  "github.com/gin-gonic/gin"
-  "leapp_daemon/infrastructure/logging"
-  "leapp_daemon/infrastructure/websocket"
-  "log"
-  "net/http"
+	"github.com/gin-gonic/gin"
+	"leapp_daemon/infrastructure/logging"
+	"leapp_daemon/infrastructure/websocket"
+	"log"
+	"net/http"
 )
 
-func WsController(context *gin.Context) {
+func (controller *EngineController) GetWs(context *gin.Context) {
 	logging.SetContext(context)
 	serveWs(context.Writer, context.Request)
 }
