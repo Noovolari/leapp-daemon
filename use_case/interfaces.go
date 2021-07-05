@@ -72,10 +72,8 @@ type NamedProfilesActionsInterface interface {
 }
 
 type AwsIamUserSessionsFacade interface {
-	Subscribe(observer aws_iam_user.AwsIamUserSessionsObserver)
 	GetSessions() []aws_iam_user.AwsIamUserSession
 	GetSessionById(sessionId string) (aws_iam_user.AwsIamUserSession, error)
-	SetSessions(sessions []aws_iam_user.AwsIamUserSession)
 	AddSession(session aws_iam_user.AwsIamUserSession) error
 	RemoveSession(sessionId string) error
 	EditSession(sessionId string, sessionName string, region string, accountNumber string, userName string,

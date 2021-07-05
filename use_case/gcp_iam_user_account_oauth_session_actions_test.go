@@ -173,7 +173,7 @@ func TestStartSession_NoPreviousActiveSession(t *testing.T) {
 	if err != nil {
 		t.Fatalf("Unexpected error")
 	}
-	gcpIamUserAccountOauthSessionActionsVerifyExpectedCalls(t, []string{}, []string{}, []string{}, []string{"GetSessions()", "StartSession(ID1, start-time)"})
+	gcpIamUserAccountOauthSessionActionsVerifyExpectedCalls(t, []string{}, []string{"GetTime()"}, []string{}, []string{"GetSessions()", "StartSession(ID1, start-time)"})
 }
 
 func TestStartSession_PreviousActiveSessionDiffersFromNewActiveSession(t *testing.T) {
@@ -186,7 +186,7 @@ func TestStartSession_PreviousActiveSessionDiffersFromNewActiveSession(t *testin
 	if err != nil {
 		t.Fatalf("Unexpected error")
 	}
-	gcpIamUserAccountOauthSessionActionsVerifyExpectedCalls(t, []string{}, []string{}, []string{}, []string{"GetSessions()", "StopSession(ID2, start-time)", "StartSession(ID1, start-time)"})
+	gcpIamUserAccountOauthSessionActionsVerifyExpectedCalls(t, []string{}, []string{"GetTime()"}, []string{}, []string{"GetSessions()", "StopSession(ID2, start-time)", "StartSession(ID1, start-time)"})
 }
 
 func TestStartSession_SessionWasAlreadyActive(t *testing.T) {
@@ -199,7 +199,7 @@ func TestStartSession_SessionWasAlreadyActive(t *testing.T) {
 	if err != nil {
 		t.Fatalf("Unexpected error")
 	}
-	gcpIamUserAccountOauthSessionActionsVerifyExpectedCalls(t, []string{}, []string{}, []string{}, []string{"GetSessions()", "StartSession(ID1, start-time)"})
+	gcpIamUserAccountOauthSessionActionsVerifyExpectedCalls(t, []string{}, []string{"GetTime()"}, []string{}, []string{"GetSessions()", "StartSession(ID1, start-time)"})
 }
 
 func TestStartSession_PreviousActiveSessionDifferentAndFacadeSetSessionStatusReturnsError(t *testing.T) {
@@ -211,7 +211,7 @@ func TestStartSession_PreviousActiveSessionDifferentAndFacadeSetSessionStatusRet
 
 	err := gcpIamUserAccountOauthSessionActions.StartSession(sessionId)
 	test.ExpectHttpError(t, err, http.StatusInternalServerError, "unable to stop the session")
-	gcpIamUserAccountOauthSessionActionsVerifyExpectedCalls(t, []string{}, []string{}, []string{}, []string{"GetSessions()", "StopSession(ID2, start-time)"})
+	gcpIamUserAccountOauthSessionActionsVerifyExpectedCalls(t, []string{}, []string{"GetTime()"}, []string{}, []string{"GetSessions()", "StopSession(ID2, start-time)"})
 }
 
 func TestStartSession_FacadeSetSessionStatusReturnsError(t *testing.T) {
@@ -223,7 +223,7 @@ func TestStartSession_FacadeSetSessionStatusReturnsError(t *testing.T) {
 
 	err := gcpIamUserAccountOauthSessionActions.StartSession(sessionId)
 	test.ExpectHttpError(t, err, http.StatusInternalServerError, "unable to start the session")
-	gcpIamUserAccountOauthSessionActionsVerifyExpectedCalls(t, []string{}, []string{}, []string{}, []string{"GetSessions()", "StartSession(ID1, start-time)"})
+	gcpIamUserAccountOauthSessionActionsVerifyExpectedCalls(t, []string{}, []string{"GetTime()"}, []string{}, []string{"GetSessions()", "StartSession(ID1, start-time)"})
 }
 
 func TestStopSession(t *testing.T) {
@@ -234,7 +234,7 @@ func TestStopSession(t *testing.T) {
 	if err != nil {
 		t.Fatalf("Unexpected error")
 	}
-	gcpIamUserAccountOauthSessionActionsVerifyExpectedCalls(t, []string{}, []string{}, []string{}, []string{"StopSession(ID, stop-time)"})
+	gcpIamUserAccountOauthSessionActionsVerifyExpectedCalls(t, []string{}, []string{"GetTime()"}, []string{}, []string{"StopSession(ID, stop-time)"})
 }
 
 func TestStopSession_FacadeReturnsError(t *testing.T) {
@@ -244,7 +244,7 @@ func TestStopSession_FacadeReturnsError(t *testing.T) {
 	sessionId := "ID"
 	err := gcpIamUserAccountOauthSessionActions.StopSession(sessionId)
 	test.ExpectHttpError(t, err, http.StatusInternalServerError, "unable to stop the session")
-	gcpIamUserAccountOauthSessionActionsVerifyExpectedCalls(t, []string{}, []string{}, []string{}, []string{"StopSession(ID, stop-time)"})
+	gcpIamUserAccountOauthSessionActionsVerifyExpectedCalls(t, []string{}, []string{"GetTime()"}, []string{}, []string{"StopSession(ID, stop-time)"})
 }
 
 func TestDeleteSession(t *testing.T) {

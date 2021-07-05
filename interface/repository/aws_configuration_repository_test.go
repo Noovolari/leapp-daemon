@@ -51,6 +51,7 @@ func awsConfigurationRepositorySetup() {
 		"aws_access_key_id     = access-key-id\n" +
 		"aws_secret_access_key = secret-key\n" +
 		"aws_session_token     = session-token\n" +
+		"expiration            = \n" +
 		"region                = region\n" +
 		"\n"
 
@@ -59,6 +60,7 @@ func awsConfigurationRepositorySetup() {
 		"aws_access_key_id     = another-access-key-id\n" +
 		"aws_secret_access_key = another-secret-key\n" +
 		"aws_session_token     = another-session-token\n" +
+		"expiration            = \n" +
 		"region                = another-region\n" +
 		"\n"
 
@@ -131,6 +133,7 @@ func TestWriteCredentials_CredentialsFileDoesNotExist_NoRegion(t *testing.T) {
 		"aws_access_key_id     = access-key-id\n" +
 		"aws_secret_access_key = secret-key\n" +
 		"aws_session_token     = session-token\n" +
+		"expiration            = \n" +
 		"\n"
 
 	actualFileContent := string(fileData)

@@ -42,6 +42,7 @@ func (env *EnvironmentMock) GenerateUuid() string {
 }
 
 func (env *EnvironmentMock) GetTime() string {
+	env.calls = append(env.calls, "GetTime()")
 	return env.ExpTime
 }
 

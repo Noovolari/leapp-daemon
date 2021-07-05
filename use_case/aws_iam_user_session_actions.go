@@ -21,9 +21,6 @@ func (actions *AwsIamUserSessionActions) GetSession(sessionId string) (aws_iam_u
 	return actions.AwsIamUserSessionsFacade.GetSessionById(sessionId)
 }
 
-// (sessionId string, sessionName string, region string,
-//	accountNumber string, userName string, awsAccessKeyId string, awsSecretKey string, mfaDevice string, profileName string)
-
 func (actions *AwsIamUserSessionActions) CreateSession(sessionName string, region string, accountNumber string,
 	userName string, awsAccessKeyId string, awsSecretKey string, mfaDevice string, profileName string) error {
 
@@ -115,8 +112,9 @@ func (actions *AwsIamUserSessionActions) DeleteSession(sessionId string) error {
 	return facade.RemoveSession(sessionId)
 }
 
-func (actions *AwsIamUserSessionActions) EditAwsIamUserSession(sessionId string, sessionName string, region string,
-	accountNumber string, userName string, awsAccessKeyId string, awsSecretKey string, mfaDevice string, profileName string) error {
+func (actions *AwsIamUserSessionActions) EditSession(sessionId string, sessionName string, region string,
+	accountNumber string, userName string, awsAccessKeyId string, awsSecretKey string, mfaDevice string,
+	profileName string) error {
 
 	currentSession, err := actions.AwsIamUserSessionsFacade.GetSessionById(sessionId)
 	if err != nil {
@@ -127,10 +125,12 @@ func (actions *AwsIamUserSessionActions) EditAwsIamUserSession(sessionId string,
 	if err != nil {
 		return err
 	}
+
 	err = actions.Keychain.SetSecret(awsSecretKey, currentSession.SecretKeyLabel)
 	if err != nil {
 		return err
 	}
+
 	profile, err := actions.NamedProfilesActions.GetOrCreateNamedProfile(profileName)
 	if err != nil {
 		return err

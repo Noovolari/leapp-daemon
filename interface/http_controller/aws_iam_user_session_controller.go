@@ -141,7 +141,7 @@ func (controller *EngineController) EditAwsIamUserSession(context *gin.Context) 
 	}
 
 	actions := controller.Providers.GetAwsIamUserSessionActions()
-	err = actions.EditAwsIamUserSession(requestUriDto.Id, requestDto.Name, requestDto.Region, requestDto.AccountNumber,
+	err = actions.EditSession(requestUriDto.Id, requestDto.Name, requestDto.Region, requestDto.AccountNumber,
 		requestDto.User, requestDto.AwsAccessKeyId, requestDto.AwsSecretAccessKey, requestDto.MfaDevice, requestDto.ProfileName)
 	if err != nil {
 		_ = context.Error(err)
