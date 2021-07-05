@@ -9,10 +9,10 @@ import (
 )
 
 type AlibabaRamUserSessionActions struct {
-	Environment          Environment
-	Keychain             Keychain
-	NamedProfilesActions NamedProfilesActionsInterface
-	/*AlibabaRamUserSessionsFacade AlibabaRamUserSessionsFacade*/
+	Environment                  Environment
+	Keychain                     Keychain
+	NamedProfilesActions         NamedProfilesActionsInterface
+	AlibabaRamUserSessionsFacade AlibabaRamUserSessionsFacade
 }
 
 func (actions *AlibabaRamUserSessionActions) Create(alias string, alibabaAccessKeyId string, alibabaSecretAccessKey string, regionName string, profileName string) error {
@@ -39,7 +39,7 @@ func (actions *AlibabaRamUserSessionActions) Create(alias string, alibabaAccessK
 		Account: &alibabaRamUserAccount,
 	}
 
-	err = session.GetAlibabaRamUserSessionsFacade().AddSession(sess)
+	err = actions.AlibabaRamUserSessionsFacade.AddSession(sess)
 	if err != nil {
 		return err
 	}
@@ -59,7 +59,7 @@ func (actions *AlibabaRamUserSessionActions) Create(alias string, alibabaAccessK
 
 func (actions *AlibabaRamUserSessionActions) Get(id string) (*session.AlibabaRamUserSession, error) {
 	var sess *session.AlibabaRamUserSession
-	sess, err := session.GetAlibabaRamUserSessionsFacade().GetSessionById(id)
+	sess, err := actions.AlibabaRamUserSessionsFacade.GetSessionById(id)
 	return sess, err
 }
 
@@ -88,7 +88,7 @@ func (actions *AlibabaRamUserSessionActions) Update(id string, alias string, reg
 		Account: &plainAlibabaAccount,
 	}
 
-	err = session.GetAlibabaRamUserSessionsFacade().UpdateSession(sess)
+	err = actions.AlibabaRamUserSessionsFacade.UpdateSession(sess)
 	if err != nil {
 		return http_error.NewInternalServerError(err)
 	}
@@ -117,7 +117,7 @@ func (actions *AlibabaRamUserSessionActions) Update(id string, alias string, reg
 }
 
 func (actions *AlibabaRamUserSessionActions) Delete(id string) error {
-	sess, err := session.GetAlibabaRamUserSessionsFacade().GetSessionById(id)
+	sess, err := actions.AlibabaRamUserSessionsFacade.GetSessionById(id)
 	if err != nil {
 		return http_error.NewInternalServerError(err)
 	}
@@ -129,7 +129,7 @@ func (actions *AlibabaRamUserSessionActions) Delete(id string) error {
 		}
 	}
 
-	oldSess, err := session.GetAlibabaRamRoleFederatedSessionsFacade().GetSessionById(id)
+	oldSess, err := actions.AlibabaRamUserSessionsFacade.GetSessionById(id)
 	if err != nil {
 		return http_error.NewInternalServerError(err)
 	}
@@ -140,7 +140,7 @@ func (actions *AlibabaRamUserSessionActions) Delete(id string) error {
 	}
 	actions.NamedProfilesActions.DeleteNamedProfile(oldNamedProfile.Id)
 
-	err = session.GetAlibabaRamUserSessionsFacade().RemoveSession(id)
+	err = actions.AlibabaRamUserSessionsFacade.RemoveSession(id)
 	if err != nil {
 		return http_error.NewInternalServerError(err)
 	}
@@ -159,12 +159,12 @@ func (actions *AlibabaRamUserSessionActions) Delete(id string) error {
 
 func (actions *AlibabaRamUserSessionActions) Start(sessionId string) error {
 
-	err := session.GetAlibabaRamUserSessionsFacade().SetStatusToPending(sessionId)
+	err := actions.AlibabaRamUserSessionsFacade.SetSessionStatusToPending(sessionId)
 	if err != nil {
 		return err
 	}
 
-	err = session.GetAlibabaRamUserSessionsFacade().SetStatusToActive(sessionId)
+	err = actions.AlibabaRamUserSessionsFacade.SetSessionStatusToActive(sessionId)
 	if err != nil {
 		return err
 	}
@@ -174,7 +174,7 @@ func (actions *AlibabaRamUserSessionActions) Start(sessionId string) error {
 
 func (actions *AlibabaRamUserSessionActions) Stop(sessionId string) error {
 
-	err := session.GetAlibabaRamUserSessionsFacade().SetStatusToInactive(sessionId)
+	err := actions.AlibabaRamUserSessionsFacade.SetSessionStatusToInactive(sessionId)
 	if err != nil {
 		return err
 	}

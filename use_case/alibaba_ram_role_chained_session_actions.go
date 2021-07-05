@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"leapp_daemon/domain/constant"
 	"leapp_daemon/domain/region"
+
 	"leapp_daemon/domain/session"
 	"leapp_daemon/infrastructure/http/http_error"
 
@@ -11,10 +12,10 @@ import (
 )
 
 type AlibabaRamRoleChainedSessionActions struct {
-	Environment          Environment
-	Keychain             Keychain
-	NamedProfilesActions NamedProfilesActionsInterface
-	/*AlibabaRamRoleChainedSessionsFacade AlibabaRamUserSessionsFacade*/
+	Environment                         Environment
+	Keychain                            Keychain
+	NamedProfilesActions                NamedProfilesActionsInterface
+	AlibabaRamRoleChainedSessionsFacade AlibabaRamRoleChainedSessionsFacade
 }
 
 func (actions *AlibabaRamRoleChainedSessionActions) Create(parentId string, accountName string, accountNumber string, roleName string, region string, profileName string) error {
@@ -29,7 +30,7 @@ func (actions *AlibabaRamRoleChainedSessionActions) Create(parentId string, acco
 		return err
 	}
 
-	sessions := session.GetAlibabaRamRoleChainedSessionsFacade().GetSessions()
+	sessions := actions.AlibabaRamRoleChainedSessionsFacade.GetSessions()
 
 	for _, sess := range sessions {
 		account := sess.Account
@@ -59,16 +60,13 @@ func (actions *AlibabaRamRoleChainedSessionActions) Create(parentId string, acco
 		Account:    &alibabaRamRoleChainedAccount,
 	}
 
-	err = session.GetAlibabaRamRoleChainedSessionsFacade().SetSessions(append(sessions, sess))
-	if err != nil {
-		return err
-	}
+	actions.AlibabaRamRoleChainedSessionsFacade.SetSessions(append(sessions, sess))
 
 	return nil
 }
 
 func (actions *AlibabaRamRoleChainedSessionActions) Get(id string) (*session.AlibabaRamRoleChainedSession, error) {
-	return session.GetAlibabaRamRoleChainedSessionsFacade().GetSessionById(id)
+	return actions.AlibabaRamRoleChainedSessionsFacade.GetSessionById(id)
 }
 
 func (actions *AlibabaRamRoleChainedSessionActions) Update(id string, parentId string, accountName string, accountNumber string, roleName string, regionName string, profileName string) error {
@@ -82,7 +80,7 @@ func (actions *AlibabaRamRoleChainedSessionActions) Update(id string, parentId s
 		return http_error.NewUnprocessableEntityError(fmt.Errorf("Region " + regionName + " not valid"))
 	}
 
-	oldSess, err := session.GetAlibabaRamRoleChainedSessionsFacade().GetSessionById(id)
+	oldSess, err := actions.AlibabaRamRoleChainedSessionsFacade.GetSessionById(id)
 	if err != nil {
 		return http_error.NewInternalServerError(err)
 	}
@@ -117,12 +115,15 @@ func (actions *AlibabaRamRoleChainedSessionActions) Update(id string, parentId s
 	if err != nil {
 		return err //TODO: return right error
 	}
-	session.GetAlibabaRamRoleChainedSessionsFacade().SetSessionById(sess)
+	err = actions.AlibabaRamRoleChainedSessionsFacade.SetSessionById(&sess)
+	if err != nil {
+		return err //TODO: return right error
+	}
 	return nil
 }
 
 func (actions *AlibabaRamRoleChainedSessionActions) Delete(id string) error {
-	sess, err := session.GetAlibabaRamRoleChainedSessionsFacade().GetSessionById(id)
+	sess, err := actions.AlibabaRamRoleChainedSessionsFacade.GetSessionById(id)
 	if err != nil {
 		return http_error.NewInternalServerError(err)
 	}
@@ -134,18 +135,18 @@ func (actions *AlibabaRamRoleChainedSessionActions) Delete(id string) error {
 		}
 	}
 
-	oldSess, err := session.GetAlibabaRamRoleFederatedSessionsFacade().GetSessionById(id)
+	oldSess, err := actions.AlibabaRamRoleChainedSessionsFacade.GetSessionById(id)
 	if err != nil {
 		return http_error.NewInternalServerError(err)
 	}
-	
+
 	oldNamedProfile, err := actions.NamedProfilesActions.GetNamedProfileById(oldSess.Account.NamedProfileId)
 	if err != nil {
 		return err //TODO: return right error
 	}
 	actions.NamedProfilesActions.DeleteNamedProfile(oldNamedProfile.Id)
 
-	err = session.GetAlibabaRamRoleChainedSessionsFacade().RemoveSession(id)
+	err = actions.AlibabaRamRoleChainedSessionsFacade.RemoveSession(id)
 	if err != nil {
 		return http_error.NewInternalServerError(err)
 	}
@@ -170,7 +171,7 @@ func (actions *AlibabaRamRoleChainedSessionActions) Delete(id string) error {
 
 func (actions *AlibabaRamRoleChainedSessionActions) Start(sessionId string) error {
 	// call AssumeRole API
-	sess, err := session.GetAlibabaRamRoleChainedSessionsFacade().GetSessionById(sessionId)
+	sess, err := actions.AlibabaRamRoleChainedSessionsFacade.GetSessionById(sessionId)
 	if err != nil {
 		return err
 	}

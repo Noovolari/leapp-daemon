@@ -11,10 +11,10 @@ import (
 )
 
 type AlibabaRamRoleFederatedSessionActions struct {
-	Environment          Environment
-	Keychain             Keychain
-	NamedProfilesActions NamedProfilesActionsInterface
-	/*AlibabaRamRoleFederatedSessionsFacade AlibabaRamUserSessionsFacade*/
+	Environment                           Environment
+	Keychain                              Keychain
+	NamedProfilesActions                  NamedProfilesActionsInterface
+	AlibabaRamRoleFederatedSessionsFacade AlibabaRamRoleFederatedSessionsFacade
 }
 
 // TODO: mettere da qualche parte questa funzione
@@ -73,7 +73,7 @@ func (actions *AlibabaRamRoleFederatedSessionActions) Create(name string, accoun
 		Profile: profileName,
 	}
 
-	err = session.GetAlibabaRamRoleFederatedSessionsFacade().AddSession(sess)
+	err = actions.AlibabaRamRoleFederatedSessionsFacade.AddSession(sess)
 	if err != nil {
 		return err
 	}
@@ -102,7 +102,7 @@ func (actions *AlibabaRamRoleFederatedSessionActions) Create(name string, accoun
 }
 
 func (actions *AlibabaRamRoleFederatedSessionActions) Get(id string) (*session.AlibabaRamRoleFederatedSession, error) {
-	return session.GetAlibabaRamRoleFederatedSessionsFacade().GetSessionById(id)
+	return actions.AlibabaRamRoleFederatedSessionsFacade.GetSessionById(id)
 }
 
 func (actions *AlibabaRamRoleFederatedSessionActions) Update(id string, name string, accountNumber string, roleName string, roleArn string,
@@ -113,7 +113,7 @@ func (actions *AlibabaRamRoleFederatedSessionActions) Update(id string, name str
 		return http_error.NewUnprocessableEntityError(fmt.Errorf("Region " + regionName + " not valid"))
 	}
 
-	oldSess, err := session.GetAlibabaRamRoleFederatedSessionsFacade().GetSessionById(id)
+	oldSess, err := actions.AlibabaRamRoleFederatedSessionsFacade.GetSessionById(id)
 	if err != nil {
 		return http_error.NewInternalServerError(err)
 	}
@@ -140,7 +140,7 @@ func (actions *AlibabaRamRoleFederatedSessionActions) Update(id string, name str
 		Profile: profileName,
 	}
 
-	err = session.GetAlibabaRamRoleFederatedSessionsFacade().UpdateSession(sess)
+	err = actions.AlibabaRamRoleFederatedSessionsFacade.UpdateSession(sess)
 	if err != nil {
 		return http_error.NewInternalServerError(err)
 	}
@@ -188,7 +188,7 @@ func (actions *AlibabaRamRoleFederatedSessionActions) Delete(id string) error {
 		}
 	}
 
-	oldSess, err := session.GetAlibabaRamRoleFederatedSessionsFacade().GetSessionById(id)
+	oldSess, err := actions.AlibabaRamRoleFederatedSessionsFacade.GetSessionById(id)
 	if err != nil {
 		return http_error.NewInternalServerError(err)
 	}
@@ -196,10 +196,10 @@ func (actions *AlibabaRamRoleFederatedSessionActions) Delete(id string) error {
 	oldNamedProfile, err := actions.NamedProfilesActions.GetNamedProfileById(oldSess.Account.NamedProfileId)
 	if err != nil {
 		return err //TODO: return right error
-	}	
+	}
 	actions.NamedProfilesActions.DeleteNamedProfile(oldNamedProfile.Id)
 
-	err = session.GetAlibabaRamRoleFederatedSessionsFacade().RemoveSession(id)
+	err = actions.AlibabaRamRoleFederatedSessionsFacade.RemoveSession(id)
 	if err != nil {
 		return http_error.NewInternalServerError(err)
 	}
@@ -223,12 +223,12 @@ func (actions *AlibabaRamRoleFederatedSessionActions) Delete(id string) error {
 
 func (actions *AlibabaRamRoleFederatedSessionActions) Start(sessionId string) error {
 
-	err := session.GetAlibabaRamRoleFederatedSessionsFacade().SetStatusToPending(sessionId)
+	err := actions.AlibabaRamRoleFederatedSessionsFacade.SetSessionStatusToPending(sessionId)
 	if err != nil {
 		return err
 	}
 
-	err = session.GetAlibabaRamRoleFederatedSessionsFacade().SetStatusToActive(sessionId)
+	err = actions.AlibabaRamRoleFederatedSessionsFacade.SetSessionStatusToActive(sessionId)
 	if err != nil {
 		return err
 	}
@@ -238,7 +238,7 @@ func (actions *AlibabaRamRoleFederatedSessionActions) Start(sessionId string) er
 
 func (actions *AlibabaRamRoleFederatedSessionActions) Stop(sessionId string) error {
 
-	err := session.GetAlibabaRamRoleFederatedSessionsFacade().SetStatusToInactive(sessionId)
+	err := actions.AlibabaRamRoleFederatedSessionsFacade.SetSessionStatusToInactive(sessionId)
 	if err != nil {
 		return err
 	}

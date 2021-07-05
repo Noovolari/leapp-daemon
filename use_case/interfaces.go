@@ -88,13 +88,42 @@ type GcpIamUserAccountOauthSessionsFacade interface {
 	EditSession(sessionId string, name string, projectName string) error
 }
 
-/*type AlibabaRamUserSessionsFacade interface {
+type AlibabaRamUserSessionsFacade interface {
 	Subscribe(observer session.AlibabaRamUserSessionsObserver)
 	GetSessions() []session.AlibabaRamUserSession
 	SetSessions(sessions []session.AlibabaRamUserSession)
 	AddSession(session session.AlibabaRamUserSession) error
 	RemoveSession(id string) error
+	UpdateSession(session session.AlibabaRamUserSession) error
 	GetSessionById(id string) (*session.AlibabaRamUserSession, error)
 	SetSessionStatusToPending(id string) error
 	SetSessionStatusToActive(id string) error
-}*/
+	SetSessionStatusToInactive(id string) error
+}
+
+type AlibabaRamRoleFederatedSessionsFacade interface {
+	Subscribe(observer session.AlibabaRamRoleFederatedSessionsObserver)
+	GetSessions() []session.AlibabaRamRoleFederatedSession
+	SetSessions(sessions []session.AlibabaRamRoleFederatedSession)
+	AddSession(session session.AlibabaRamRoleFederatedSession) error
+	RemoveSession(id string) error
+	UpdateSession(session session.AlibabaRamRoleFederatedSession) error
+	GetSessionById(id string) (*session.AlibabaRamRoleFederatedSession, error)
+	SetSessionStatusToPending(id string) error
+	SetSessionStatusToActive(id string) error
+	SetSessionStatusToInactive(id string) error
+}
+
+type AlibabaRamRoleChainedSessionsFacade interface {
+	Subscribe(observer session.AlibabaRamRoleChainedSessionsObserver)
+	GetSessions() []session.AlibabaRamRoleChainedSession
+	SetSessions(sessions []session.AlibabaRamRoleChainedSession)
+	AddSession(session session.AlibabaRamRoleChainedSession) error
+	RemoveSession(id string) error
+	UpdateSession(session session.AlibabaRamRoleChainedSession) error
+	GetSessionById(id string) (*session.AlibabaRamRoleChainedSession, error)
+	SetSessionById(*session.AlibabaRamRoleChainedSession) error
+	SetSessionStatusToPending(id string) error
+	SetSessionStatusToActive(id string) error
+	SetSessionStatusToInactive(id string) error
+}
