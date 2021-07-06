@@ -12,7 +12,6 @@ type EditAlibabaRamRoleFederatedSessionUriRequestDto struct {
 
 type EditAlibabaRamRoleFederatedSessionRequestDto struct {
 	Name          string `json:"name" binding:"required"`
-	AccountNumber string `json:"accountNumber" binding:"required"`
 	RoleName      string `json:"roleName" binding:"required"`
 	RoleArn       string `json:"roleArn" binding:"required"`
 	IdpArn        string `json:"idpArn" binding:"required"`

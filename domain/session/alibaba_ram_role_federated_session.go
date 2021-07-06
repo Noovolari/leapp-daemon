@@ -19,7 +19,6 @@ type AlibabaRamRoleFederatedSession struct {
 }
 
 type AlibabaRamRoleFederatedAccount struct {
-	AccountNumber string
 	Name          string
 	Role          *AlibabaRamRole
 	IdpArn        string

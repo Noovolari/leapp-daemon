@@ -38,7 +38,7 @@ func SAMLAuth(region string, idpArn string, roleArn string, assertion string) (k
 	return
 }
 
-func (actions *AlibabaRamRoleFederatedSessionActions) Create(name string, accountNumber string, roleName string, roleArn string,
+func (actions *AlibabaRamRoleFederatedSessionActions) Create(name string, roleName string, roleArn string,
 	idpArn string, regionName string, ssoUrl string, profileName string) error {
 
 	namedProfile, err := actions.NamedProfilesActions.GetOrCreateNamedProfile(profileName)
@@ -57,7 +57,6 @@ func (actions *AlibabaRamRoleFederatedSessionActions) Create(name string, accoun
 	}
 
 	federatedAlibabaAccount := session.AlibabaRamRoleFederatedAccount{
-		AccountNumber: accountNumber,
 		Name:          name,
 		Role:          &alibabaRole,
 		IdpArn:        idpArn,
@@ -104,7 +103,7 @@ func (actions *AlibabaRamRoleFederatedSessionActions) Get(id string) (*session.A
 	return actions.AlibabaRamRoleFederatedSessionsFacade.GetSessionById(id)
 }
 
-func (actions *AlibabaRamRoleFederatedSessionActions) Update(id string, name string, accountNumber string, roleName string, roleArn string,
+func (actions *AlibabaRamRoleFederatedSessionActions) Update(id string, name string, roleName string, roleArn string,
 	idpArn string, regionName string, ssoUrl string, profileName string) error {
 
 	isRegionValid := region.IsAlibabaRegionValid(regionName)
@@ -123,7 +122,6 @@ func (actions *AlibabaRamRoleFederatedSessionActions) Update(id string, name str
 	}
 
 	federatedAlibabaAccount := session.AlibabaRamRoleFederatedAccount{
-		AccountNumber: accountNumber,
 		Name:          name,
 		Role:          &alibabaRole,
 		IdpArn:        idpArn,
