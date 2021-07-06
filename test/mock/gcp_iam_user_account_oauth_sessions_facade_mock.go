@@ -3,7 +3,7 @@ package mock
 import (
 	"errors"
 	"fmt"
-	"leapp_daemon/domain/gcp/gcp_iam_user_account_oauth"
+	"leapp_daemon/domain/domain_gcp/gcp_iam_user_account_oauth"
 	"leapp_daemon/infrastructure/http/http_error"
 )
 

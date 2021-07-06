@@ -3,7 +3,7 @@ package mock
 import (
 	"errors"
 	"fmt"
-	"leapp_daemon/domain/aws/aws_iam_user"
+	"leapp_daemon/domain/domain_aws/aws_iam_user"
 	"leapp_daemon/infrastructure/http/http_error"
 )
 

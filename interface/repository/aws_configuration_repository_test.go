@@ -2,6 +2,7 @@ package repository
 
 import (
 	"fmt"
+	"leapp_daemon/interface/aws"
 	"leapp_daemon/test"
 	"leapp_daemon/test/mock"
 	"os"
@@ -14,8 +15,8 @@ var (
 	tempDirPath                string
 	tempAwsDirPath             string
 	tempCredentialsFilePath    string
-	awsCredentials             AwsTempCredentials
-	anotherAwsCredentials      AwsTempCredentials
+	awsCredentials             aws.AwsTempCredentials
+	anotherAwsCredentials      aws.AwsTempCredentials
 	awsCredentialsFileContent1 string
 	awsCredentialsFileContent2 string
 	awsFsMock                  mock.FileSystemMock
@@ -30,7 +31,7 @@ func awsConfigurationRepositorySetup() {
 	_ = os.MkdirAll(tempAwsDirPath, 0600)
 	tempCredentialsFilePath = filepath.Join(tempAwsDirPath, "credentials")
 
-	awsCredentials = AwsTempCredentials{
+	awsCredentials = aws.AwsTempCredentials{
 		ProfileName:  "profile-name",
 		AccessKeyId:  "access-key-id",
 		SecretKey:    "secret-key",
@@ -38,7 +39,7 @@ func awsConfigurationRepositorySetup() {
 		Region:       "region",
 	}
 
-	anotherAwsCredentials = AwsTempCredentials{
+	anotherAwsCredentials = aws.AwsTempCredentials{
 		ProfileName:  "another-profile-name",
 		AccessKeyId:  "another-access-key-id",
 		SecretKey:    "another-secret-key",
@@ -85,7 +86,7 @@ func TestWriteCredentials_ErrorOnGetCredentialsFilePath(t *testing.T) {
 	awsConfigurationRepositorySetup()
 	awsFsMock.ExpErrorOnGetHomeDir = true
 
-	err := awsRepo.WriteCredentials([]AwsTempCredentials{awsCredentials})
+	err := awsRepo.WriteCredentials([]aws.AwsTempCredentials{awsCredentials})
 	test.ExpectHttpError(t, err, 500, "error getting home dir")
 	awsConfigurationRepositoryVerifyExpectedCalls(t, []string{"GetHomeDir()"}, []string{})
 }
@@ -94,7 +95,7 @@ func TestWriteCredentials_CredentialsFileDoesNotExist(t *testing.T) {
 	awsConfigurationRepositorySetup()
 	awsFsMock.ExpHomeDir = tempDirPath
 
-	err := awsRepo.WriteCredentials([]AwsTempCredentials{awsCredentials})
+	err := awsRepo.WriteCredentials([]aws.AwsTempCredentials{awsCredentials})
 	if err != nil {
 		t.Fatalf("unexpected error")
 	}
@@ -118,7 +119,7 @@ func TestWriteCredentials_CredentialsFileDoesNotExist_NoRegion(t *testing.T) {
 	awsFsMock.ExpHomeDir = tempDirPath
 
 	awsCredentials.Region = ""
-	err := awsRepo.WriteCredentials([]AwsTempCredentials{awsCredentials})
+	err := awsRepo.WriteCredentials([]aws.AwsTempCredentials{awsCredentials})
 	if err != nil {
 		t.Fatalf("unexpected error")
 	}
@@ -149,7 +150,7 @@ func TestWriteCredentials_CredentialsFileDoesNotExist_MultipleCredentials(t *tes
 	awsConfigurationRepositorySetup()
 	awsFsMock.ExpHomeDir = tempDirPath
 
-	err := awsRepo.WriteCredentials([]AwsTempCredentials{awsCredentials, anotherAwsCredentials})
+	err := awsRepo.WriteCredentials([]aws.AwsTempCredentials{awsCredentials, anotherAwsCredentials})
 	if err != nil {
 		t.Fatalf("unexpected error")
 	}
@@ -176,7 +177,7 @@ func TestWriteCredentials_CredentialsFileAlreadyExistAndManagedByLeapp(t *testin
 	awsFsMock.ExpDoesFileExist = true
 
 	os.WriteFile(tempCredentialsFilePath, []byte(awsCredentialsFileContent1), 0666)
-	err := awsRepo.WriteCredentials([]AwsTempCredentials{anotherAwsCredentials})
+	err := awsRepo.WriteCredentials([]aws.AwsTempCredentials{anotherAwsCredentials})
 	if err != nil {
 		t.Fatalf("unexpected error")
 	}
@@ -209,7 +210,7 @@ func TestWriteCredentials_CredentialsFileAlreadyExistButNotManagedByLeapp(t *tes
 		"\n"
 
 	os.WriteFile(tempCredentialsFilePath, []byte(previousData), 0666)
-	err := awsRepo.WriteCredentials([]AwsTempCredentials{anotherAwsCredentials})
+	err := awsRepo.WriteCredentials([]aws.AwsTempCredentials{anotherAwsCredentials})
 	if err != nil {
 		t.Fatalf("unexpected error")
 	}
@@ -245,7 +246,7 @@ func TestWriteCredentials_CredentialsFileAlreadyExistButNotManagedByLeapp_Backup
 		"\n"
 
 	os.WriteFile(tempCredentialsFilePath, []byte(previousData), 0666)
-	err := awsRepo.WriteCredentials([]AwsTempCredentials{anotherAwsCredentials})
+	err := awsRepo.WriteCredentials([]aws.AwsTempCredentials{anotherAwsCredentials})
 	test.ExpectHttpError(t, err, 500, "error renaming file")
 
 	fileData, err := os.ReadFile(tempCredentialsFilePath)

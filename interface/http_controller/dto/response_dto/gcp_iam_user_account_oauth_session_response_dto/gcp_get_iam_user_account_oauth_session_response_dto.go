@@ -2,7 +2,7 @@ package gcp_iam_user_account_oauth_session_response_dto
 
 import (
 	"github.com/gin-gonic/gin"
-	"leapp_daemon/domain/gcp/gcp_iam_user_account_oauth"
+	"leapp_daemon/domain/domain_gcp/gcp_iam_user_account_oauth"
 )
 
 // swagger:response gcpGetIamUserAccountOauthSessionResponse

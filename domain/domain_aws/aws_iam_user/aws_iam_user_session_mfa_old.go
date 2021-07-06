@@ -1,7 +1,7 @@
 package aws_iam_user
 
 import (
-	"leapp_daemon/domain/aws"
+	"leapp_daemon/domain/domain_aws"
 	"time"
 )
 
@@ -12,7 +12,7 @@ func (sess *AwsIamUserSession) IsMfaRequired() (bool, error) {
 func (sess *AwsIamUserSession) IsRotationIntervalExpired() (bool, error) {
 	startTime, _ := time.Parse(time.RFC3339, sess.StartTime)
 	secondsPassedFromStart := time.Now().Sub(startTime).Seconds()
-	return int64(secondsPassedFromStart) > aws.RotationIntervalInSeconds, nil
+	return int64(secondsPassedFromStart) > domain_aws.RotationIntervalInSeconds, nil
 }
 
 /*

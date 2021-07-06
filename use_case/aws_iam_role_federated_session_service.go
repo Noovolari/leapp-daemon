@@ -1,7 +1,7 @@
 package use_case
 
 import (
-	"leapp_daemon/domain/aws/aws_iam_role_federated"
+	"leapp_daemon/domain/domain_aws/aws_iam_role_federated"
 )
 
 func CreateAwsIamRoleFederatedSession(name string, accountNumber string, roleName string, roleArn string,

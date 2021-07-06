@@ -2,8 +2,8 @@ package use_case
 
 import (
 	"encoding/json"
-	"leapp_daemon/domain/aws"
-	"leapp_daemon/domain/aws/aws_iam_user"
+	"leapp_daemon/domain/domain_aws"
+	"leapp_daemon/domain/domain_aws/aws_iam_user"
 	"leapp_daemon/infrastructure/http/http_error"
 	"leapp_daemon/infrastructure/logging"
 	"time"
@@ -44,7 +44,7 @@ func (actions *AwsIamUserSessionActions) CreateSession(sessionName string, regio
 		SessionTokenLabel:      sessionTokenExpirationLabel,
 		MfaDevice:              mfaDevice,
 		NamedProfileId:         namedProfile.Id,
-		Status:                 aws.NotActive,
+		Status:                 domain_aws.NotActive,
 		StartTime:              "",
 		LastStopTime:           "",
 		SessionTokenExpiration: "",
@@ -78,6 +78,11 @@ func (actions *AwsIamUserSessionActions) StartSession(sessionId string) error {
 
 	currentTime := actions.Environment.GetTime()
 	err = actions.refreshSessionTokenIfNeeded(sessionToStart, currentTime)
+	if err != nil {
+		goto StartSessionFailed
+	}
+
+	err = actions.stopActiveSessionsByNamedProfileId(sessionToStart.NamedProfileId)
 	if err != nil {
 		goto StartSessionFailed
 	}
@@ -116,17 +121,18 @@ func (actions *AwsIamUserSessionActions) EditSession(sessionId string, sessionNa
 	accountNumber string, userName string, awsAccessKeyId string, awsSecretKey string, mfaDevice string,
 	profileName string) error {
 
-	currentSession, err := actions.AwsIamUserSessionsFacade.GetSessionById(sessionId)
+	facade := actions.AwsIamUserSessionsFacade
+	sessionToEdit, err := facade.GetSessionById(sessionId)
 	if err != nil {
 		return err
 	}
 
-	err = actions.Keychain.SetSecret(awsAccessKeyId, currentSession.AccessKeyIdLabel)
+	err = actions.Keychain.SetSecret(awsAccessKeyId, sessionToEdit.AccessKeyIdLabel)
 	if err != nil {
 		return err
 	}
 
-	err = actions.Keychain.SetSecret(awsSecretKey, currentSession.SecretKeyLabel)
+	err = actions.Keychain.SetSecret(awsSecretKey, sessionToEdit.SecretKeyLabel)
 	if err != nil {
 		return err
 	}
@@ -136,14 +142,21 @@ func (actions *AwsIamUserSessionActions) EditSession(sessionId string, sessionNa
 		return err
 	}
 
-	return actions.AwsIamUserSessionsFacade.EditSession(sessionId, sessionName, region, accountNumber, userName, mfaDevice, profile.Id)
+	if sessionToEdit.Status == domain_aws.Active {
+		err := actions.stopActiveSessionsByNamedProfileId(profile.Id)
+		if err != nil {
+			return err
+		}
+	}
+
+	return facade.EditSession(sessionId, sessionName, region, accountNumber, userName, mfaDevice, profile.Id)
 }
 
 func (actions *AwsIamUserSessionActions) RotateSessionTokens() {
 	facade := actions.AwsIamUserSessionsFacade
 
 	for _, awsSession := range facade.GetSessions() {
-		if awsSession.Status != aws.Active {
+		if awsSession.Status != domain_aws.Active {
 			continue
 		}
 		currentTime := actions.Environment.GetTime()
@@ -219,4 +232,17 @@ func (actions *AwsIamUserSessionActions) refreshSessionToken(session aws_iam_use
 	}
 
 	return actions.AwsIamUserSessionsFacade.SetSessionTokenExpiration(session.Id, credentials.Expiration.Format(time.RFC3339))
+}
+
+func (actions *AwsIamUserSessionActions) stopActiveSessionsByNamedProfileId(namedProfileId string) error {
+	for _, awsSession := range actions.AwsIamUserSessionsFacade.GetSessions() {
+		if awsSession.Status == domain_aws.Active && awsSession.NamedProfileId == namedProfileId {
+			err := actions.StopSession(awsSession.Id)
+			if err != nil {
+				return err
+			}
+		}
+	}
+
+	return nil
 }

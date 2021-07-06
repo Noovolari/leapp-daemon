@@ -21,7 +21,7 @@ func AwsIamUserBootstrap(prov *providers.Providers, config domain.Configuration)
 	awsIamUserSessionFacade.SetSessions(awsIamUserSessions)
 	awsIamUserSessionFacade.Subscribe(prov.GetAwsSessionWriter())
 	awsIamUserSessionFacade.Subscribe(prov.GetAwsCredentialsApplier())
-	prov.GetTimerCollection().AddTimer(1,
+	prov.GetTimerCollection().AddTimer(1000,
 		prov.GetAwsIamUserSessionActions().RotateSessionTokens)
 }
 

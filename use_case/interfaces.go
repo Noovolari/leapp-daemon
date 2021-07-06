@@ -4,10 +4,10 @@ import (
 	"github.com/aws/aws-sdk-go/service/sts"
 	"golang.org/x/oauth2"
 	"leapp_daemon/domain"
-	"leapp_daemon/domain/aws/aws_iam_user"
-	"leapp_daemon/domain/aws/named_profile"
-	"leapp_daemon/domain/gcp/gcp_iam_user_account_oauth"
-	"leapp_daemon/interface/repository"
+	"leapp_daemon/domain/domain_aws/aws_iam_user"
+	"leapp_daemon/domain/domain_aws/named_profile"
+	"leapp_daemon/domain/domain_gcp/gcp_iam_user_account_oauth"
+	"leapp_daemon/interface/aws"
 )
 
 type FileSystem interface {
@@ -44,7 +44,7 @@ type ConfigurationRepository interface {
 }
 
 type AwsConfigurationRepository interface {
-	WriteCredentials(credentials []repository.AwsTempCredentials) error
+	WriteCredentials(credentials []aws.AwsTempCredentials) error
 }
 
 type GcpConfigurationRepository interface {

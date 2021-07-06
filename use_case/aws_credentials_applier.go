@@ -2,16 +2,16 @@ package use_case
 
 import (
 	"encoding/json"
-	"leapp_daemon/domain/aws"
-	"leapp_daemon/domain/aws/aws_iam_user"
+	"leapp_daemon/domain/domain_aws"
+	"leapp_daemon/domain/domain_aws/aws_iam_user"
 	"leapp_daemon/infrastructure/logging"
-	"leapp_daemon/interface/repository"
+	"leapp_daemon/interface/aws"
 )
 
 type AwsCredentialsApplier struct {
-	Keychain                   Keychain
-	NamedProfilesFacade        NamedProfilesFacade
-	AwsConfigurationRepository AwsConfigurationRepository
+	Keychain            Keychain
+	NamedProfilesFacade NamedProfilesFacade
+	Repository          AwsConfigurationRepository
 }
 
 type AwsSessionToken struct {
@@ -23,9 +23,9 @@ type AwsSessionToken struct {
 
 func (applier *AwsCredentialsApplier) UpdateAwsIamUserSessions(oldSessions []aws_iam_user.AwsIamUserSession, newSessions []aws_iam_user.AwsIamUserSession) {
 
-	activeCredentials := make([]repository.AwsTempCredentials, 0)
+	activeCredentials := make([]aws.AwsTempCredentials, 0)
 	for _, newSession := range newSessions {
-		if newSession.Status != aws.Active {
+		if newSession.Status != domain_aws.Active {
 			continue
 		}
 
@@ -48,7 +48,7 @@ func (applier *AwsCredentialsApplier) UpdateAwsIamUserSessions(oldSessions []aws
 			return
 		}
 
-		tempCredentials := repository.AwsTempCredentials{
+		tempCredentials := aws.AwsTempCredentials{
 			ProfileName:  namedProfile.Name,
 			AccessKeyId:  sessionToken.AccessKeyId,
 			SecretKey:    sessionToken.SecretAccessKey,
@@ -58,7 +58,7 @@ func (applier *AwsCredentialsApplier) UpdateAwsIamUserSessions(oldSessions []aws
 		}
 		activeCredentials = append(activeCredentials, tempCredentials)
 	}
-	err := applier.AwsConfigurationRepository.WriteCredentials(activeCredentials)
+	err := applier.Repository.WriteCredentials(activeCredentials)
 	if err != nil {
 		logging.Entry().Error(err)
 	}

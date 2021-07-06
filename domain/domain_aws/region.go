@@ -1,4 +1,4 @@
-package aws
+package domain_aws
 
 func GetRegionList() []string {
 	return []string{

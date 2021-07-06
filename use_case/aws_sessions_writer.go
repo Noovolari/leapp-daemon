@@ -1,7 +1,7 @@
 package use_case
 
 import (
-	"leapp_daemon/domain/aws/aws_iam_user"
+	"leapp_daemon/domain/domain_aws/aws_iam_user"
 	"leapp_daemon/infrastructure/logging"
 )
 

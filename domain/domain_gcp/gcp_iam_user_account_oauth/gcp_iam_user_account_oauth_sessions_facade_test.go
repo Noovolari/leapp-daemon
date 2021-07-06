@@ -1,7 +1,7 @@
 package gcp_iam_user_account_oauth
 
 import (
-	"leapp_daemon/domain/gcp"
+	"leapp_daemon/domain/domain_gcp"
 	"leapp_daemon/test"
 	"net/http"
 	"reflect"
@@ -122,7 +122,7 @@ func TestGcpIamUserSessionFacade_StartSession(t *testing.T) {
 	facadeSetup()
 	sessionFacade.Subscribe(fakeSessionObserver{})
 
-	newSession := GcpIamUserAccountOauthSession{Id: "ID", Status: gcp.NotActive}
+	newSession := GcpIamUserAccountOauthSession{Id: "ID", Status: domain_gcp.NotActive}
 	sessionFacade.gcpIamUserAccountOauthSessions = []GcpIamUserAccountOauthSession{newSession}
 
 	sessionFacade.StartSession("ID", "start-time")
@@ -131,7 +131,7 @@ func TestGcpIamUserSessionFacade_StartSession(t *testing.T) {
 		t.Errorf("unexpected session")
 	}
 
-	if !reflect.DeepEqual(sessionsAfterUpdate, []GcpIamUserAccountOauthSession{{Id: "ID", Status: gcp.Active, StartTime: "start-time"}}) {
+	if !reflect.DeepEqual(sessionsAfterUpdate, []GcpIamUserAccountOauthSession{{Id: "ID", Status: domain_gcp.Active, StartTime: "start-time"}}) {
 		t.Errorf("sessions were not updated")
 	}
 }
@@ -152,7 +152,7 @@ func TestGcpIamUserSessionFacade_StopSession(t *testing.T) {
 	facadeSetup()
 	sessionFacade.Subscribe(fakeSessionObserver{})
 
-	newSession := GcpIamUserAccountOauthSession{Id: "ID", Status: gcp.Active}
+	newSession := GcpIamUserAccountOauthSession{Id: "ID", Status: domain_gcp.Active}
 	sessionFacade.gcpIamUserAccountOauthSessions = []GcpIamUserAccountOauthSession{newSession}
 
 	sessionFacade.StopSession("ID", "stop-time")
@@ -161,7 +161,7 @@ func TestGcpIamUserSessionFacade_StopSession(t *testing.T) {
 		t.Errorf("unexpected session")
 	}
 
-	if !reflect.DeepEqual(sessionsAfterUpdate, []GcpIamUserAccountOauthSession{{Id: "ID", Status: gcp.NotActive, LastStopTime: "stop-time"}}) {
+	if !reflect.DeepEqual(sessionsAfterUpdate, []GcpIamUserAccountOauthSession{{Id: "ID", Status: domain_gcp.NotActive, LastStopTime: "stop-time"}}) {
 		t.Errorf("sessions were not updated")
 	}
 }

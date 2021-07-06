@@ -1,13 +1,13 @@
 package aws_iam_role_federated
 
 import (
-	"leapp_daemon/domain/aws"
+	"leapp_daemon/domain/domain_aws"
 	"time"
 )
 
 type AwsIamRoleFederatedSession struct {
 	Id        string
-	Status    aws.AwsSessionStatus
+	Status    domain_aws.AwsSessionStatus
 	StartTime string
 	Account   *AwsIamRoleFederatedAccount
 	Profile   string
@@ -30,7 +30,7 @@ type AwsIamRoleFederatedRole struct {
 func (sess *AwsIamRoleFederatedSession) IsRotationIntervalExpired() (bool, error) {
 	startTime, _ := time.Parse(time.RFC3339, sess.StartTime)
 	secondsPassedFromStart := time.Now().Sub(startTime).Seconds()
-	return int64(secondsPassedFromStart) > aws.RotationIntervalInSeconds, nil
+	return int64(secondsPassedFromStart) > domain_aws.RotationIntervalInSeconds, nil
 }
 
 /*
