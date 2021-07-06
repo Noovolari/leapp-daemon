@@ -32,6 +32,28 @@ func (controller *EngineController) GetGcpOauthUrl(context *gin.Context) {
 	context.JSON(http.StatusOK, responseDto.ToMap())
 }
 
+func (controller *EngineController) GetNamedConfigurations(context *gin.Context) {
+	// swagger:route GET /gcp/named-configurations gcpIamUserAccountOauthSession getNamedConfigurations
+	// Get the GCP Named Configurations List
+	//   Responses:
+	//     200: GcpNamedConfigurationsResponse
+
+	logging.SetContext(context)
+
+	actions := controller.Providers.GetNamedConfigurationsActions()
+	namedConfigurations, err := actions.GetNamedConfigurations()
+	if err != nil {
+		_ = context.Error(err)
+		return
+	}
+
+	responseDto := response_dto.GcpNamedConfigurationsResponse{
+		Message: "success",
+		Data:    namedConfigurations,
+	}
+	context.JSON(http.StatusOK, responseDto.ToMap())
+}
+
 func (controller *EngineController) CreateGcpIamUserAccountOauthSession(context *gin.Context) {
 	// swagger:route POST /gcp/iam-user-account-oauth-sessions createGcpIamUserAccountOauthSession
 	// Create a new GCP Iam UserAccount Oauth Session
@@ -49,7 +71,7 @@ func (controller *EngineController) CreateGcpIamUserAccountOauthSession(context 
 
 	actions := controller.Providers.GetGcpIamUserAccountOauthSessionActions()
 
-	err = actions.CreateSession(requestDto.Name, requestDto.AccountId, requestDto.ProjectName, requestDto.OauthCode)
+	err = actions.CreateSession(requestDto.Name, requestDto.AccountId, requestDto.ProjectName, requestDto.ConfigurationName, requestDto.OauthCode)
 	if err != nil {
 		_ = context.Error(err)
 		return
@@ -190,7 +212,7 @@ func (controller *EngineController) EditGcpIamUserAccountOauthSession(context *g
 	}
 
 	actions := controller.Providers.GetGcpIamUserAccountOauthSessionActions()
-	err = actions.EditSession(requestUriDto.Id, requestDto.Name, requestDto.ProjectName)
+	err = actions.EditSession(requestUriDto.Id, requestDto.Name, requestDto.ProjectName, requestDto.ConfigurationName)
 	if err != nil {
 		_ = context.Error(err)
 		return

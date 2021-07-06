@@ -92,7 +92,7 @@ func (facade *GcpIamUserAccountOauthSessionsFacade) RemoveSession(sessionId stri
 	return nil
 }
 
-func (facade *GcpIamUserAccountOauthSessionsFacade) EditSession(sessionId string, sessionName string, projectName string) error {
+func (facade *GcpIamUserAccountOauthSessionsFacade) EditSession(sessionId string, sessionName string, projectName string, namedConfigurationId string) error {
 	gcpIamUserAccountOauthSessionsLock.Lock()
 	defer gcpIamUserAccountOauthSessionsLock.Unlock()
 
@@ -111,6 +111,7 @@ func (facade *GcpIamUserAccountOauthSessionsFacade) EditSession(sessionId string
 
 	sessionToEdit.Name = sessionName
 	sessionToEdit.ProjectName = projectName
+	sessionToEdit.NamedConfigurationId = namedConfigurationId
 
 	return facade.replaceSession(sessionId, sessionToEdit)
 }

@@ -8,14 +8,14 @@ type NamedProfilesWriter struct {
 	ConfigurationRepository ConfigurationRepository
 }
 
-func (namedProfilesWriter *NamedProfilesWriter) UpdateNamedProfiles(oldNamedProfiles []named_profile.NamedProfile, newNamedProfiles []named_profile.NamedProfile) error {
-	config, err := namedProfilesWriter.ConfigurationRepository.GetConfiguration()
+func (writer *NamedProfilesWriter) UpdateNamedProfiles(oldNamedProfiles []named_profile.NamedProfile, newNamedProfiles []named_profile.NamedProfile) error {
+	config, err := writer.ConfigurationRepository.GetConfiguration()
 	if err != nil {
 		return err
 	}
 
 	config.NamedProfiles = newNamedProfiles
-	err = namedProfilesWriter.ConfigurationRepository.UpdateConfiguration(config)
+	err = writer.ConfigurationRepository.UpdateConfiguration(config)
 
 	return err
 }

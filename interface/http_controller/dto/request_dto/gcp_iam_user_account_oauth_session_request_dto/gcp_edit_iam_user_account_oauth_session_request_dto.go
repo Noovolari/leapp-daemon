@@ -33,6 +33,10 @@ type GcpEditIamUserAccountOauthSessionRequest struct {
 	// the name of the gcp project
 	// required: true
 	ProjectName string `json:"projectName" binding:"required"`
+
+	// the configuration name
+	// required: false
+	ConfigurationName string `json:"configurationName"`
 }
 
 func (requestDto *GcpEditIamUserAccountOauthSessionUriRequest) Build(context *gin.Context) error {

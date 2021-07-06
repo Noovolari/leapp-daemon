@@ -7,6 +7,7 @@ import (
 	"leapp_daemon/domain/domain_aws/aws_iam_user"
 	"leapp_daemon/domain/domain_aws/named_profile"
 	"leapp_daemon/domain/domain_gcp/gcp_iam_user_account_oauth"
+	"leapp_daemon/domain/domain_gcp/named_configuration"
 )
 
 type Configuration struct {
@@ -16,6 +17,7 @@ type Configuration struct {
 	AwsIamRoleFederatedSessions    []aws_iam_role_federated.AwsIamRoleFederatedSession
 	GcpIamUserAccountOauthSessions []gcp_iam_user_account_oauth.GcpIamUserAccountOauthSession
 	NamedProfiles                  []named_profile.NamedProfile
+	NamedConfigurations            []named_configuration.NamedConfiguration
 }
 
 type ProxyConfiguration struct {

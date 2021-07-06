@@ -28,6 +28,10 @@ type GcpCreateIamUserAccountOauthSessionRequest struct {
 	// the OAuth code to obtain credentials
 	// required: true
 	OauthCode string `json:"oauthCode" binding:"required"`
+
+	// the configuration name
+	// required: false
+	ConfigurationName string `json:"configurationName"`
 }
 
 func (requestDto *GcpCreateIamUserAccountOauthSessionRequest) Build(context *gin.Context) error {

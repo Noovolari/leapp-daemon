@@ -4,12 +4,6 @@ import (
 	"leapp_daemon/domain/domain_aws"
 )
 
-type AwsIamUserSessionContainer interface {
-	AddAwsIamUserSession(AwsIamUserSession) error
-	GetAllAwsIamUserSessions() ([]AwsIamUserSession, error)
-	RemoveAwsIamUserSession(session AwsIamUserSession) error
-}
-
 type AwsIamUserSession struct {
 	Id                     string
 	Name                   string

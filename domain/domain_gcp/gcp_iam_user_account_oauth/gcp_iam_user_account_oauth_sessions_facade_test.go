@@ -186,7 +186,7 @@ func TestGcpIamUserSessionFacade_EditSession(t *testing.T) {
 	session2 := GcpIamUserAccountOauthSession{Id: "ID2", Name: "Name2", ProjectName: "Project2"}
 	sessionFacade.gcpIamUserAccountOauthSessions = []GcpIamUserAccountOauthSession{session1, session2}
 
-	sessionFacade.EditSession("ID1", "NewName", "NewProject")
+	sessionFacade.EditSession("ID1", "NewName", "NewProject", "")
 
 	if !reflect.DeepEqual(sessionsBeforeUpdate, []GcpIamUserAccountOauthSession{session1, session2}) {
 		t.Errorf("unexpected session")
@@ -206,10 +206,10 @@ func TestGcpIamUserSessionFacade_EditSession_DuplicateSessionNameAttempt(t *test
 	session2 := GcpIamUserAccountOauthSession{Id: "ID2", Name: "Name2", ProjectName: "Project2"}
 	sessionFacade.gcpIamUserAccountOauthSessions = []GcpIamUserAccountOauthSession{session1, session2}
 
-	err := sessionFacade.EditSession("ID1", "Name2", "NewProject")
+	err := sessionFacade.EditSession("ID1", "Name2", "NewProject", "")
 	test.ExpectHttpError(t, err, http.StatusConflict, "a session named Name2 is already present")
 
-	err = sessionFacade.EditSession("ID2", "Name1", "NewProject")
+	err = sessionFacade.EditSession("ID2", "Name1", "NewProject", "")
 	test.ExpectHttpError(t, err, http.StatusConflict, "a session named Name1 is already present")
 }
 
@@ -217,7 +217,7 @@ func TestGcpIamUserSessionFacade_EditSession_notFound(t *testing.T) {
 	facadeSetup()
 	sessionFacade.Subscribe(fakeSessionObserver{})
 
-	err := sessionFacade.EditSession("ID", "", "")
+	err := sessionFacade.EditSession("ID", "", "", "")
 	test.ExpectHttpError(t, err, http.StatusNotFound, "session with id ID not found")
 
 	if len(sessionsBeforeUpdate) > 0 || len(sessionsAfterUpdate) > 0 {

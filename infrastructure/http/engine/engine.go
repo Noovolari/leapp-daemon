@@ -61,7 +61,7 @@ func initializeRoutes(ginEngine *gin.Engine, providers *providers.Providers) {
 		v1.GET("sessions", contr.ListSession)
 
 		// AWS sessions
-		v1.GET("aws/named-profiles", contr.ListNamedProfiles)
+		v1.GET("aws/named-profiles", contr.ListNamedProfiles) //TODO: this method must belong to a generic AWS_SESSION_CONTROLLER
 		v1.GET("aws/regions", contr.GetAwsRegionList)
 		v1.PUT("aws/sessions/:id/region", contr.EditAwsRegion)
 
@@ -96,6 +96,7 @@ func initializeRoutes(ginEngine *gin.Engine, providers *providers.Providers) {
 		v1.POST("gcp/iam-user-account-oauth-sessions/:id/start", contr.StartGcpIamUserAccountOauthSession)
 		v1.POST("gcp/iam-user-account-oauth-sessions/:id/stop", contr.StopGcpIamUserAccountOauthSession)
 		v1.DELETE("gcp/iam-user-account-oauth-sessions/:id", contr.DeleteGcpIamUserAccountOauthSession)
+		v1.GET("gcp/named-configurations", contr.GetNamedConfigurations)
 
 		// WebSocket
 		v1.GET("ws", contr.GetWs)

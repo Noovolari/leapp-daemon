@@ -14,8 +14,11 @@ func main() {
 	defer prov.Close()
 
 	config := ConfigurationBootstrap(prov)
+
 	NamedProfilesBootstrap(prov, config)
 	AwsIamUserBootstrap(prov, config)
+
+	NamedConfigurationsBootstrap(prov, config)
 	GcpIamUserAccountOauthBootstrap(prov, config)
 
 	//go websocket.Hub.Run()

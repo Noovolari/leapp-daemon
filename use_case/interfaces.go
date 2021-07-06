@@ -7,6 +7,7 @@ import (
 	"leapp_daemon/domain/domain_aws/aws_iam_user"
 	"leapp_daemon/domain/domain_aws/named_profile"
 	"leapp_daemon/domain/domain_gcp/gcp_iam_user_account_oauth"
+	"leapp_daemon/domain/domain_gcp/named_configuration"
 	"leapp_daemon/interface/aws"
 )
 
@@ -67,8 +68,19 @@ type NamedProfilesFacade interface {
 	AddNamedProfile(namedProfile named_profile.NamedProfile) error
 }
 
+type NamedConfigurationsFacade interface {
+	GetNamedConfigurations() []named_configuration.NamedConfiguration
+	GetNamedConfigurationById(id string) (named_configuration.NamedConfiguration, error)
+	GetNamedConfigurationByName(name string) (named_configuration.NamedConfiguration, error)
+	AddNamedConfiguration(namedProfile named_configuration.NamedConfiguration) error
+}
+
 type NamedProfilesActionsInterface interface {
 	GetOrCreateNamedProfile(profileName string) (named_profile.NamedProfile, error)
+}
+
+type NamedConfigurationsActionsInterface interface {
+	GetOrCreateNamedConfiguration(configurationName string) (named_configuration.NamedConfiguration, error)
 }
 
 type AwsIamUserSessionsFacade interface {
@@ -91,5 +103,5 @@ type GcpIamUserAccountOauthSessionsFacade interface {
 	StartSession(sessionId string, startTime string) error
 	StopSession(sessionId string, stopTime string) error
 	RemoveSession(sessionId string) error
-	EditSession(sessionId string, name string, projectName string) error
+	EditSession(sessionId string, sessionName string, projectName string, namedConfigurationId string) error
 }

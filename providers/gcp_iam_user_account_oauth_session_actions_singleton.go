@@ -18,6 +18,7 @@ func (prov *Providers) GetGcpIamUserAccountOauthSessionActions() *use_case.GcpIa
 			Environment:                         prov.GetEnvironment(),
 			Keychain:                            prov.GetKeychain(),
 			GcpIamUserAccountOauthSessionFacade: prov.GetGcpIamUserAccountOauthSessionFacade(),
+			NamedConfigurationsActions:          prov.GetNamedConfigurationsActions(),
 		}
 	}
 	return gcpIamUserAccountOauthSessionActionsSingleton
