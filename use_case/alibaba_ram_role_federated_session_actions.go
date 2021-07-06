@@ -145,12 +145,10 @@ func (actions *AlibabaRamRoleFederatedSessionActions) Update(id string, name str
 		return http_error.NewInternalServerError(err)
 	}
 
-	oldNamedProfile, err := actions.NamedProfilesActions.GetNamedProfileById(oldSess.Account.NamedProfileId)
+	err = actions.NamedProfilesActions.UpdateNamedProfileName(oldSess.Account.NamedProfileId, profileName)
 	if err != nil {
 		return err //TODO: return right error
 	}
-	oldNamedProfile.Name = profileName
-	actions.NamedProfilesActions.SetNamedProfileName(oldNamedProfile)
 
 	alibabaAccessKeyId, alibabaSecretAccessKey, alibabaStsToken, err := SAMLAuth(regionName, idpArn, roleArn, ssoUrl)
 	if err != nil {

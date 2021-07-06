@@ -1,7 +1,6 @@
 package controller
 
 import (
-	"leapp_daemon/domain/session"
 	"leapp_daemon/infrastructure/logging"
 	alibaba_ram_user_session_request_dto "leapp_daemon/interface/http/controller/dto/request_dto/alibaba_ram_user_session_dto"
 	"leapp_daemon/interface/http/controller/dto/response_dto"
@@ -94,6 +93,7 @@ func (controller *EngineController) UpdateAlibabaRamUserSessionController(contex
 
 	actions := controller.Providers.GetAlibabaRamUserSessionActions()
 
+
 	err = actions.Update(
 		requestUriDto.Id,
 		requestDto.Name,
@@ -127,7 +127,9 @@ func (controller *EngineController) DeleteAlibabaRamUserSessionController(contex
 		return
 	}
 
-	err = session.GetAlibabaRamUserSessionsFacade().RemoveSession(requestDto.Id)
+	actions := controller.Providers.GetAlibabaRamUserSessionActions()
+
+	err = actions.Delete(requestDto.Id)
 	if err != nil {
 		_ = context.Error(err)
 		return

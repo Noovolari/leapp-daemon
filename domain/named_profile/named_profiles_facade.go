@@ -92,6 +92,18 @@ func (fac *NamedProfilesFacade) DeleteNamedProfile(id string) error {
 	return http_error.NewNotFoundError(fmt.Errorf("named profile with id %v not found", id))
 }
 
+func (fac *NamedProfilesFacade) UpdateNamedProfileName(id string, name string) error {
+	namedProfiles := fac.namedProfiles
+	for i, np := range namedProfiles {
+		if np.Id == id {
+			namedProfiles[i].Name = name
+			fac.updateState(namedProfiles)
+			return nil
+		}
+	}
+	return http_error.NewNotFoundError(fmt.Errorf("named profile with id %v not found", id))
+}
+
 func (fac *NamedProfilesFacade) updateState(newState []NamedProfile) error {
 	oldNamedProfiles := fac.GetNamedProfiles()
 	fac.SetNamedProfiles(newState)

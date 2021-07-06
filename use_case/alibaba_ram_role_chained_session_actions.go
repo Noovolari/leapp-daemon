@@ -106,12 +106,7 @@ func (actions *AlibabaRamRoleChainedSessionActions) Update(id string, parentId s
 		Profile:    profileName,
 	}
 
-	oldNamedProfile, err := actions.NamedProfilesActions.GetNamedProfileById(oldSess.Account.NamedProfileId)
-	if err != nil {
-		return err //TODO: return right error
-	}
-	oldNamedProfile.Name = profileName
-	err = actions.NamedProfilesActions.SetNamedProfileName(oldNamedProfile)
+	err = actions.NamedProfilesActions.UpdateNamedProfileName(oldSess.Account.NamedProfileId, profileName)
 	if err != nil {
 		return err //TODO: return right error
 	}

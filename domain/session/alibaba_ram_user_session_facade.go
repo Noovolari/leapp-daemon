@@ -40,10 +40,10 @@ func (fac *AlibabaRamUserSessionsFacade) GetSessions() []AlibabaRamUserSession {
 	return fac.alibabaRamUserSessions
 }
 
-func (fac *AlibabaRamUserSessionsFacade) SetSessions(newAlibabaRamUserSessions []AlibabaRamUserSession) error {
-	fac.alibabaRamUserSessions = newAlibabaRamUserSessions
+func (fac *AlibabaRamUserSessionsFacade) SetSessions(sessions []AlibabaRamUserSession) error {
+	fac.alibabaRamUserSessions = sessions
 
-	err := fac.updateState(newAlibabaRamUserSessions)
+	err := fac.updateState(sessions)
 	if err != nil {
 		return err
 	}
@@ -139,7 +139,7 @@ func (fac *AlibabaRamUserSessionsFacade) GetSessionById(id string) (*AlibabaRamU
 	return nil, http_error.NewNotFoundError(fmt.Errorf("alibaba Ram User session with id %s not found", id))
 }
 
-func (fac *AlibabaRamUserSessionsFacade) SetStatusToPending(id string) error {
+func (fac *AlibabaRamUserSessionsFacade) SetSessionStatusToPending(id string) error {
 	alibabaRamUserSessionsLock.Lock()
 	defer alibabaRamUserSessionsLock.Unlock()
 
@@ -176,7 +176,7 @@ func (fac *AlibabaRamUserSessionsFacade) SetStatusToPending(id string) error {
 	return nil
 }
 
-func (fac *AlibabaRamUserSessionsFacade) SetStatusToActive(id string) error {
+func (fac *AlibabaRamUserSessionsFacade) SetSessionStatusToActive(id string) error {
 	alibabaRamUserSessionsLock.Lock()
 	defer alibabaRamUserSessionsLock.Unlock()
 
@@ -213,7 +213,7 @@ func (fac *AlibabaRamUserSessionsFacade) SetStatusToActive(id string) error {
 	return nil
 }
 
-func (fac *AlibabaRamUserSessionsFacade) SetStatusToInactive(id string) error {
+func (fac *AlibabaRamUserSessionsFacade) SetSessionStatusToInactive(id string) error {
 	alibabaRamUserSessionsLock.Lock()
 	defer alibabaRamUserSessionsLock.Unlock()
 

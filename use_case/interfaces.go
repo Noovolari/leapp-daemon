@@ -56,13 +56,14 @@ type NamedProfilesFacade interface {
 	GetNamedProfileById(id string) (named_profile.NamedProfile, error)
 	GetNamedProfileByName(name string) (named_profile.NamedProfile, error)
 	AddNamedProfile(namedProfile named_profile.NamedProfile) error
+	UpdateNamedProfileName(id string, name string) error
 	DeleteNamedProfile(profileId string) error
 }
 
 type NamedProfilesActionsInterface interface {
 	GetOrCreateNamedProfile(profileName string) (named_profile.NamedProfile, error)
 	GetNamedProfileById(profileId string) (named_profile.NamedProfile, error)
-	SetNamedProfileName(np named_profile.NamedProfile) error
+	UpdateNamedProfileName(id string, name string) error
 	DeleteNamedProfile(profileId string) error
 }
 
@@ -91,7 +92,7 @@ type GcpIamUserAccountOauthSessionsFacade interface {
 type AlibabaRamUserSessionsFacade interface {
 	Subscribe(observer session.AlibabaRamUserSessionsObserver)
 	GetSessions() []session.AlibabaRamUserSession
-	SetSessions(sessions []session.AlibabaRamUserSession)
+	SetSessions(sessions []session.AlibabaRamUserSession) error
 	AddSession(session session.AlibabaRamUserSession) error
 	RemoveSession(id string) error
 	UpdateSession(session session.AlibabaRamUserSession) error
@@ -104,7 +105,7 @@ type AlibabaRamUserSessionsFacade interface {
 type AlibabaRamRoleFederatedSessionsFacade interface {
 	Subscribe(observer session.AlibabaRamRoleFederatedSessionsObserver)
 	GetSessions() []session.AlibabaRamRoleFederatedSession
-	SetSessions(sessions []session.AlibabaRamRoleFederatedSession)
+	SetSessions(sessions []session.AlibabaRamRoleFederatedSession) error
 	AddSession(session session.AlibabaRamRoleFederatedSession) error
 	RemoveSession(id string) error
 	UpdateSession(session session.AlibabaRamRoleFederatedSession) error
@@ -117,12 +118,11 @@ type AlibabaRamRoleFederatedSessionsFacade interface {
 type AlibabaRamRoleChainedSessionsFacade interface {
 	Subscribe(observer session.AlibabaRamRoleChainedSessionsObserver)
 	GetSessions() []session.AlibabaRamRoleChainedSession
-	SetSessions(sessions []session.AlibabaRamRoleChainedSession)
+	SetSessions(sessions []session.AlibabaRamRoleChainedSession) error
 	AddSession(session session.AlibabaRamRoleChainedSession) error
 	RemoveSession(id string) error
-	UpdateSession(session session.AlibabaRamRoleChainedSession) error
 	GetSessionById(id string) (*session.AlibabaRamRoleChainedSession, error)
-	SetSessionById(*session.AlibabaRamRoleChainedSession) error
+	SetSessionById(newSession *session.AlibabaRamRoleChainedSession) error
 	SetSessionStatusToPending(id string) error
 	SetSessionStatusToActive(id string) error
 	SetSessionStatusToInactive(id string) error

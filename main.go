@@ -16,6 +16,8 @@ func main() {
 	AwsIamUserBootstrap(prov, config)
 	GcpIamUserAccountOauthBootstrap(prov, config)
 	AlibabaRamUserBootstrap(prov, config)
+	AlibabaRamRoleFederatedBootstrap(prov, config)
+	AlibabaRamRoleChainedBootstrap(prov, config)
 
 	//timer.Initialize(1, use_case.RotateAllSessionsCredentials)
 	//defer timer.Close()

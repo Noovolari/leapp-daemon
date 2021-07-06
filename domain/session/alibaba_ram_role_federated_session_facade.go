@@ -149,7 +149,7 @@ func (fac *AlibabaRamRoleFederatedSessionsFacade) SetSessionById(newSession Alib
 	fac.SetSessions(allSessions)
 }
 
-func (fac *AlibabaRamRoleFederatedSessionsFacade) SetStatusToPending(id string) error {
+func (fac *AlibabaRamRoleFederatedSessionsFacade) SetSessionStatusToPending(id string) error {
 	federatedAlibabaSessionsLock.Lock()
 	defer federatedAlibabaSessionsLock.Unlock()
 
@@ -186,7 +186,7 @@ func (fac *AlibabaRamRoleFederatedSessionsFacade) SetStatusToPending(id string) 
 	return nil
 }
 
-func (fac *AlibabaRamRoleFederatedSessionsFacade) SetStatusToActive(id string) error {
+func (fac *AlibabaRamRoleFederatedSessionsFacade) SetSessionStatusToActive(id string) error {
 	federatedAlibabaSessionsLock.Lock()
 	defer federatedAlibabaSessionsLock.Unlock()
 
@@ -223,7 +223,7 @@ func (fac *AlibabaRamRoleFederatedSessionsFacade) SetStatusToActive(id string) e
 	return nil
 }
 
-func (fac *AlibabaRamRoleFederatedSessionsFacade) SetStatusToInactive(id string) error {
+func (fac *AlibabaRamRoleFederatedSessionsFacade) SetSessionStatusToInactive(id string) error {
 	federatedAlibabaSessionsLock.Lock()
 	defer federatedAlibabaSessionsLock.Unlock()
 

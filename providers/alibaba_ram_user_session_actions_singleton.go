@@ -14,10 +14,10 @@ func (prov *Providers) GetAlibabaRamUserSessionActions() *use_case.AlibabaRamUse
 
 	if alibabaRamUserSessionActionsSingleton == nil {
 		alibabaRamUserSessionActionsSingleton = &use_case.AlibabaRamUserSessionActions{
-			NamedProfilesActions:     prov.GetNamedProfilesActions(),
-			Environment:              prov.GetEnvironment(),
-			Keychain:                 prov.GetKeychain(),
-			/*AlibabaRamUserSessionsFacade: prov.GetAlibabaRamUserSessionFacade(),*/
+			NamedProfilesActions:         prov.GetNamedProfilesActions(),
+			Environment:                  prov.GetEnvironment(),
+			Keychain:                     prov.GetKeychain(),
+			AlibabaRamUserSessionsFacade: prov.GetAlibabaRamUserSessionFacade(),
 		}
 	}
 	return alibabaRamUserSessionActionsSingleton

@@ -16,7 +16,7 @@ type AlibabaRamRoleChainedSessionsObserver interface {
 
 type AlibabaRamRoleChainedSessionsFacade struct {
 	alibabaRamRoleChainedSessions []AlibabaRamRoleChainedSession
-	observers              []AlibabaRamRoleChainedSessionsObserver
+	observers                     []AlibabaRamRoleChainedSessionsObserver
 }
 
 func GetAlibabaRamRoleChainedSessionsFacade() *AlibabaRamRoleChainedSessionsFacade {
@@ -131,14 +131,16 @@ func (fac *AlibabaRamRoleChainedSessionsFacade) GetSessionById(id string) (*Alib
 	return nil, http_error.NewNotFoundError(fmt.Errorf("trusted Alibaba session with id %s not found", id))
 }
 
-func (fac *AlibabaRamRoleChainedSessionsFacade) SetSessionById(newSession AlibabaRamRoleChainedSession) {
+func (fac *AlibabaRamRoleChainedSessionsFacade) SetSessionById(newSession *AlibabaRamRoleChainedSession) error {
 	allSessions := fac.GetSessions()
 	for i, alibabaRamRoleChainedSession := range allSessions {
 		if alibabaRamRoleChainedSession.Id == newSession.Id {
-			allSessions[i] = newSession
+			allSessions[i] = *newSession
+			fac.SetSessions(allSessions)
+			return nil
 		}
 	}
-	fac.SetSessions(allSessions)
+	return http_error.NewNotFoundError(fmt.Errorf("trusted Alibaba session with id %s not found", newSession.Id))
 }
 
 func (fac *AlibabaRamRoleChainedSessionsFacade) SetSessionStatusToPending(id string) error {
