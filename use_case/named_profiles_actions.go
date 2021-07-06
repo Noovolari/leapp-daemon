@@ -54,12 +54,3 @@ func (actions *NamedProfilesActions) DeleteNamedProfile(profileId string) error 
 	}
 }
 
-func (actions *NamedProfilesActions) UpdateNamedProfileName(id string, name string) error {
-	facade := actions.NamedProfilesFacade
-	err := facade.UpdateNamedProfileName(id, name)
-	if err != nil {
-		return err
-	} else {
-		return nil
-	}
-}

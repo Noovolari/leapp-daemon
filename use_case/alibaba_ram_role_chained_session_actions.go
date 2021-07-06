@@ -80,9 +80,9 @@ func (actions *AlibabaRamRoleChainedSessionActions) Update(id string, parentId s
 		return http_error.NewUnprocessableEntityError(fmt.Errorf("Region " + regionName + " not valid"))
 	}
 
-	oldSess, err := actions.AlibabaRamRoleChainedSessionsFacade.GetSessionById(id)
+	np, err := actions.NamedProfilesActions.GetOrCreateNamedProfile(profileName)
 	if err != nil {
-		return http_error.NewInternalServerError(err)
+		return err //TODO: return right error
 	}
 
 	alibabaRamRoleChainedAccount := session.AlibabaRamRoleChainedAccount{
@@ -93,7 +93,7 @@ func (actions *AlibabaRamRoleChainedSessionActions) Update(id string, parentId s
 			Arn:  fmt.Sprintf("acs:ram::%s:role/%s", accountNumber, roleName),
 		},
 		Region:         regionName,
-		NamedProfileId: oldSess.Account.NamedProfileId,
+		NamedProfileId: np.Id,
 	}
 
 	sess := session.AlibabaRamRoleChainedSession{
@@ -106,10 +106,6 @@ func (actions *AlibabaRamRoleChainedSessionActions) Update(id string, parentId s
 		Profile:    profileName,
 	}
 
-	err = actions.NamedProfilesActions.UpdateNamedProfileName(oldSess.Account.NamedProfileId, profileName)
-	if err != nil {
-		return err //TODO: return right error
-	}
 	err = actions.AlibabaRamRoleChainedSessionsFacade.SetSessionById(&sess)
 	if err != nil {
 		return err //TODO: return right error
@@ -129,17 +125,6 @@ func (actions *AlibabaRamRoleChainedSessionActions) Delete(id string) error {
 			return err
 		}
 	}
-
-	oldSess, err := actions.AlibabaRamRoleChainedSessionsFacade.GetSessionById(id)
-	if err != nil {
-		return http_error.NewInternalServerError(err)
-	}
-
-	oldNamedProfile, err := actions.NamedProfilesActions.GetNamedProfileById(oldSess.Account.NamedProfileId)
-	if err != nil {
-		return err //TODO: return right error
-	}
-	actions.NamedProfilesActions.DeleteNamedProfile(oldNamedProfile.Id)
 
 	err = actions.AlibabaRamRoleChainedSessionsFacade.RemoveSession(id)
 	if err != nil {

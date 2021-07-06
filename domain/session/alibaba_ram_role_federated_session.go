@@ -16,7 +16,6 @@ type AlibabaRamRoleFederatedSession struct {
 	Status    Status
 	StartTime string
 	Account   *AlibabaRamRoleFederatedAccount
-	Profile   string
 }
 
 type AlibabaRamRoleFederatedAccount struct {

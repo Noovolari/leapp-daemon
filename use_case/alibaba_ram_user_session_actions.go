@@ -70,14 +70,14 @@ func (actions *AlibabaRamUserSessionActions) Update(id string, alias string, reg
 		return http_error.NewUnprocessableEntityError(fmt.Errorf("Region " + regionName + " not valid"))
 	}
 
-	oldSess, err := session.GetAlibabaRamUserSessionsFacade().GetSessionById(id)
+	np, err := actions.NamedProfilesActions.GetOrCreateNamedProfile(profileName)
 	if err != nil {
-		return http_error.NewInternalServerError(err)
+		return err //TODO: return right error
 	}
 
 	plainAlibabaAccount := session.AlibabaRamUserAccount{
 		Region:         regionName,
-		NamedProfileId: oldSess.Account.NamedProfileId,
+		NamedProfileId: np.Id,
 	}
 
 	sess := session.AlibabaRamUserSession{
@@ -90,11 +90,6 @@ func (actions *AlibabaRamUserSessionActions) Update(id string, alias string, reg
 	err = actions.AlibabaRamUserSessionsFacade.UpdateSession(sess)
 	if err != nil {
 		return http_error.NewInternalServerError(err)
-	}
-
-	err = actions.NamedProfilesActions.UpdateNamedProfileName(oldSess.Account.NamedProfileId, profileName)
-	if err != nil {
-		return err //TODO: return right error
 	}
 
 	err = actions.Keychain.SetSecret(alibabaAccessKeyId, sess.Id+constant.PlainAlibabaKeyIdSuffix)
@@ -122,17 +117,6 @@ func (actions *AlibabaRamUserSessionActions) Delete(id string) error {
 			return err
 		}
 	}
-
-	oldSess, err := actions.AlibabaRamUserSessionsFacade.GetSessionById(id)
-	if err != nil {
-		return http_error.NewInternalServerError(err)
-	}
-
-	oldNamedProfile, err := actions.NamedProfilesActions.GetNamedProfileById(oldSess.Account.NamedProfileId)
-	if err != nil {
-		return err //TODO: return right error
-	}
-	actions.NamedProfilesActions.DeleteNamedProfile(oldNamedProfile.Id)
 
 	err = actions.AlibabaRamUserSessionsFacade.RemoveSession(id)
 	if err != nil {

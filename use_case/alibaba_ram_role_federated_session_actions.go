@@ -70,7 +70,6 @@ func (actions *AlibabaRamRoleFederatedSessionActions) Create(name string, accoun
 		Id:      actions.Environment.GenerateUuid(),
 		Status:  session.NotActive,
 		Account: &federatedAlibabaAccount,
-		Profile: profileName,
 	}
 
 	err = actions.AlibabaRamRoleFederatedSessionsFacade.AddSession(sess)
@@ -113,9 +112,9 @@ func (actions *AlibabaRamRoleFederatedSessionActions) Update(id string, name str
 		return http_error.NewUnprocessableEntityError(fmt.Errorf("Region " + regionName + " not valid"))
 	}
 
-	oldSess, err := actions.AlibabaRamRoleFederatedSessionsFacade.GetSessionById(id)
+	np, err := actions.NamedProfilesActions.GetOrCreateNamedProfile(profileName)
 	if err != nil {
-		return http_error.NewInternalServerError(err)
+		return err //TODO: return right error
 	}
 
 	alibabaRole := session.AlibabaRamRole{
@@ -130,24 +129,18 @@ func (actions *AlibabaRamRoleFederatedSessionActions) Update(id string, name str
 		IdpArn:        idpArn,
 		Region:        regionName,
 		/*SsoUrl:        ssoUrl,*/
-		NamedProfileId: oldSess.Account.NamedProfileId,
+		NamedProfileId: np.Id,
 	}
 
 	sess := session.AlibabaRamRoleFederatedSession{
 		Id:      id,
 		Status:  session.NotActive,
 		Account: &federatedAlibabaAccount,
-		Profile: profileName,
 	}
 
 	err = actions.AlibabaRamRoleFederatedSessionsFacade.UpdateSession(sess)
 	if err != nil {
 		return http_error.NewInternalServerError(err)
-	}
-
-	err = actions.NamedProfilesActions.UpdateNamedProfileName(oldSess.Account.NamedProfileId, profileName)
-	if err != nil {
-		return err //TODO: return right error
 	}
 
 	alibabaAccessKeyId, alibabaSecretAccessKey, alibabaStsToken, err := SAMLAuth(regionName, idpArn, roleArn, ssoUrl)
@@ -185,17 +178,6 @@ func (actions *AlibabaRamRoleFederatedSessionActions) Delete(id string) error {
 			return err
 		}
 	}
-
-	oldSess, err := actions.AlibabaRamRoleFederatedSessionsFacade.GetSessionById(id)
-	if err != nil {
-		return http_error.NewInternalServerError(err)
-	}
-
-	oldNamedProfile, err := actions.NamedProfilesActions.GetNamedProfileById(oldSess.Account.NamedProfileId)
-	if err != nil {
-		return err //TODO: return right error
-	}
-	actions.NamedProfilesActions.DeleteNamedProfile(oldNamedProfile.Id)
 
 	err = actions.AlibabaRamRoleFederatedSessionsFacade.RemoveSession(id)
 	if err != nil {
