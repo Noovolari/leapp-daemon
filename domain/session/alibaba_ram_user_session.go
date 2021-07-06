@@ -23,5 +23,5 @@ func (sess *AlibabaRamUserSession) GetId() string {
 }
 
 func (sess *AlibabaRamUserSession) GetTypeString() string {
-	return "plain"
+	return "user"
 }

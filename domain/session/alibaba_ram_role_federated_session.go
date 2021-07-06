@@ -45,7 +45,7 @@ func (sess *AlibabaRamRoleFederatedSession) GetId() string {
 }
 
 func (sess *AlibabaRamRoleFederatedSession) GetTypeString() string {
-	return "federated"
+	return "role-federated"
 }
 
 /*

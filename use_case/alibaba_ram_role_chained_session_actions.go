@@ -171,25 +171,25 @@ func (actions *AlibabaRamRoleChainedSessionActions) Start(sessionId string) erro
 		return err
 	}
 	region := sess.Account.Region
-	label := sess.ParentId + "-" + sess.ParentType + "-alibaba-session-access-key-id"
+	label := sess.ParentId + "-alibaba-ram-" + sess.ParentType + "-session-access-key-id"
 	accessKeyId, err := actions.Keychain.GetSecret(label)
 	if err != nil {
 		return err
 	}
-	label = sess.ParentId + "-" + sess.ParentType + "-alibaba-session-secret-access-key"
+	label = sess.ParentId + "-alibaba-ram-" + sess.ParentType + "-session-secret-access-key"
 	accessKeySecret, err := actions.Keychain.GetSecret(label)
 	if err != nil {
 		return err
 	}
 
 	var client *sts.Client
-	if sess.ParentType == "plain" {
+	if sess.ParentType == "user" {
 		client, err = sts.NewClientWithAccessKey(region, accessKeyId, accessKeySecret)
 		if err != nil {
 			return err
 		}
 	} else {
-		label = sess.ParentId + "-" + sess.ParentType + "-alibaba-session-sts-token"
+		label = sess.ParentId + "-alibaba-ram-" + sess.ParentType + "-session-sts-token"
 		stsToken, err := actions.Keychain.GetSecret(label)
 		if err != nil {
 			return err
@@ -210,15 +210,15 @@ func (actions *AlibabaRamRoleChainedSessionActions) Start(sessionId string) erro
 	}
 
 	// saves credentials into keychain
-	err = actions.Keychain.SetSecret(response.Credentials.AccessKeyId, sess.Id+"-trusted-alibaba-session-access-key-id")
+	err = actions.Keychain.SetSecret(response.Credentials.AccessKeyId, sess.Id+constant.TrustedAlibabaKeyIdSuffix)
 	if err != nil {
 		return http_error.NewInternalServerError(err)
 	}
-	err = actions.Keychain.SetSecret(response.Credentials.AccessKeySecret, sess.Id+"-trusted-alibaba-session-secret-access-key")
+	err = actions.Keychain.SetSecret(response.Credentials.AccessKeySecret, sess.Id+constant.TrustedAlibabaSecretAccessKeySuffix)
 	if err != nil {
 		return http_error.NewInternalServerError(err)
 	}
-	err = actions.Keychain.SetSecret(response.Credentials.SecurityToken, sess.Id+"-trusted-alibaba-session-sts-token")
+	err = actions.Keychain.SetSecret(response.Credentials.SecurityToken, sess.Id+constant.TrustedAlibabaStsTokenSuffix)
 	if err != nil {
 		return http_error.NewInternalServerError(err)
 	}
@@ -250,7 +250,7 @@ func GetAlibabaParentById(parentId string) (session.AlibabaParentSession, error)
 	if err != nil {
 		federated, err := session.GetAlibabaRamRoleFederatedSessionsFacade().GetSessionById(parentId)
 		if err != nil {
-			return nil, http_error.NewNotFoundError(fmt.Errorf("no plain or federated session with id %s found", parentId))
+			return nil, http_error.NewNotFoundError(fmt.Errorf("no user or role session with id %s found", parentId))
 		}
 		return federated, nil
 	}
