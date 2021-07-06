@@ -1,12 +1,12 @@
 package constant
 
-const PlainAlibabaKeyIdSuffix string = "-plain-alibaba-session-access-key-id"
-const PlainAlibabaSecretAccessKeySuffix string = "-plain-alibaba-session-secret-access-key"
+const PlainAlibabaKeyIdSuffix string = "-alibaba-ram-user-session-access-key-id"
+const PlainAlibabaSecretAccessKeySuffix string = "-alibaba-ram-user-session-secret-access-key"
 
-const FederatedAlibabaKeyIdSuffix string = "-federated-alibaba-session-access-key-id"
-const FederatedAlibabaSecretAccessKeySuffix string = "-federated-alibaba-session-secret-access-key"
-const FederatedAlibabaStsTokenSuffix string = "-federated-alibaba-session-sts-token"
+const FederatedAlibabaKeyIdSuffix string = "-alibaba-ram-role-federated-session-access-key-id"
+const FederatedAlibabaSecretAccessKeySuffix string = "-alibaba-ram-role-federated-session-secret-access-key"
+const FederatedAlibabaStsTokenSuffix string = "-alibaba-ram-role-federated-session-sts-token"
 
-const TrustedAlibabaKeyIdSuffix string = "-trusted-alibaba-session-access-key-id"
-const TrustedAlibabaSecretAccessKeySuffix string = "-trusted-alibaba-session-secret-access-key"
-const TrustedAlibabaStsTokenSuffix string = "-trusted-alibaba-session-sts-token"
+const TrustedAlibabaKeyIdSuffix string = "-alibaba-ram-role-chained-session-access-key-id"
+const TrustedAlibabaSecretAccessKeySuffix string = "-alibaba-ram-role-chained-session-secret-access-key"
+const TrustedAlibabaStsTokenSuffix string = "-alibaba-ram-role-chained-session-sts-token"

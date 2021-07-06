@@ -144,7 +144,6 @@ func (alibabaCredentialsApplier *AlibabaCredentialsApplier) UpdateAlibabaRamRole
 				}
 
 				credentialsFilePath := homeDir + "/" + constant.AlibabaCredentialsFilePath
-				// if you got errors check here
 				profileName := newSess.Account.Name
 				region := newSess.Account.Region
 
@@ -206,7 +205,7 @@ func (alibabaCredentialsApplier *AlibabaCredentialsApplier) getFederatedCreds(se
 		return accessKeyId, secretAccessKey, stsToken, http_error.NewUnprocessableEntityError(err)
 	}
 
-	stsTokenName := sessionId + constant.TrustedAlibabaStsTokenSuffix
+	stsTokenName := sessionId + constant.FederatedAlibabaStsTokenSuffix
 	stsToken, err = alibabaCredentialsApplier.Keychain.GetSecret(stsTokenName)
 	if err != nil {
 		return accessKeyId, secretAccessKey, stsToken, http_error.NewUnprocessableEntityError(err)
