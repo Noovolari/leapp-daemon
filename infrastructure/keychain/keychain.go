@@ -1,4 +1,4 @@
-// TODO: probably, it should be moved in interface layer, since it acts as an interface between a domain concept,
+// TODO: probably, it should be moved in adapter layer, since it acts as an adapter between a domain concept,
 //  e.g. access keys, and an external service.
 
 package keychain

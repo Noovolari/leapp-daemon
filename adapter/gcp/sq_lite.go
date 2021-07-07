@@ -11,6 +11,5 @@ func getSqliteDatabase(sqlFilePath string) (*sql.DB, error) {
   if err != nil {
     return nil, http_error.NewNotFoundError(err)
   }
-
   return database, nil
 }

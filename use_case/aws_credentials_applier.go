@@ -5,7 +5,7 @@ import (
 	"leapp_daemon/domain/aws"
 	"leapp_daemon/domain/aws/aws_iam_user"
 	"leapp_daemon/infrastructure/logging"
-	"leapp_daemon/interface/repository"
+	"leapp_daemon/adapter/repository"
 )
 
 type AwsCredentialsApplier struct {

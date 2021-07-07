@@ -1,7 +1,7 @@
 package providers
 
 import (
-	"leapp_daemon/interface/repository"
+	"leapp_daemon/adapter/repository"
 	"sync"
 )
 

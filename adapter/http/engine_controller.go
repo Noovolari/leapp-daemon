@@ -1,4 +1,4 @@
-package http_controller
+package http
 
 import (
 	"leapp_daemon/providers"

@@ -1,7 +1,7 @@
 package providers
 
 import (
-	"leapp_daemon/interface/aws"
+	"leapp_daemon/adapter/aws"
 	"sync"
 )
 

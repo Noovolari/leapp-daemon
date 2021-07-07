@@ -1,13 +1,13 @@
 package engine
 
 import (
-	"fmt"
-	"github.com/gin-gonic/gin"
-	"github.com/sirupsen/logrus"
-	"leapp_daemon/infrastructure/http/middleware"
-	"leapp_daemon/infrastructure/logging"
-	"leapp_daemon/interface/http_controller"
-	"leapp_daemon/providers"
+  "fmt"
+  "github.com/gin-gonic/gin"
+  "github.com/sirupsen/logrus"
+  "leapp_daemon/adapter/http"
+  "leapp_daemon/infrastructure/http/middleware"
+  "leapp_daemon/infrastructure/logging"
+  "leapp_daemon/providers"
 )
 
 type engineWrapper struct {
@@ -53,7 +53,7 @@ func (engineWrapper *engineWrapper) Serve(port int) {
 }
 
 func initializeRoutes(ginEngine *gin.Engine, providers *providers.Providers) {
-	contr := http_controller.EngineController{Providers: providers}
+	contr := http.EngineController{Providers: providers}
 
 	v1 := ginEngine.Group("/api/v1")
 	{
@@ -98,6 +98,7 @@ func initializeRoutes(ginEngine *gin.Engine, providers *providers.Providers) {
 		v1.DELETE("gcp/iam-user-account-oauth-sessions/:id", contr.DeleteGcpIamUserAccountOauthSession)
 
 		// WebSocket
-		v1.GET("ws", contr.GetWs)
+		v1.GET("websocket/register-client", contr.RegisterClient)
+    v1.POST("websocket/test", contr.Test)
 	}
 }

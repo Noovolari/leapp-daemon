@@ -7,7 +7,7 @@ import (
 	"leapp_daemon/domain/aws/aws_iam_user"
 	"leapp_daemon/domain/aws/named_profile"
 	"leapp_daemon/domain/gcp/gcp_iam_user_account_oauth"
-	"leapp_daemon/interface/repository"
+  "leapp_daemon/adapter/repository"
 )
 
 type FileSystem interface {
