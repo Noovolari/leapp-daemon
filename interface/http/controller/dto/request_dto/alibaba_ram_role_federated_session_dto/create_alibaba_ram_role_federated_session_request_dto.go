@@ -13,6 +13,7 @@ type CreateAlibabaRamRoleFederatedSessionRequestDto struct {
 	IdpArn        string `json:"idpArn" binding:"required"`
 	Region        string `json:"region" binding:"required"`
 	SsoUrl        string `json:"ssoUrl" binding:"required"`
+	SAMLAssertion string `json:"samlassertion" binding:"required"`
 	ProfileName   string `json:"profileName"`
 }
 

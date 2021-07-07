@@ -23,7 +23,7 @@ type AlibabaRamRoleFederatedAccount struct {
 	Role          *AlibabaRamRole
 	IdpArn        string
 	Region        string
-	/*SsoUrl        string*/
+	SsoUrl        string
 	NamedProfileId string
 }
 

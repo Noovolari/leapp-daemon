@@ -44,7 +44,7 @@ func (controller *EngineController) CreateAlibabaRamRoleFederatedSessionControll
 	actions := controller.Providers.GetAlibabaRamRoleFederatedSessionActions()
 
 	err = actions.Create(requestDto.Name, requestDto.RoleName,
-		requestDto.RoleArn, requestDto.IdpArn, requestDto.Region, requestDto.SsoUrl,
+		requestDto.RoleArn, requestDto.IdpArn, requestDto.Region, requestDto.SsoUrl, requestDto.SAMLAssertion,
 		requestDto.ProfileName)
 	if err != nil {
 		_ = context.Error(err)
@@ -82,6 +82,7 @@ func (controller *EngineController) EditAlibabaRamRoleFederatedSessionController
 		requestDto.IdpArn,
 		requestDto.Region,
 		requestDto.SsoUrl,
+		requestDto.SAMLAssertion,
 		requestDto.ProfileName)
 
 	if err != nil {

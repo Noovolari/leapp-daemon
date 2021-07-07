@@ -39,7 +39,7 @@ func SAMLAuth(region string, idpArn string, roleArn string, assertion string) (k
 }
 
 func (actions *AlibabaRamRoleFederatedSessionActions) Create(name string, roleName string, roleArn string,
-	idpArn string, regionName string, ssoUrl string, profileName string) error {
+	idpArn string, regionName string, ssoUrl string, assertion string, profileName string) error {
 
 	namedProfile, err := actions.NamedProfilesActions.GetOrCreateNamedProfile(profileName)
 	if err != nil {
@@ -57,11 +57,11 @@ func (actions *AlibabaRamRoleFederatedSessionActions) Create(name string, roleNa
 	}
 
 	federatedAlibabaAccount := session.AlibabaRamRoleFederatedAccount{
-		Name:          name,
-		Role:          &alibabaRole,
-		IdpArn:        idpArn,
-		Region:        regionName,
-		/*SsoUrl:        ssoUrl,*/
+		Name:           name,
+		Role:           &alibabaRole,
+		IdpArn:         idpArn,
+		Region:         regionName,
+		SsoUrl:         ssoUrl,
 		NamedProfileId: namedProfile.Id,
 	}
 
@@ -76,7 +76,7 @@ func (actions *AlibabaRamRoleFederatedSessionActions) Create(name string, roleNa
 		return err
 	}
 
-	alibabaAccessKeyId, alibabaSecretAccessKey, alibabaStsToken, err := SAMLAuth(regionName, idpArn, roleArn, ssoUrl)
+	alibabaAccessKeyId, alibabaSecretAccessKey, alibabaStsToken, err := SAMLAuth(regionName, idpArn, roleArn, assertion)
 	if err != nil {
 		return err
 	}
@@ -104,7 +104,7 @@ func (actions *AlibabaRamRoleFederatedSessionActions) Get(id string) (*session.A
 }
 
 func (actions *AlibabaRamRoleFederatedSessionActions) Update(id string, name string, roleName string, roleArn string,
-	idpArn string, regionName string, ssoUrl string, profileName string) error {
+	idpArn string, regionName string, ssoUrl string, assertion string, profileName string) error {
 
 	isRegionValid := region.IsAlibabaRegionValid(regionName)
 	if !isRegionValid {
@@ -122,11 +122,11 @@ func (actions *AlibabaRamRoleFederatedSessionActions) Update(id string, name str
 	}
 
 	federatedAlibabaAccount := session.AlibabaRamRoleFederatedAccount{
-		Name:          name,
-		Role:          &alibabaRole,
-		IdpArn:        idpArn,
-		Region:        regionName,
-		/*SsoUrl:        ssoUrl,*/
+		Name:           name,
+		Role:           &alibabaRole,
+		IdpArn:         idpArn,
+		Region:         regionName,
+		SsoUrl:         ssoUrl,
 		NamedProfileId: np.Id,
 	}
 
@@ -141,7 +141,7 @@ func (actions *AlibabaRamRoleFederatedSessionActions) Update(id string, name str
 		return http_error.NewInternalServerError(err)
 	}
 
-	alibabaAccessKeyId, alibabaSecretAccessKey, alibabaStsToken, err := SAMLAuth(regionName, idpArn, roleArn, ssoUrl)
+	alibabaAccessKeyId, alibabaSecretAccessKey, alibabaStsToken, err := SAMLAuth(regionName, idpArn, roleArn, assertion)
 	if err != nil {
 		return err
 	}
