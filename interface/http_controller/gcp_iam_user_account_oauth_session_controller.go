@@ -41,11 +41,7 @@ func (controller *EngineController) GetNamedConfigurations(context *gin.Context)
 	logging.SetContext(context)
 
 	actions := controller.Providers.GetNamedConfigurationsActions()
-	namedConfigurations, err := actions.GetNamedConfigurations()
-	if err != nil {
-		_ = context.Error(err)
-		return
-	}
+	namedConfigurations := actions.GetNamedConfigurations()
 
 	responseDto := response_dto.GcpNamedConfigurationsResponse{
 		Message: "success",

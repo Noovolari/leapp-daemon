@@ -9,8 +9,8 @@ type NamedConfigurationsActions struct {
 	NamedConfigurationsFacade NamedConfigurationsFacade
 }
 
-func (actions *NamedConfigurationsActions) GetNamedConfigurations() ([]named_configuration.NamedConfiguration, error) {
-	return actions.NamedConfigurationsFacade.GetNamedConfigurations(), nil
+func (actions *NamedConfigurationsActions) GetNamedConfigurations() []named_configuration.NamedConfiguration {
+	return actions.NamedConfigurationsFacade.GetNamedConfigurations()
 }
 
 func (actions *NamedConfigurationsActions) GetNamedConfigurationById(profileId string) (named_configuration.NamedConfiguration, error) {
