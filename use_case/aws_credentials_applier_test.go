@@ -68,3 +68,55 @@ func TestAwsCredentialsApplier_UpdateAwsIamUserSessions_NoActiveSessions(t *test
 	awsCredentialApplier.UpdateAwsIamUserSessions(oldSessions, newSessions)
 	awsCredentialApplierVerifyExpectedCalls(t, []string{}, []string{}, []string{"WriteCredentials([])"})
 }
+
+func TestAwsCredentialsApplier_UpdateAwsImUserSessions_FacadeGetNamedProfileByIdReturnsError(t *testing.T) {
+	awsCredentialApplierSetup()
+	oldSessions := []aws_iam_user.AwsIamUserSession{}
+	newSessions := []aws_iam_user.AwsIamUserSession{{Id: "ID1", Status: domain_aws.Active, NamedProfileId: "ProfileId"}}
+	awsCredentialApplierNamedProfileFacadeMock.ExpErrorOnGetNamedProfileById = true
+
+	awsCredentialApplier.UpdateAwsIamUserSessions(oldSessions, newSessions)
+	awsCredentialApplierVerifyExpectedCalls(t, []string{}, []string{"GetNamedProfileById(ProfileId)"}, []string{})
+}
+
+func TestAwsCredentialsApplier_UpdateAwsImUserSessions_KeychainGetSecretReturnsError(t *testing.T) {
+	awsCredentialApplierSetup()
+	oldSessions := []aws_iam_user.AwsIamUserSession{}
+	newSessions := []aws_iam_user.AwsIamUserSession{
+		{Id: "ID1", Status: domain_aws.Active, NamedProfileId: "ProfileId", SessionTokenLabel: "sessionTokenLabel"},
+	}
+	awsCredentialApplierNamedProfileFacadeMock.ExpNamedProfile = named_profile.NamedProfile{Id: "ProfileId", Name: "profileName"}
+	awsCredentialApplierKeychainMock.ExpErrorOnGetSecret = true
+
+	awsCredentialApplier.UpdateAwsIamUserSessions(oldSessions, newSessions)
+	awsCredentialApplierVerifyExpectedCalls(t, []string{"GetSecret(sessionTokenLabel)"},
+		[]string{"GetNamedProfileById(ProfileId)"}, []string{})
+}
+
+func TestAwsCredentialsApplier_UpdateAwsImUserSessions_UnmarshallSessionTokenReturnsError(t *testing.T) {
+	awsCredentialApplierSetup()
+	oldSessions := []aws_iam_user.AwsIamUserSession{}
+	newSessions := []aws_iam_user.AwsIamUserSession{
+		{Id: "ID1", Status: domain_aws.Active, NamedProfileId: "ProfileId", SessionTokenLabel: "sessionTokenLabel"},
+	}
+	awsCredentialApplierNamedProfileFacadeMock.ExpNamedProfile = named_profile.NamedProfile{Id: "ProfileId", Name: "profileName"}
+	awsCredentialApplierKeychainMock.ExpGetSecret = "{this is not a json}"
+
+	awsCredentialApplier.UpdateAwsIamUserSessions(oldSessions, newSessions)
+	awsCredentialApplierVerifyExpectedCalls(t, []string{"GetSecret(sessionTokenLabel)"},
+		[]string{"GetNamedProfileById(ProfileId)"}, []string{})
+}
+
+func TestAwsCredentialsApplier_UpdateAwsImUserSessions_RepositoryWriteCredentialsReturnsError(t *testing.T) {
+	awsCredentialApplierSetup()
+	oldSessions := []aws_iam_user.AwsIamUserSession{}
+	newSessions := []aws_iam_user.AwsIamUserSession{
+		{Id: "ID1", Status: domain_aws.Active, NamedProfileId: "ProfileId", SessionTokenLabel: "sessionTokenLabel"},
+	}
+	awsCredentialApplierNamedProfileFacadeMock.ExpNamedProfile = named_profile.NamedProfile{Id: "ProfileId", Name: "profileName"}
+	awsCredentialApplierKeychainMock.ExpGetSecret = "{\"empty\":\"json\"}"
+
+	awsCredentialApplier.UpdateAwsIamUserSessions(oldSessions, newSessions)
+	awsCredentialApplierVerifyExpectedCalls(t, []string{"GetSecret(sessionTokenLabel)"},
+		[]string{"GetNamedProfileById(ProfileId)"}, []string{"WriteCredentials([{profileName     }])"})
+}
