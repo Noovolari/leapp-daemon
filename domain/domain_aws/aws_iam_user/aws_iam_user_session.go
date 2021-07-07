@@ -1,7 +1,7 @@
 package aws_iam_user
 
 import (
-	"leapp_daemon/domain/aws"
+	"leapp_daemon/domain/domain_aws"
 )
 
 type AwsIamUserSessionContainer interface {
@@ -21,7 +21,7 @@ type AwsIamUserSession struct {
 	SessionTokenLabel      string
 	MfaDevice              string
 	NamedProfileId         string
-	Status                 aws.AwsSessionStatus
+	Status                 domain_aws.AwsSessionStatus
 	StartTime              string
 	LastStopTime           string
 	SessionTokenExpiration string

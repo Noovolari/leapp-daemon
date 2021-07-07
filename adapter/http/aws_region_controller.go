@@ -1,19 +1,19 @@
 package http
 
 import (
-	"github.com/gin-gonic/gin"
-	"leapp_daemon/domain/aws"
-	"leapp_daemon/infrastructure/logging"
-	"leapp_daemon/adapter/http/dto/request_dto/aws_region_request_dto"
-	"leapp_daemon/adapter/http/dto/response_dto"
-	"leapp_daemon/use_case"
-	"net/http"
+  "github.com/gin-gonic/gin"
+  "leapp_daemon/adapter/http/dto/request_dto/aws_region_request_dto"
+  "leapp_daemon/adapter/http/dto/response_dto"
+  "leapp_daemon/domain/domain_aws"
+  "leapp_daemon/infrastructure/logging"
+  "leapp_daemon/use_case"
+  "net/http"
 )
 
 func (controller *EngineController) GetAwsRegionList(context *gin.Context) {
 	logging.SetContext(context)
 
-	responseDto := response_dto.MessageAndDataResponseDto{Message: "success", Data: aws.GetRegionList()}
+	responseDto := response_dto.MessageAndDataResponseDto{Message: "success", Data: domain_aws.GetRegionList()}
 	context.JSON(http.StatusOK, responseDto.ToMap())
 }
 

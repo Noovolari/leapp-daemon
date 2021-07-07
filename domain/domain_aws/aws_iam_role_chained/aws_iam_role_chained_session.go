@@ -1,12 +1,12 @@
 package aws_iam_role_chained
 
 import (
-	"leapp_daemon/domain/aws"
+	"leapp_daemon/domain/domain_aws"
 )
 
 type AwsIamRoleChainedSession struct {
 	Id        string
-	Status    aws.AwsSessionStatus
+	Status    domain_aws.AwsSessionStatus
 	StartTime string
 	ParentId  string
 	Account   *AwsIamRoleChainedAccount

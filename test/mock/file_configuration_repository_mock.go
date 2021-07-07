@@ -22,7 +22,7 @@ func (repo *FileConfigurationRepositoryMock) GetCalls() []string {
 }
 
 func (repo *FileConfigurationRepositoryMock) CreateConfiguration(configuration domain.Configuration) error {
-	repo.calls = append(repo.calls, "WriteDefaultCredentials()")
+	repo.calls = append(repo.calls, "CreateConfiguration()")
 	return nil
 }
 

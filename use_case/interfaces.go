@@ -1,13 +1,13 @@
 package use_case
 
 import (
-	"github.com/aws/aws-sdk-go/service/sts"
-	"golang.org/x/oauth2"
-	"leapp_daemon/domain"
-	"leapp_daemon/domain/aws/aws_iam_user"
-	"leapp_daemon/domain/aws/named_profile"
-	"leapp_daemon/domain/gcp/gcp_iam_user_account_oauth"
-  "leapp_daemon/adapter/repository"
+  "github.com/aws/aws-sdk-go/service/sts"
+  "golang.org/x/oauth2"
+  "leapp_daemon/adapter/aws"
+  "leapp_daemon/domain"
+  "leapp_daemon/domain/domain_aws/aws_iam_user"
+  "leapp_daemon/domain/domain_aws/named_profile"
+  "leapp_daemon/domain/domain_gcp/gcp_iam_user_account_oauth"
 )
 
 type FileSystem interface {
@@ -44,7 +44,7 @@ type ConfigurationRepository interface {
 }
 
 type AwsConfigurationRepository interface {
-	WriteCredentials(credentials []repository.AwsTempCredentials) error
+	WriteCredentials(credentials []aws.AwsTempCredentials) error
 }
 
 type GcpConfigurationRepository interface {
@@ -72,10 +72,8 @@ type NamedProfilesActionsInterface interface {
 }
 
 type AwsIamUserSessionsFacade interface {
-	Subscribe(observer aws_iam_user.AwsIamUserSessionsObserver)
 	GetSessions() []aws_iam_user.AwsIamUserSession
 	GetSessionById(sessionId string) (aws_iam_user.AwsIamUserSession, error)
-	SetSessions(sessions []aws_iam_user.AwsIamUserSession)
 	AddSession(session aws_iam_user.AwsIamUserSession) error
 	RemoveSession(sessionId string) error
 	EditSession(sessionId string, sessionName string, region string, accountNumber string, userName string,

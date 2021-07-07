@@ -3,7 +3,7 @@ package use_case
 import (
 	"fmt"
 	"leapp_daemon/domain"
-	"leapp_daemon/domain/aws/aws_iam_role_chained"
+	"leapp_daemon/domain/domain_aws/aws_iam_role_chained"
 	"leapp_daemon/infrastructure/http/http_error"
 )
 

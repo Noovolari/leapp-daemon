@@ -1,13 +1,13 @@
 package http
 
 import (
-	"github.com/gin-gonic/gin"
-	"leapp_daemon/domain/aws/aws_iam_role_chained"
-	"leapp_daemon/infrastructure/logging"
-	"leapp_daemon/adapter/http/dto/request_dto/aws_iam_role_chained_session_request_dto"
-	"leapp_daemon/adapter/http/dto/response_dto"
-	"leapp_daemon/use_case"
-	"net/http"
+  "github.com/gin-gonic/gin"
+  "leapp_daemon/adapter/http/dto/request_dto/aws_iam_role_chained_session_request_dto"
+  "leapp_daemon/adapter/http/dto/response_dto"
+  "leapp_daemon/domain/domain_aws/aws_iam_role_chained"
+  "leapp_daemon/infrastructure/logging"
+  "leapp_daemon/use_case"
+  "net/http"
 )
 
 // swagger:response getAwsIamRoleChainedSessionResponse

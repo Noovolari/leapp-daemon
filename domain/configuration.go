@@ -2,11 +2,11 @@ package domain
 
 import (
 	"encoding/json"
-	"leapp_daemon/domain/aws/aws_iam_role_chained"
-	"leapp_daemon/domain/aws/aws_iam_role_federated"
-	"leapp_daemon/domain/aws/aws_iam_user"
-	"leapp_daemon/domain/aws/named_profile"
-	"leapp_daemon/domain/gcp/gcp_iam_user_account_oauth"
+	"leapp_daemon/domain/domain_aws/aws_iam_role_chained"
+	"leapp_daemon/domain/domain_aws/aws_iam_role_federated"
+	"leapp_daemon/domain/domain_aws/aws_iam_user"
+	"leapp_daemon/domain/domain_aws/named_profile"
+	"leapp_daemon/domain/domain_gcp/gcp_iam_user_account_oauth"
 )
 
 type Configuration struct {

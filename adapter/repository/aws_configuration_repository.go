@@ -1,11 +1,12 @@
 package repository
 
 import (
-	"fmt"
-	"gopkg.in/ini.v1"
-	"leapp_daemon/infrastructure/http/http_error"
-	"path/filepath"
-	"strings"
+  "fmt"
+  "gopkg.in/ini.v1"
+  "leapp_daemon/adapter/aws"
+  "leapp_daemon/infrastructure/http/http_error"
+  "path/filepath"
+  "strings"
 )
 
 type AwsConfigFileSystem interface {
@@ -26,15 +27,6 @@ type AwsEnvironment interface {
 type AwsConfigurationRepository struct {
 	FileSystem  AwsConfigFileSystem
 	Environment AwsEnvironment
-}
-
-type AwsTempCredentials struct {
-	ProfileName  string
-	AccessKeyId  string
-	SecretKey    string
-	SessionToken string
-	Expiration   string
-	Region       string
 }
 
 func (repo *AwsConfigurationRepository) getAwsDirPath() (string, error) {
@@ -64,7 +56,7 @@ func (repo *AwsConfigurationRepository) getCredentialsBackupFilePath() (string, 
 	return filepath.Join(awsDir, fmt.Sprintf("credentials_%v.backup", timeText)), nil
 }
 
-func (repo *AwsConfigurationRepository) createProfileSection(credentialsIniFile *ini.File, credentials AwsTempCredentials) error {
+func (repo *AwsConfigurationRepository) createProfileSection(credentialsIniFile *ini.File, credentials aws.AwsTempCredentials) error {
 
 	credentialsIniFile.DeleteSection(credentials.ProfileName)
 	section, err := credentialsIniFile.NewSection(credentials.ProfileName)
@@ -130,7 +122,7 @@ func (repo *AwsConfigurationRepository) backupCredentialsFile(credentialsFilePat
 	return nil
 }
 
-func (repo *AwsConfigurationRepository) WriteCredentials(credentials []AwsTempCredentials) error {
+func (repo *AwsConfigurationRepository) WriteCredentials(credentials []aws.AwsTempCredentials) error {
 
 	credentialsFilePath, err := repo.getCredentialsFilePath()
 	if err != nil {

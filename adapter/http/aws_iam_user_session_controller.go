@@ -1,12 +1,12 @@
 package http
 
 import (
-	"github.com/gin-gonic/gin"
-	"leapp_daemon/infrastructure/logging"
-	"leapp_daemon/adapter/http/dto/request_dto/aws_iam_user_session_request_dto"
-	"leapp_daemon/adapter/http/dto/response_dto"
-	"leapp_daemon/adapter/http/dto/response_dto/aws_iam_user_session_response_dto"
-	"net/http"
+  "github.com/gin-gonic/gin"
+  "leapp_daemon/adapter/http/dto/request_dto/aws_iam_user_session_request_dto"
+  "leapp_daemon/adapter/http/dto/response_dto"
+  "leapp_daemon/adapter/http/dto/response_dto/aws_iam_user_session_response_dto"
+  "leapp_daemon/infrastructure/logging"
+  "net/http"
 )
 
 func (controller *EngineController) CreateAwsIamUserSession(context *gin.Context) {
@@ -141,7 +141,7 @@ func (controller *EngineController) EditAwsIamUserSession(context *gin.Context) 
 	}
 
 	actions := controller.Providers.GetAwsIamUserSessionActions()
-	err = actions.EditAwsIamUserSession(requestUriDto.Id, requestDto.Name, requestDto.Region, requestDto.AccountNumber,
+	err = actions.EditSession(requestUriDto.Id, requestDto.Name, requestDto.Region, requestDto.AccountNumber,
 		requestDto.User, requestDto.AwsAccessKeyId, requestDto.AwsSecretAccessKey, requestDto.MfaDevice, requestDto.ProfileName)
 	if err != nil {
 		_ = context.Error(err)

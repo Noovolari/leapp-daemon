@@ -2,7 +2,7 @@ package aws_iam_user_session_response_dto
 
 import (
 	"github.com/gin-gonic/gin"
-	"leapp_daemon/domain/aws/aws_iam_user"
+	"leapp_daemon/domain/domain_aws/aws_iam_user"
 )
 
 // swagger:response getAwsIamUserSessionResponse

@@ -11,8 +11,8 @@ type timer struct {
 
 type ScheduledFunction func()
 
-func NewTimer(intervalInSeconds int, scheduledFunction ScheduledFunction) *timer {
-	tickDuration := time.Duration(intervalInSeconds) * time.Second
+func NewTimer(intervalInMilliseconds int, scheduledFunction ScheduledFunction) *timer {
+	tickDuration := time.Duration(intervalInMilliseconds) * time.Millisecond
 
 	timer := timer{
 		done:   make(chan bool),

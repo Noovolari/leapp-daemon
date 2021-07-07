@@ -2,7 +2,7 @@ package aws_iam_user
 
 import (
 	"fmt"
-	"leapp_daemon/domain/aws"
+	"leapp_daemon/domain/domain_aws"
 	"leapp_daemon/infrastructure/http/http_error"
 	"sync"
 )
@@ -134,18 +134,18 @@ func (facade *AwsIamUserSessionsFacade) SetSessionTokenExpiration(sessionId stri
 }
 
 func (facade *AwsIamUserSessionsFacade) StartingSession(sessionId string) error {
-	return facade.setSessionStatus(sessionId, aws.Pending, "", "")
+	return facade.setSessionStatus(sessionId, domain_aws.Pending, "", "")
 }
 
 func (facade *AwsIamUserSessionsFacade) StartSession(sessionId string, startTime string) error {
-	return facade.setSessionStatus(sessionId, aws.Active, startTime, "")
+	return facade.setSessionStatus(sessionId, domain_aws.Active, startTime, "")
 }
 
 func (facade *AwsIamUserSessionsFacade) StopSession(sessionId string, stopTime string) error {
-	return facade.setSessionStatus(sessionId, aws.NotActive, "", stopTime)
+	return facade.setSessionStatus(sessionId, domain_aws.NotActive, "", stopTime)
 }
 
-func (facade *AwsIamUserSessionsFacade) setSessionStatus(sessionId string, status aws.AwsSessionStatus, startTime string, lastStopTime string) error {
+func (facade *AwsIamUserSessionsFacade) setSessionStatus(sessionId string, status domain_aws.AwsSessionStatus, startTime string, lastStopTime string) error {
 	awsIamUserSessionsLock.Lock()
 	defer awsIamUserSessionsLock.Unlock()
 

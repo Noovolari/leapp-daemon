@@ -2,7 +2,7 @@ package gcp_iam_user_account_oauth
 
 import (
 	"fmt"
-	"leapp_daemon/domain/gcp"
+	"leapp_daemon/domain/domain_gcp"
 	"leapp_daemon/infrastructure/http/http_error"
 	"sync"
 )
@@ -116,14 +116,14 @@ func (facade *GcpIamUserAccountOauthSessionsFacade) EditSession(sessionId string
 }
 
 func (facade *GcpIamUserAccountOauthSessionsFacade) StartSession(sessionId string, startTime string) error {
-	return facade.setSessionStatus(sessionId, gcp.Active, startTime, "")
+	return facade.setSessionStatus(sessionId, domain_gcp.Active, startTime, "")
 }
 
 func (facade *GcpIamUserAccountOauthSessionsFacade) StopSession(sessionId string, stopTime string) error {
-	return facade.setSessionStatus(sessionId, gcp.NotActive, "", stopTime)
+	return facade.setSessionStatus(sessionId, domain_gcp.NotActive, "", stopTime)
 }
 
-func (facade *GcpIamUserAccountOauthSessionsFacade) setSessionStatus(sessionId string, status gcp.GcpSessionStatus, startTime string, lastStopTime string) error {
+func (facade *GcpIamUserAccountOauthSessionsFacade) setSessionStatus(sessionId string, status domain_gcp.GcpSessionStatus, startTime string, lastStopTime string) error {
 	gcpIamUserAccountOauthSessionsLock.Lock()
 	defer gcpIamUserAccountOauthSessionsLock.Unlock()
 

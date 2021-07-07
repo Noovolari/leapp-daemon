@@ -10,8 +10,8 @@ func NewTimerCollection() *TimerCollection {
 	}
 }
 
-func (timers *TimerCollection) AddTimer(intervalInSeconds int, scheduledFunction ScheduledFunction) {
-	timers.timers = append(timers.timers, NewTimer(intervalInSeconds, scheduledFunction))
+func (timers *TimerCollection) AddTimer(intervalInMilliseconds int, scheduledFunction ScheduledFunction) {
+	timers.timers = append(timers.timers, NewTimer(intervalInMilliseconds, scheduledFunction))
 }
 
 func (timers *TimerCollection) Close() {

@@ -1,4 +1,4 @@
-package aws
+package domain_aws
 
 type AwsSessionStatus int
 

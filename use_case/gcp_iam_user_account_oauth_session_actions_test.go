@@ -2,8 +2,8 @@ package use_case
 
 import (
 	"golang.org/x/oauth2"
-	"leapp_daemon/domain/gcp"
-	"leapp_daemon/domain/gcp/gcp_iam_user_account_oauth"
+	"leapp_daemon/domain/domain_gcp"
+	"leapp_daemon/domain/domain_gcp/gcp_iam_user_account_oauth"
 	"leapp_daemon/test"
 	"leapp_daemon/test/mock"
 	"net/http"
@@ -165,7 +165,7 @@ func TestCreateSession_FacadeAddSessionReturnsError(t *testing.T) {
 
 func TestStartSession_NoPreviousActiveSession(t *testing.T) {
 	gcpIamUserAccountOauthSessionActionsSetup()
-	gcpIamUserAccountOauthSessionFacadeMock.ExpGetSessions = []gcp_iam_user_account_oauth.GcpIamUserAccountOauthSession{{Id: "ID2", Status: gcp.NotActive}}
+	gcpIamUserAccountOauthSessionFacadeMock.ExpGetSessions = []gcp_iam_user_account_oauth.GcpIamUserAccountOauthSession{{Id: "ID2", Status: domain_gcp.NotActive}}
 	envMock.ExpTime = "start-time"
 	sessionId := "ID1"
 
@@ -173,12 +173,12 @@ func TestStartSession_NoPreviousActiveSession(t *testing.T) {
 	if err != nil {
 		t.Fatalf("Unexpected error")
 	}
-	gcpIamUserAccountOauthSessionActionsVerifyExpectedCalls(t, []string{}, []string{}, []string{}, []string{"GetSessions()", "StartSession(ID1, start-time)"})
+	gcpIamUserAccountOauthSessionActionsVerifyExpectedCalls(t, []string{}, []string{"GetTime()"}, []string{}, []string{"GetSessions()", "StartSession(ID1, start-time)"})
 }
 
 func TestStartSession_PreviousActiveSessionDiffersFromNewActiveSession(t *testing.T) {
 	gcpIamUserAccountOauthSessionActionsSetup()
-	gcpIamUserAccountOauthSessionFacadeMock.ExpGetSessions = []gcp_iam_user_account_oauth.GcpIamUserAccountOauthSession{{Id: "ID2", Status: gcp.Active}}
+	gcpIamUserAccountOauthSessionFacadeMock.ExpGetSessions = []gcp_iam_user_account_oauth.GcpIamUserAccountOauthSession{{Id: "ID2", Status: domain_gcp.Active}}
 	envMock.ExpTime = "start-time"
 	sessionId := "ID1"
 
@@ -186,12 +186,12 @@ func TestStartSession_PreviousActiveSessionDiffersFromNewActiveSession(t *testin
 	if err != nil {
 		t.Fatalf("Unexpected error")
 	}
-	gcpIamUserAccountOauthSessionActionsVerifyExpectedCalls(t, []string{}, []string{}, []string{}, []string{"GetSessions()", "StopSession(ID2, start-time)", "StartSession(ID1, start-time)"})
+	gcpIamUserAccountOauthSessionActionsVerifyExpectedCalls(t, []string{}, []string{"GetTime()"}, []string{}, []string{"GetSessions()", "StopSession(ID2, start-time)", "StartSession(ID1, start-time)"})
 }
 
 func TestStartSession_SessionWasAlreadyActive(t *testing.T) {
 	gcpIamUserAccountOauthSessionActionsSetup()
-	gcpIamUserAccountOauthSessionFacadeMock.ExpGetSessions = []gcp_iam_user_account_oauth.GcpIamUserAccountOauthSession{{Id: "ID1", Status: gcp.Active}}
+	gcpIamUserAccountOauthSessionFacadeMock.ExpGetSessions = []gcp_iam_user_account_oauth.GcpIamUserAccountOauthSession{{Id: "ID1", Status: domain_gcp.Active}}
 	envMock.ExpTime = "start-time"
 	sessionId := "ID1"
 
@@ -199,31 +199,31 @@ func TestStartSession_SessionWasAlreadyActive(t *testing.T) {
 	if err != nil {
 		t.Fatalf("Unexpected error")
 	}
-	gcpIamUserAccountOauthSessionActionsVerifyExpectedCalls(t, []string{}, []string{}, []string{}, []string{"GetSessions()", "StartSession(ID1, start-time)"})
+	gcpIamUserAccountOauthSessionActionsVerifyExpectedCalls(t, []string{}, []string{"GetTime()"}, []string{}, []string{"GetSessions()", "StartSession(ID1, start-time)"})
 }
 
 func TestStartSession_PreviousActiveSessionDifferentAndFacadeSetSessionStatusReturnsError(t *testing.T) {
 	gcpIamUserAccountOauthSessionActionsSetup()
-	gcpIamUserAccountOauthSessionFacadeMock.ExpGetSessions = []gcp_iam_user_account_oauth.GcpIamUserAccountOauthSession{{Id: "ID2", Status: gcp.Active}}
+	gcpIamUserAccountOauthSessionFacadeMock.ExpGetSessions = []gcp_iam_user_account_oauth.GcpIamUserAccountOauthSession{{Id: "ID2", Status: domain_gcp.Active}}
 	gcpIamUserAccountOauthSessionFacadeMock.ExpErrorOnStopSession = true
 	envMock.ExpTime = "start-time"
 	sessionId := "ID1"
 
 	err := gcpIamUserAccountOauthSessionActions.StartSession(sessionId)
 	test.ExpectHttpError(t, err, http.StatusInternalServerError, "unable to stop the session")
-	gcpIamUserAccountOauthSessionActionsVerifyExpectedCalls(t, []string{}, []string{}, []string{}, []string{"GetSessions()", "StopSession(ID2, start-time)"})
+	gcpIamUserAccountOauthSessionActionsVerifyExpectedCalls(t, []string{}, []string{"GetTime()"}, []string{}, []string{"GetSessions()", "StopSession(ID2, start-time)"})
 }
 
 func TestStartSession_FacadeSetSessionStatusReturnsError(t *testing.T) {
 	gcpIamUserAccountOauthSessionActionsSetup()
-	gcpIamUserAccountOauthSessionFacadeMock.ExpGetSessions = []gcp_iam_user_account_oauth.GcpIamUserAccountOauthSession{{Id: "ID2", Status: gcp.NotActive}}
+	gcpIamUserAccountOauthSessionFacadeMock.ExpGetSessions = []gcp_iam_user_account_oauth.GcpIamUserAccountOauthSession{{Id: "ID2", Status: domain_gcp.NotActive}}
 	gcpIamUserAccountOauthSessionFacadeMock.ExpErrorOnStartSession = true
 	envMock.ExpTime = "start-time"
 	sessionId := "ID1"
 
 	err := gcpIamUserAccountOauthSessionActions.StartSession(sessionId)
 	test.ExpectHttpError(t, err, http.StatusInternalServerError, "unable to start the session")
-	gcpIamUserAccountOauthSessionActionsVerifyExpectedCalls(t, []string{}, []string{}, []string{}, []string{"GetSessions()", "StartSession(ID1, start-time)"})
+	gcpIamUserAccountOauthSessionActionsVerifyExpectedCalls(t, []string{}, []string{"GetTime()"}, []string{}, []string{"GetSessions()", "StartSession(ID1, start-time)"})
 }
 
 func TestStopSession(t *testing.T) {
@@ -234,7 +234,7 @@ func TestStopSession(t *testing.T) {
 	if err != nil {
 		t.Fatalf("Unexpected error")
 	}
-	gcpIamUserAccountOauthSessionActionsVerifyExpectedCalls(t, []string{}, []string{}, []string{}, []string{"StopSession(ID, stop-time)"})
+	gcpIamUserAccountOauthSessionActionsVerifyExpectedCalls(t, []string{}, []string{"GetTime()"}, []string{}, []string{"StopSession(ID, stop-time)"})
 }
 
 func TestStopSession_FacadeReturnsError(t *testing.T) {
@@ -244,7 +244,7 @@ func TestStopSession_FacadeReturnsError(t *testing.T) {
 	sessionId := "ID"
 	err := gcpIamUserAccountOauthSessionActions.StopSession(sessionId)
 	test.ExpectHttpError(t, err, http.StatusInternalServerError, "unable to stop the session")
-	gcpIamUserAccountOauthSessionActionsVerifyExpectedCalls(t, []string{}, []string{}, []string{}, []string{"StopSession(ID, stop-time)"})
+	gcpIamUserAccountOauthSessionActionsVerifyExpectedCalls(t, []string{}, []string{"GetTime()"}, []string{}, []string{"StopSession(ID, stop-time)"})
 }
 
 func TestDeleteSession(t *testing.T) {

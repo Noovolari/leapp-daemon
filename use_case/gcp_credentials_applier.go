@@ -1,8 +1,8 @@
 package use_case
 
 import (
-	"leapp_daemon/domain/gcp"
-	"leapp_daemon/domain/gcp/gcp_iam_user_account_oauth"
+	"leapp_daemon/domain/domain_gcp"
+	"leapp_daemon/domain/domain_gcp/gcp_iam_user_account_oauth"
 	"leapp_daemon/infrastructure/logging"
 	"reflect"
 )
@@ -36,14 +36,14 @@ func (applier *GcpCredentialsApplier) UpdateGcpIamUserAccountOauthSessions(oldSe
 func (applier *GcpCredentialsApplier) getActiveSessions(oldSessions []gcp_iam_user_account_oauth.GcpIamUserAccountOauthSession, newSessions []gcp_iam_user_account_oauth.GcpIamUserAccountOauthSession) (*gcp_iam_user_account_oauth.GcpIamUserAccountOauthSession, *gcp_iam_user_account_oauth.GcpIamUserAccountOauthSession) {
 	var oldActiveSession *gcp_iam_user_account_oauth.GcpIamUserAccountOauthSession
 	for _, oldSession := range oldSessions {
-		if oldSession.Status == gcp.Active {
+		if oldSession.Status == domain_gcp.Active {
 			oldActiveSession = &oldSession
 			break
 		}
 	}
 	var newActiveSession *gcp_iam_user_account_oauth.GcpIamUserAccountOauthSession
 	for _, newSession := range newSessions {
-		if newSession.Status == gcp.Active {
+		if newSession.Status == domain_gcp.Active {
 			newActiveSession = &newSession
 			break
 		}

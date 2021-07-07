@@ -1,7 +1,7 @@
 package use_case
 
 import (
-	"leapp_daemon/domain/gcp/gcp_iam_user_account_oauth"
+	"leapp_daemon/domain/domain_gcp/gcp_iam_user_account_oauth"
 	"leapp_daemon/infrastructure/logging"
 )
 

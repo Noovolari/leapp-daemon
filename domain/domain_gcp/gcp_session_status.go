@@ -1,4 +1,4 @@
-package gcp
+package domain_gcp
 
 type GcpSessionStatus int
 

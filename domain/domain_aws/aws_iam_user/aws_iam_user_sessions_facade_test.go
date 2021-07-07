@@ -1,7 +1,7 @@
 package aws_iam_user
 
 import (
-	"leapp_daemon/domain/aws"
+	"leapp_daemon/domain/domain_aws"
 	"leapp_daemon/test"
 	"net/http"
 	"reflect"
@@ -152,7 +152,7 @@ func TestAwsIamUserSessionsFacade_StartingSession(t *testing.T) {
 	facadeSetup()
 	facade.Subscribe(fakeSessionsObserver{})
 
-	newSession := AwsIamUserSession{Id: "ID", Status: aws.NotActive}
+	newSession := AwsIamUserSession{Id: "ID", Status: domain_aws.NotActive}
 	facade.awsIamUserSessions = []AwsIamUserSession{newSession}
 
 	facade.StartingSession("ID")
@@ -161,7 +161,7 @@ func TestAwsIamUserSessionsFacade_StartingSession(t *testing.T) {
 		t.Errorf("unexpected session")
 	}
 
-	if !reflect.DeepEqual(sessionsAfterUpdate, []AwsIamUserSession{{Id: "ID", Status: aws.Pending, StartTime: "", LastStopTime: ""}}) {
+	if !reflect.DeepEqual(sessionsAfterUpdate, []AwsIamUserSession{{Id: "ID", Status: domain_aws.Pending, StartTime: "", LastStopTime: ""}}) {
 		t.Errorf("sessions were not updated")
 	}
 }
@@ -182,7 +182,7 @@ func TestAwsIamUserSessionsFacade_StartSession(t *testing.T) {
 	facadeSetup()
 	facade.Subscribe(fakeSessionsObserver{})
 
-	newSession := AwsIamUserSession{Id: "ID", Status: aws.NotActive}
+	newSession := AwsIamUserSession{Id: "ID", Status: domain_aws.NotActive}
 	facade.awsIamUserSessions = []AwsIamUserSession{newSession}
 
 	facade.StartSession("ID", "start-time")
@@ -191,7 +191,7 @@ func TestAwsIamUserSessionsFacade_StartSession(t *testing.T) {
 		t.Errorf("unexpected session")
 	}
 
-	if !reflect.DeepEqual(sessionsAfterUpdate, []AwsIamUserSession{{Id: "ID", Status: aws.Active, StartTime: "start-time"}}) {
+	if !reflect.DeepEqual(sessionsAfterUpdate, []AwsIamUserSession{{Id: "ID", Status: domain_aws.Active, StartTime: "start-time"}}) {
 		t.Errorf("sessions were not updated")
 	}
 }
@@ -212,7 +212,7 @@ func TestAwsIamUserSessionsFacade_StopSession(t *testing.T) {
 	facadeSetup()
 	facade.Subscribe(fakeSessionsObserver{})
 
-	newSession := AwsIamUserSession{Id: "ID", Status: aws.Active}
+	newSession := AwsIamUserSession{Id: "ID", Status: domain_aws.Active}
 	facade.awsIamUserSessions = []AwsIamUserSession{newSession}
 
 	facade.StopSession("ID", "stop-time")
@@ -221,7 +221,7 @@ func TestAwsIamUserSessionsFacade_StopSession(t *testing.T) {
 		t.Errorf("unexpected session")
 	}
 
-	if !reflect.DeepEqual(sessionsAfterUpdate, []AwsIamUserSession{{Id: "ID", Status: aws.NotActive, LastStopTime: "stop-time"}}) {
+	if !reflect.DeepEqual(sessionsAfterUpdate, []AwsIamUserSession{{Id: "ID", Status: domain_aws.NotActive, LastStopTime: "stop-time"}}) {
 		t.Errorf("sessions were not updated")
 	}
 }
@@ -260,7 +260,7 @@ func TestAwsIamUserSessionsFacade_EditSession(t *testing.T) {
 	if !reflect.DeepEqual(sessionsAfterUpdate, []AwsIamUserSession{
 		{Id: "ID1", Name: "newName", Region: "newRegion", AccountNumber: "newAccountNumber", UserName: "newUserName",
 			AccessKeyIdLabel: "accessKeyIdLabel", SecretKeyLabel: "secretKeyLabel", SessionTokenLabel: "sessionTokenLabel",
-			MfaDevice: "newMfaDevice", NamedProfileId: "newProfileId", Status: aws.NotActive, StartTime: "",
+			MfaDevice: "newMfaDevice", NamedProfileId: "newProfileId", Status: domain_aws.NotActive, StartTime: "",
 			LastStopTime: "", SessionTokenExpiration: ""}, session2}) {
 		t.Errorf("sessions were not updated")
 	}

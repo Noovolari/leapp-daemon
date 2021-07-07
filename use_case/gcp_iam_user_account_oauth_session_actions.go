@@ -1,8 +1,8 @@
 package use_case
 
 import (
-	"leapp_daemon/domain/gcp"
-	"leapp_daemon/domain/gcp/gcp_iam_user_account_oauth"
+	"leapp_daemon/domain/domain_gcp"
+	"leapp_daemon/domain/domain_gcp/gcp_iam_user_account_oauth"
 	"leapp_daemon/infrastructure/http/http_error"
 )
 
@@ -32,7 +32,7 @@ func (actions *GcpIamUserAccountOauthSessionActions) CreateSession(name string, 
 		AccountId:        accountId,
 		ProjectName:      projectName,
 		CredentialsLabel: credentialsLabel,
-		Status:           gcp.NotActive,
+		Status:           domain_gcp.NotActive,
 		StartTime:        "",
 		LastStopTime:     "",
 	}
@@ -58,7 +58,7 @@ func (actions *GcpIamUserAccountOauthSessionActions) StartSession(sessionId stri
 	currentTime := actions.Environment.GetTime()
 
 	for _, currentSession := range facade.GetSessions() {
-		if currentSession.Status != gcp.NotActive && currentSession.Id != sessionId {
+		if currentSession.Status != domain_gcp.NotActive && currentSession.Id != sessionId {
 			err := facade.StopSession(currentSession.Id, currentTime)
 			if err != nil {
 				return err
