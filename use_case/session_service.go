@@ -4,6 +4,7 @@ import (
 	"leapp_daemon/domain/domain_aws/named_profile"
 )
 
+//TODO remove this class and enventually move this methods under the proper actions class
 func ListAllSessions(gcpIamUserAccountOauthSessionFacade GcpIamUserAccountOauthSessionsFacade,
 	awsIamUserSessionFacade AwsIamUserSessionsFacade) (*map[string]interface{}, error) {
 

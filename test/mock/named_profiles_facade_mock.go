@@ -38,7 +38,7 @@ func (facade *NamedProfilesFacadeMock) SetNamedProfiles(namedProfiles []named_pr
 }
 
 func (facade *NamedProfilesFacadeMock) AddNamedProfile(namedProfile named_profile.NamedProfile) error {
-	facade.calls = append(facade.calls, fmt.Sprintf("AddNamedProfile(%v)", namedProfile.Id))
+	facade.calls = append(facade.calls, fmt.Sprintf("AddNamedProfile(%v)", namedProfile))
 	if facade.ExpErrorOnAddNamedProfile {
 		return http_error.NewInternalServerError(errors.New("failed to add named profile"))
 	}
@@ -48,7 +48,7 @@ func (facade *NamedProfilesFacadeMock) AddNamedProfile(namedProfile named_profil
 
 func (facade *NamedProfilesFacadeMock) GetNamedProfileByName(profileName string) (named_profile.NamedProfile, error) {
 	facade.calls = append(facade.calls, fmt.Sprintf("GetNamedProfileByName(%v)", profileName))
-	if facade.ExpErrorOnAddNamedProfile {
+	if facade.ExpErrorOnGetNamedProfileByName {
 		return named_profile.NamedProfile{}, http_error.NewNotFoundError(errors.New("named profile not found"))
 	}
 

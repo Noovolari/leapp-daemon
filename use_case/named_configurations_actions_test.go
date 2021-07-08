@@ -10,10 +10,10 @@ import (
 )
 
 var (
-	namedConfigurations             []named_configuration.NamedConfiguration
-	namedConfigurationActionEnvMock mock.EnvironmentMock
-	namedConfigurationFacadeMock    mock.NamedConfigurationsFacadeMock
-	namedConfigurationActions       *NamedConfigurationsActions
+	namedConfigurations              []named_configuration.NamedConfiguration
+	namedConfigurationsActionEnvMock mock.EnvironmentMock
+	namedConfigurationsFacadeMock    mock.NamedConfigurationsFacadeMock
+	namedConfigurationsActions       *NamedConfigurationsActions
 )
 
 func namedConfigurationActionsSetup() {
@@ -22,29 +22,29 @@ func namedConfigurationActionsSetup() {
 		{Id: "ID2", Name: "configurationName2"},
 	}
 
-	namedConfigurationActionEnvMock = mock.NewEnvironmentMock()
-	namedConfigurationFacadeMock = mock.NewNamedConfigurationsFacadeMock()
+	namedConfigurationsActionEnvMock = mock.NewEnvironmentMock()
+	namedConfigurationsFacadeMock = mock.NewNamedConfigurationsFacadeMock()
 	gcpIamUserAccountOauthSessionActionsKeychainMock = mock.NewKeychainMock()
-	namedConfigurationActions = &NamedConfigurationsActions{
-		Environment:               &namedConfigurationActionEnvMock,
-		NamedConfigurationsFacade: &namedConfigurationFacadeMock,
+	namedConfigurationsActions = &NamedConfigurationsActions{
+		Environment:               &namedConfigurationsActionEnvMock,
+		NamedConfigurationsFacade: &namedConfigurationsFacadeMock,
 	}
 }
 
-func namedConfigurationActionsVerifyExpectedCalls(t *testing.T, envMockCalls, namedConfigurationFacadeMockCalls []string) {
-	if !reflect.DeepEqual(namedConfigurationActionEnvMock.GetCalls(), envMockCalls) {
-		t.Fatalf("envMock expectation violation.\nMock calls: %v", namedConfigurationActionEnvMock.GetCalls())
+func namedConfigurationActionsVerifyExpectedCalls(t *testing.T, envMockCalls, namedConfigurationsFacadeMockCalls []string) {
+	if !reflect.DeepEqual(namedConfigurationsActionEnvMock.GetCalls(), envMockCalls) {
+		t.Fatalf("envMock expectation violation.\nMock calls: %v", namedConfigurationsActionEnvMock.GetCalls())
 	}
-	if !reflect.DeepEqual(namedConfigurationFacadeMock.GetCalls(), namedConfigurationFacadeMockCalls) {
-		t.Fatalf("namedConfigurationFacadeMock expectation violation.\nMock calls: %v", namedConfigurationFacadeMock.GetCalls())
+	if !reflect.DeepEqual(namedConfigurationsFacadeMock.GetCalls(), namedConfigurationsFacadeMockCalls) {
+		t.Fatalf("namedConfigurationsFacadeMock expectation violation.\nMock calls: %v", namedConfigurationsFacadeMock.GetCalls())
 	}
 }
 
 func TestGetNamedConfigurations(t *testing.T) {
 	namedConfigurationActionsSetup()
-	namedConfigurationFacadeMock.ExpNamedConfigurations = namedConfigurations
+	namedConfigurationsFacadeMock.ExpNamedConfigurations = namedConfigurations
 
-	actualConfigurations := namedConfigurationActions.GetNamedConfigurations()
+	actualConfigurations := namedConfigurationsActions.GetNamedConfigurations()
 	if !reflect.DeepEqual(actualConfigurations, namedConfigurations) {
 		t.Fatalf("Returned unexpected named configurations")
 	}
@@ -53,9 +53,9 @@ func TestGetNamedConfigurations(t *testing.T) {
 
 func TestGetNamedConfigurationById(t *testing.T) {
 	namedConfigurationActionsSetup()
-	namedConfigurationFacadeMock.ExpNamedConfiguration = namedConfigurations[0]
+	namedConfigurationsFacadeMock.ExpNamedConfiguration = namedConfigurations[0]
 
-	actualConfiguration, err := namedConfigurationActions.GetNamedConfigurationById("ID1")
+	actualConfiguration, err := namedConfigurationsActions.GetNamedConfigurationById("ID1")
 	if err != nil {
 		t.Fatalf("Returned unexpected error")
 
@@ -68,18 +68,18 @@ func TestGetNamedConfigurationById(t *testing.T) {
 
 func TestGetNamedConfigurationById_facadeReturnsError(t *testing.T) {
 	namedConfigurationActionsSetup()
-	namedConfigurationFacadeMock.ExpErrorOnGetNamedConfigurationById = true
+	namedConfigurationsFacadeMock.ExpErrorOnGetNamedConfigurationById = true
 
-	_, err := namedConfigurationActions.GetNamedConfigurationById("ID1")
+	_, err := namedConfigurationsActions.GetNamedConfigurationById("ID1")
 	test.ExpectHttpError(t, err, http.StatusNotFound, "named configuration not found")
 	namedConfigurationActionsVerifyExpectedCalls(t, []string{}, []string{"GetNamedConfigurationById(ID1)"})
 }
 
 func TestGetOrCreateNamedConfiguration(t *testing.T) {
 	namedConfigurationActionsSetup()
-	namedConfigurationFacadeMock.ExpNamedConfiguration = namedConfigurations[0]
+	namedConfigurationsFacadeMock.ExpNamedConfiguration = namedConfigurations[0]
 
-	actualConfiguration, err := namedConfigurationActions.GetOrCreateNamedConfiguration("configurationName1")
+	actualConfiguration, err := namedConfigurationsActions.GetOrCreateNamedConfiguration("configurationName1")
 	if err != nil {
 		return
 	}
@@ -91,9 +91,9 @@ func TestGetOrCreateNamedConfiguration(t *testing.T) {
 
 func TestGetOrCreateNamedConfiguration_DefaultNamedConfiguration(t *testing.T) {
 	namedConfigurationActionsSetup()
-	namedConfigurationFacadeMock.ExpNamedConfiguration = namedConfigurations[0]
+	namedConfigurationsFacadeMock.ExpNamedConfiguration = namedConfigurations[0]
 
-	actualConfiguration, err := namedConfigurationActions.GetOrCreateNamedConfiguration("")
+	actualConfiguration, err := namedConfigurationsActions.GetOrCreateNamedConfiguration("")
 	if err != nil {
 		return
 	}
@@ -105,11 +105,11 @@ func TestGetOrCreateNamedConfiguration_DefaultNamedConfiguration(t *testing.T) {
 
 func TestGetOrCreateNamedConfiguration_FacadeGetByNameReturnsError(t *testing.T) {
 	namedConfigurationActionsSetup()
-	namedConfigurationFacadeMock.ExpErrorOnGetNamedConfigurationByName = true
-	namedConfigurationActionEnvMock.ExpUuid = "NewID"
+	namedConfigurationsFacadeMock.ExpErrorOnGetNamedConfigurationByName = true
+	namedConfigurationsActionEnvMock.ExpUuid = "NewID"
 	expectedConfiguration := named_configuration.NamedConfiguration{Id: "NewID", Name: "newConfigurationName"}
 
-	actualConfiguration, err := namedConfigurationActions.GetOrCreateNamedConfiguration("newConfigurationName")
+	actualConfiguration, err := namedConfigurationsActions.GetOrCreateNamedConfiguration("newConfigurationName")
 	if err != nil {
 		return
 	}
@@ -122,11 +122,11 @@ func TestGetOrCreateNamedConfiguration_FacadeGetByNameReturnsError(t *testing.T)
 
 func TestGetOrCreateNamedConfiguration_FacadeAddNamedConfigurationReturnsError(t *testing.T) {
 	namedConfigurationActionsSetup()
-	namedConfigurationFacadeMock.ExpErrorOnGetNamedConfigurationByName = true
-	namedConfigurationFacadeMock.ExpErrorOnAddNamedConfiguration = true
-	namedConfigurationActionEnvMock.ExpUuid = "NewID"
+	namedConfigurationsFacadeMock.ExpErrorOnGetNamedConfigurationByName = true
+	namedConfigurationsFacadeMock.ExpErrorOnAddNamedConfiguration = true
+	namedConfigurationsActionEnvMock.ExpUuid = "NewID"
 
-	_, err := namedConfigurationActions.GetOrCreateNamedConfiguration("newConfigurationName")
+	_, err := namedConfigurationsActions.GetOrCreateNamedConfiguration("newConfigurationName")
 	test.ExpectHttpError(t, err, http.StatusConflict, "unable to add named configuration")
 
 	namedConfigurationActionsVerifyExpectedCalls(t, []string{"GenerateUuid()"},

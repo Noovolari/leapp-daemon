@@ -9,13 +9,17 @@ type NamedProfilesActions struct {
 	NamedProfilesFacade NamedProfilesFacade
 }
 
+func (actions *NamedProfilesActions) GetNamedProfiles() []named_profile.NamedProfile {
+	return actions.NamedProfilesFacade.GetNamedProfiles()
+}
+
 func (actions *NamedProfilesActions) GetNamedProfileById(profileId string) (named_profile.NamedProfile, error) {
 	return actions.NamedProfilesFacade.GetNamedProfileById(profileId)
 }
 
 func (actions *NamedProfilesActions) GetOrCreateNamedProfile(profileName string) (named_profile.NamedProfile, error) {
 	if profileName == "" {
-		profileName = "default"
+		profileName = named_profile.DefaultNamedProfileName
 	}
 
 	facade := actions.NamedProfilesFacade
