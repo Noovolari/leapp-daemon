@@ -28,10 +28,10 @@ func (actions *NamedConfigurationsActionsMock) GetNamedConfigurations() []named_
 	return actions.ExpNamedConfigurations
 }
 
-func (actions *NamedConfigurationsActionsMock) GetNamedConfigurationById(profileId string) (named_configuration.NamedConfiguration, error) {
-	actions.calls = append(actions.calls, fmt.Sprintf("GetNamedConfigurationById(%v)", profileId))
+func (actions *NamedConfigurationsActionsMock) GetNamedConfigurationById(configurationId string) (named_configuration.NamedConfiguration, error) {
+	actions.calls = append(actions.calls, fmt.Sprintf("GetNamedConfigurationById(%v)", configurationId))
 	if actions.ExpErrorOnGetNamedConfigurationById {
-		return named_configuration.NamedConfiguration{}, http_error.NewNotFoundError(errors.New("named profile not found"))
+		return named_configuration.NamedConfiguration{}, http_error.NewNotFoundError(errors.New("named configuration not found"))
 	}
 
 	return actions.ExpNamedConfiguration, nil
