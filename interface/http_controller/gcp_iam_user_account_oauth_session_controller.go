@@ -33,7 +33,7 @@ func (controller *EngineController) GetGcpOauthUrl(context *gin.Context) {
 }
 
 func (controller *EngineController) GetNamedConfigurations(context *gin.Context) {
-	// swagger:route GET /gcp/named-configurations gcpIamUserAccountOauthSession getNamedConfigurations
+	// swagger:route GET /gcp/named-configurations namedConfigurations getNamedConfigurations
 	// Get the GCP Named Configurations List
 	//   Responses:
 	//     200: GcpNamedConfigurationsResponse

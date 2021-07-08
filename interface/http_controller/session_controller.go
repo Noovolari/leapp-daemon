@@ -3,13 +3,12 @@ package http_controller
 import (
 	"github.com/gin-gonic/gin"
 	"leapp_daemon/infrastructure/logging"
-	"leapp_daemon/interface/http_controller/dto/request_dto/confirm_mfa_token_request_dto"
 	"leapp_daemon/interface/http_controller/dto/response_dto"
 	"leapp_daemon/use_case"
 	"net/http"
 )
 
-//TODO: Blast this struct and refactor in accord with the server architecture!
+//TODO: refactor these functions in accord with the architecture!
 func (controller *EngineController) ListSession(context *gin.Context) {
 	logging.SetContext(context)
 
@@ -23,6 +22,7 @@ func (controller *EngineController) ListSession(context *gin.Context) {
 	  listType := requestDto.Type
 	  query := requestDto.Query*/
 
+	//TODO refactor with actions
 	sessionList, err := use_case.ListAllSessions(
 		controller.Providers.GetGcpIamUserAccountOauthSessionFacade(),
 		controller.Providers.GetAwsIamUserSessionFacade())
@@ -32,38 +32,5 @@ func (controller *EngineController) ListSession(context *gin.Context) {
 	}
 
 	responseDto := response_dto.MessageAndDataResponseDto{Message: "success", Data: sessionList}
-	context.JSON(http.StatusOK, responseDto.ToMap())
-}
-
-func (controller *EngineController) ConfirmMfaToken(context *gin.Context) {
-	logging.SetContext(context)
-
-	requestDto := confirm_mfa_token_request_dto.MfaTokenConfirmRequestDto{}
-	err := (&requestDto).Build(context)
-	if err != nil {
-		_ = context.Error(err)
-		return
-	}
-
-	err = use_case.RotateSessionCredentialsWithMfaToken(requestDto.SessionId, requestDto.MfaToken)
-	if err != nil {
-		_ = context.Error(err)
-		return
-	}
-
-	responseDto := response_dto.MessageAndDataResponseDto{Message: "success", Data: requestDto.SessionId}
-	context.JSON(http.StatusOK, responseDto.ToMap())
-}
-
-func (controller *EngineController) ListNamedProfiles(context *gin.Context) {
-	logging.SetContext(context)
-
-	namedProfiles, err := use_case.ListAllNamedProfiles(controller.Providers.GetNamedProfilesFacade())
-	if err != nil {
-		_ = context.Error(err)
-		return
-	}
-
-	responseDto := response_dto.MessageAndDataResponseDto{Message: "success", Data: namedProfiles}
 	context.JSON(http.StatusOK, responseDto.ToMap())
 }
