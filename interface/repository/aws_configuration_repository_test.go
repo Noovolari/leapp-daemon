@@ -28,7 +28,7 @@ func awsConfigurationRepositorySetup() {
 	tempDirPath = filepath.Join(os.TempDir(), "temp-aws")
 	_ = os.RemoveAll(tempDirPath)
 	tempAwsDirPath = filepath.Join(tempDirPath, ".aws")
-	_ = os.MkdirAll(tempAwsDirPath, 0600)
+	_ = os.MkdirAll(tempAwsDirPath, 0777)
 	tempCredentialsFilePath = filepath.Join(tempAwsDirPath, "credentials")
 
 	awsCredentials = aws.AwsTempCredentials{
