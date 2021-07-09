@@ -19,10 +19,11 @@ type GcpEditIamUserAccountOauthSessionRequestWrapper struct {
 	Body GcpEditIamUserAccountOauthSessionRequest
 }
 
+// swagger:parameters editGcpIamUserAccountOauthSession
 type GcpEditIamUserAccountOauthSessionUriRequest struct {
-	// the Id of the session
-	//required: true
-	Id string `uri:"id" binding:"required"`
+  // in: path
+  // required: true
+  Id string `json:"id" uri:"id" binding:"required"`
 }
 
 type GcpEditIamUserAccountOauthSessionRequest struct {

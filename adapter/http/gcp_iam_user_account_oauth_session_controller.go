@@ -1,12 +1,12 @@
 package http
 
 import (
-	"github.com/gin-gonic/gin"
-	"leapp_daemon/infrastructure/logging"
+  "github.com/gin-gonic/gin"
   "leapp_daemon/adapter/http/dto/request_dto/gcp_iam_user_account_oauth_session_request_dto"
   "leapp_daemon/adapter/http/dto/response_dto"
   "leapp_daemon/adapter/http/dto/response_dto/gcp_iam_user_account_oauth_session_response_dto"
-	"net/http"
+  "leapp_daemon/infrastructure/logging"
+  "net/http"
 )
 
 func (controller *EngineController) GetGcpOauthUrl(context *gin.Context) {
@@ -33,7 +33,7 @@ func (controller *EngineController) GetGcpOauthUrl(context *gin.Context) {
 }
 
 func (controller *EngineController) CreateGcpIamUserAccountOauthSession(context *gin.Context) {
-	// swagger:route POST /gcp/iam-user-account-oauth-sessions createGcpIamUserAccountOauthSession
+	// swagger:route POST /gcp/iam-user-account-oauth-sessions gcpIamUserAccountOauthSession createGcpIamUserAccountOauthSession
 	// Create a new GCP Iam UserAccount Oauth Session
 	//   Responses:
 	//     200: MessageResponse

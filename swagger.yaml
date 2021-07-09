@@ -208,11 +208,12 @@ definitions:
     x-go-package: leapp_daemon/adapter/http/dto/request_dto/gcp_iam_user_account_oauth_session_request_dto
   GcpEditIamUserAccountOauthSessionUriRequest:
     properties:
-      Id:
-        description: the Id of the session
+      id:
+        description: 'in: path'
         type: string
+        x-go-name: Id
     required:
-    - Id
+    - id
     type: object
     x-go-package: leapp_daemon/adapter/http/dto/request_dto/gcp_iam_user_account_oauth_session_request_dto
   GcpGetIamUserAccountOauthSessionResponse:
@@ -401,10 +402,18 @@ paths:
           description: MessageResponse
           schema:
             $ref: '#/definitions/MessageResponse'
+      tags:
+      - gcpIamUserAccountOauthSession
   /gcp/iam-user-account-oauth-sessions/{id}:
     delete:
       description: Delete a GCP Iam UserAccount Oauth Session
       operationId: deleteGcpIamUserAccountOauthSession
+      parameters:
+      - in: path
+        name: id
+        required: true
+        type: string
+        x-go-name: Id
       responses:
         "200":
           description: MessageResponse
@@ -415,6 +424,12 @@ paths:
     get:
       description: Get a GCP Iam UserAccount Oauth Session
       operationId: getGcpIamUserAccountOauthSession
+      parameters:
+      - in: path
+        name: id
+        required: true
+        type: string
+        x-go-name: Id
       responses:
         "200":
           description: GcpGetIamUserAccountOauthSessionResponse
@@ -431,6 +446,11 @@ paths:
         name: Body
         schema:
           $ref: '#/definitions/GcpEditIamUserAccountOauthSessionRequest'
+      - in: path
+        name: id
+        required: true
+        type: string
+        x-go-name: Id
       responses:
         "200":
           description: MessageResponse
@@ -442,6 +462,12 @@ paths:
     get:
       description: Start a GCP Iam UserAccount Oauth Session
       operationId: startGcpIamUserAccountOauthSession
+      parameters:
+      - in: path
+        name: id
+        required: true
+        type: string
+        x-go-name: Id
       responses:
         "200":
           description: MessageResponse
@@ -453,6 +479,12 @@ paths:
     get:
       description: Stop a GCP Iam UserAccount Oauth Session
       operationId: stopGcpIamUserAccountOauthSession
+      parameters:
+      - in: path
+        name: id
+        required: true
+        type: string
+        x-go-name: Id
       responses:
         "200":
           description: MessageResponse
