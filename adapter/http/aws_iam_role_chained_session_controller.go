@@ -10,9 +10,7 @@ import (
   "net/http"
 )
 
-// swagger:response getAwsIamRoleChainedSessionResponse
 type getAwsIamRoleChainedSessionResponseWrapper struct {
-	// in: body
 	Body getAwsIamRoleChainedSessionResponse
 }
 
@@ -22,11 +20,6 @@ type getAwsIamRoleChainedSessionResponse struct {
 }
 
 func (controller *EngineController) CreateAwsIamRoleChainedSession(context *gin.Context) {
-	// swagger:route POST /aws/iam-role-chained-sessions createAwsIamRoleChainedSession
-	// Create a new AWS IAM Role Chained Session
-	//   Responses:
-	//     200: messageResponse
-
 	logging.SetContext(context)
 
 	requestDto := aws_iam_role_chained_session_request_dto.AwsCreateIamRoleChainedSessionRequestDto{}
@@ -47,11 +40,6 @@ func (controller *EngineController) CreateAwsIamRoleChainedSession(context *gin.
 }
 
 func (controller *EngineController) GetAwsIamRoleChainedSession(context *gin.Context) {
-	// swagger:route GET /aws/iam-role-chained-sessions/{id} awsIamRoleChainedSession getAwsIamRoleChainedSession
-	// Get a AWS IAM Role Chained Session
-	//   Responses:
-	//     200: AwsGetIamRoleChainedSessionResponse
-
 	logging.SetContext(context)
 
 	requestDto := aws_iam_role_chained_session_request_dto.AwsGetIamRoleChainedSessionRequestDto{}
@@ -72,11 +60,6 @@ func (controller *EngineController) GetAwsIamRoleChainedSession(context *gin.Con
 }
 
 func (controller *EngineController) EditAwsIamRoleChainedSession(context *gin.Context) {
-	// swagger:route PUT /aws/iam-role-chained-sessions/{id} awsIamRoleChainedSession editAwsIamRoleChainedSession
-	// Edit a AWS IAM Role Chained Session
-	//   Responses:
-	//     200: messageResponse
-
 	logging.SetContext(context)
 
 	requestUriDto := aws_iam_role_chained_session_request_dto.AwsEditIamRoleChainedSessionUriRequestDto{}
@@ -111,11 +94,6 @@ func (controller *EngineController) EditAwsIamRoleChainedSession(context *gin.Co
 }
 
 func (controller *EngineController) DeleteAwsIamRoleChainedSession(context *gin.Context) {
-	// swagger:route DELETE /aws/iam-role-chained-sessions/{id} awsIamRoleChainedSession deleteAwsIamRoleChainedSession
-	// Delete a AWS IAM Role Chained Session
-	//   Responses:
-	//     200: messageResponse
-
 	logging.SetContext(context)
 
 	requestDto := aws_iam_role_chained_session_request_dto.AwsDeleteIamRoleChainedSessionRequestDto{}

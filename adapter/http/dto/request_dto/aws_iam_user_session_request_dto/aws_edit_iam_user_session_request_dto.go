@@ -5,22 +5,18 @@ import (
 	"leapp_daemon/infrastructure/http/http_error"
 )
 
-// swagger:parameters updateAwsIamUserSession
-type AwsUpdateIamUserSessionUriRequestWrapper struct {
-	// AWS Iam UserName Session update uri body
-	// in:body
-	Body AwsEditIamUserSessionUriRequest
-}
-
-// swagger:parameters updateAwsIamUserSession
+// swagger:parameters editAwsIamUserSession
 type AwsEditIamUserSessionRequestWrapper struct {
 	// AWS Iam UserName Session update uri body
 	// in:body
 	Body AwsEditIamUserSessionRequest
 }
 
+// swagger:parameters editAwsIamUserSession
 type AwsEditIamUserSessionUriRequest struct {
-	Id string `uri:"id" binding:"required"`
+  // in: path
+  // required: true
+  Id string `json:"id" uri:"id" binding:"required"`
 }
 
 type AwsEditIamUserSessionRequest struct {

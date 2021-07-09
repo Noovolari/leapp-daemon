@@ -5,8 +5,11 @@ import (
 	"leapp_daemon/infrastructure/http/http_error"
 )
 
+// swagger:parameters stopAwsIamUserSession
 type AwsStopIamUserSessionRequestDto struct {
-	Id string `uri:"id" binding:"required"`
+  // in: path
+  // required: true
+  Id string `json:"id" uri:"id" binding:"required"`
 }
 
 func (requestDto *AwsStopIamUserSessionRequestDto) Build(context *gin.Context) error {

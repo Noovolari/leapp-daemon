@@ -1,40 +1,8 @@
+basePath: /api/v1
+consumes:
+- application/json
 definitions:
-  CreateAwsIamUserSessionRequest:
-    properties:
-      accountNumber:
-        description: the account number of the aws account related to the role
-        type: string
-        x-go-name: AccountNumber
-      awsAccessKeyId:
-        type: string
-        x-go-name: AwsAccessKeyId
-      awsSecretAccessKey:
-        type: string
-        x-go-name: AwsSecretAccessKey
-      mfaDevice:
-        type: string
-        x-go-name: MfaDevice
-      name:
-        description: the name which will be displayed
-        type: string
-        x-go-name: Name
-      profileName:
-        type: string
-        x-go-name: ProfileName
-      region:
-        description: the region on which the session will be initialized
-        type: string
-        x-go-name: Region
-      user:
-        type: string
-        x-go-name: User
-    required:
-    - name
-    - accountNumber
-    - region
-    type: object
-    x-go-package: leapp_daemon/adapter/http/controller/dto/request_dto/plain_aws_session_dto
-  CreateAwsIamRoleChainedSessionRequestDto:
+  AwsCreateIamRoleChainedSessionRequestDto:
     properties:
       accountName:
         description: the name which will be displayed
@@ -64,8 +32,43 @@ definitions:
     - accountNumber
     - roleName
     type: object
-    x-go-package: leapp_daemon/adapter/http/controller/dto/request_dto/trusted_aws_session_dto
-  EditAwsIamRoleChainedSessionRequestDto:
+    x-go-package: leapp_daemon/adapter/http/dto/request_dto/aws_iam_role_chained_session_request_dto
+  AwsCreateIamUserSessionRequest:
+    properties:
+      accountNumber:
+        description: the account number of the aws account related to the role
+        type: string
+        x-go-name: AccountNumber
+      awsAccessKeyId:
+        type: string
+        x-go-name: AwsAccessKeyId
+      awsSecretKey:
+        type: string
+        x-go-name: AwsSecretKey
+      mfaDevice:
+        type: string
+        x-go-name: MfaDevice
+      profileName:
+        type: string
+        x-go-name: ProfileName
+      region:
+        description: the region on which the session will be initialized
+        type: string
+        x-go-name: Region
+      sessionName:
+        description: the name which will be displayed
+        type: string
+        x-go-name: SessionName
+      userName:
+        type: string
+        x-go-name: UserName
+    required:
+    - sessionName
+    - accountNumber
+    - region
+    type: object
+    x-go-package: leapp_daemon/adapter/http/dto/request_dto/aws_iam_user_session_request_dto
+  AwsEditIamRoleChainedSessionRequestDto:
     properties:
       accountName:
         description: the name which will be displayed
@@ -90,88 +93,8 @@ definitions:
         type: string
         x-go-name: RoleName
     type: object
-    x-go-package: leapp_daemon/adapter/http/controller/dto/request_dto/trusted_aws_session_dto
-  GetAwsIamUserSessionResponse:
-    properties:
-      Data:
-        $ref: '#/definitions/AwsIamUserSession'
-      Message:
-        type: string
-    type: object
-    x-go-package: leapp_daemon/adapter/http/controller/dto/response_dto/plain_aws_session_dto
-  MessageResponse:
-    properties:
-      Message:
-        type: string
-    type: object
-    x-go-package: leapp_daemon/adapter/http/controller/dto/response_dto
-  PlainAwsAccount:
-    properties:
-      MfaDevice:
-        type: string
-      NamedProfileId:
-        type: string
-      Region:
-        type: string
-      SessionTokenExpiration:
-        type: string
-    type: object
-    x-go-package: leapp_daemon/domain/session
-  AwsIamUserSession:
-    properties:
-      Account:
-        $ref: '#/definitions/PlainAwsAccount'
-      Alias:
-        type: string
-      Id:
-        type: string
-      LastStopTime:
-        type: string
-      StartTime:
-        type: string
-      Status:
-        $ref: '#/definitions/Status'
-    type: object
-    x-go-package: leapp_daemon/domain/session
-  Status:
-    format: int64
-    type: integer
-    x-go-package: leapp_daemon/domain/session
-  TrustedAwsAccount:
-    properties:
-      AccountNumber:
-        type: string
-      Name:
-        type: string
-      Region:
-        type: string
-      Role:
-        $ref: '#/definitions/TrustedAwsRole'
-    type: object
-    x-go-package: leapp_daemon/domain/session
-  TrustedAwsRole:
-    properties:
-      Arn:
-        type: string
-      Name:
-        type: string
-    type: object
-    x-go-package: leapp_daemon/domain/session
-  AwsIamRoleChainedSession:
-    properties:
-      Account:
-        $ref: '#/definitions/TrustedAwsAccount'
-      Id:
-        type: string
-      ParentId:
-        type: string
-      StartTime:
-        type: string
-      Status:
-        $ref: '#/definitions/Status'
-    type: object
-    x-go-package: leapp_daemon/domain/session
-  UpdateAwsIamUserSessionRequest:
+    x-go-package: leapp_daemon/adapter/http/dto/request_dto/aws_iam_role_chained_session_request_dto
+  AwsEditIamUserSessionRequest:
     properties:
       accountNumber:
         type: string
@@ -198,32 +121,176 @@ definitions:
         type: string
         x-go-name: User
     type: object
-    x-go-package: leapp_daemon/adapter/http/controller/dto/request_dto/plain_aws_session_dto
-  UpdateAwsIamUserSessionUriRequest:
-    properties:
-      Id:
-        type: string
-    type: object
-    x-go-package: leapp_daemon/adapter/http/controller/dto/request_dto/plain_aws_session_dto
-  getAwsIamRoleChainedSessionResponse:
+    x-go-package: leapp_daemon/adapter/http/dto/request_dto/aws_iam_user_session_request_dto
+  AwsGetIamUserSessionResponse:
     properties:
       Data:
-        $ref: '#/definitions/AwsIamRoleChainedSession'
+        $ref: '#/definitions/AwsIamUserSession'
       Message:
         type: string
     type: object
-    x-go-package: leapp_daemon/adapter/http/controller
+    x-go-package: leapp_daemon/adapter/http/dto/response_dto/aws_iam_user_session_response_dto
+  AwsIamUserSession:
+    properties:
+      AccessKeyIdLabel:
+        type: string
+      AccountNumber:
+        type: string
+      Id:
+        type: string
+      LastStopTime:
+        type: string
+      MfaDevice:
+        type: string
+      Name:
+        type: string
+      NamedProfileId:
+        type: string
+      Region:
+        type: string
+      SecretKeyLabel:
+        type: string
+      SessionTokenExpiration:
+        type: string
+      SessionTokenLabel:
+        type: string
+      StartTime:
+        type: string
+      Status:
+        $ref: '#/definitions/AwsSessionStatus'
+      UserName:
+        type: string
+    type: object
+    x-go-package: leapp_daemon/domain/domain_aws/aws_iam_user
+  AwsSessionStatus:
+    format: int64
+    type: integer
+    x-go-package: leapp_daemon/domain/domain_aws
+  GcpCreateIamUserAccountOauthSessionRequest:
+    properties:
+      accountId:
+        description: the account identifier of the gcp account
+        type: string
+        x-go-name: AccountId
+      name:
+        description: the name which will be displayed
+        type: string
+        x-go-name: Name
+      oauthCode:
+        description: the OAuth code to obtain credentials
+        type: string
+        x-go-name: OauthCode
+      projectName:
+        description: the name of the gcp project
+        type: string
+        x-go-name: ProjectName
+    required:
+    - name
+    - accountId
+    - projectName
+    - oauthCode
+    type: object
+    x-go-package: leapp_daemon/adapter/http/dto/request_dto/gcp_iam_user_account_oauth_session_request_dto
+  GcpEditIamUserAccountOauthSessionRequest:
+    properties:
+      name:
+        description: the name which will be displayed
+        type: string
+        x-go-name: Name
+      projectName:
+        description: the name of the gcp project
+        type: string
+        x-go-name: ProjectName
+    required:
+    - name
+    - projectName
+    type: object
+    x-go-package: leapp_daemon/adapter/http/dto/request_dto/gcp_iam_user_account_oauth_session_request_dto
+  GcpEditIamUserAccountOauthSessionUriRequest:
+    properties:
+      Id:
+        description: the Id of the session
+        type: string
+    required:
+    - Id
+    type: object
+    x-go-package: leapp_daemon/adapter/http/dto/request_dto/gcp_iam_user_account_oauth_session_request_dto
+  GcpGetIamUserAccountOauthSessionResponse:
+    properties:
+      Data:
+        $ref: '#/definitions/GcpIamUserAccountOauthSession'
+      Message:
+        type: string
+    type: object
+    x-go-package: leapp_daemon/adapter/http/dto/response_dto/gcp_iam_user_account_oauth_session_response_dto
+  GcpIamUserAccountOauthSession:
+    properties:
+      AccountId:
+        type: string
+      CredentialsLabel:
+        type: string
+      Id:
+        type: string
+      LastStopTime:
+        type: string
+      Name:
+        type: string
+      ProjectName:
+        type: string
+      StartTime:
+        type: string
+      Status:
+        $ref: '#/definitions/GcpSessionStatus'
+    type: object
+    x-go-package: leapp_daemon/domain/domain_gcp/gcp_iam_user_account_oauth
+  GcpOauthUrlResponse:
+    properties:
+      Data:
+        type: string
+      Message:
+        type: string
+    type: object
+    x-go-package: leapp_daemon/adapter/http/dto/response_dto/gcp_iam_user_account_oauth_session_response_dto
+  GcpSessionStatus:
+    format: int64
+    type: integer
+    x-go-package: leapp_daemon/domain/domain_gcp
+  MessageResponse:
+    properties:
+      Message:
+        type: string
+    type: object
+    x-go-package: leapp_daemon/adapter/http/dto/response_dto
+host: localhost
+info:
+  contact:
+    email: john.doe@example.com
+    name: John Doe
+    url: https://john.doe.com
+  description: |-
+    the purpose of this application is to provide an application
+    that is using plain go code to define an API
+
+    This should demonstrate all the possible comment annotations
+    that are available to turn go code into a fully compliant swagger 2.0 spec
+  license:
+    name: MIT
+    url: https://opensource.org/licenses/MIT
+  termsOfService: there are no TOS at this moment, use at your own risk we take no
+    responsibility
+  title: Leapp API
+  version: 0.0.1
 paths:
-  /session/plain:
+  /aws/iam-user-sessions:
     post:
-      description: Create a new AWS Iam User Session
+      description: Create a new AWS IAM UserName Session
       operationId: createAwsIamUserSession
       parameters:
-      - description: AWS Iam User session create body
+      - description: AWS Iam UserName Session create body
         in: body
         name: Body
         schema:
-          $ref: '#/definitions/CreateAwsIamUserSessionRequest'
+          $ref: '#/definitions/AwsCreateIamUserSessionRequest'
       responses:
         "200":
           description: MessageResponse
@@ -231,10 +298,16 @@ paths:
             $ref: '#/definitions/MessageResponse'
       tags:
       - awsIamUserSession
-  /session/plain/{id}:
+  /aws/iam-user-sessions/{id}:
     delete:
-      description: Delete a AWS Iam User Session
+      description: Delete an AWS IAM UserName Session
       operationId: deleteAwsIamUserSession
+      parameters:
+      - in: path
+        name: id
+        required: true
+        type: string
+        x-go-name: Id
       responses:
         "200":
           description: MessageResponse
@@ -243,24 +316,35 @@ paths:
       tags:
       - awsIamUserSession
     get:
-      description: Get a AWS Iam User Session
+      description: Get a AWS IAM UserName Session
       operationId: getAwsIamUserSession
+      parameters:
+      - in: path
+        name: id
+        required: true
+        type: string
+        x-go-name: Id
       responses:
         "200":
-          description: GetAwsIamUserSessionResponse
+          description: AwsGetIamUserSessionResponse
           schema:
-            $ref: '#/definitions/GetAwsIamUserSessionResponse'
+            $ref: '#/definitions/AwsGetIamUserSessionResponse'
       tags:
       - awsIamUserSession
     put:
-      description: Edit a AWS Iam User Session
-      operationId: updateAwsIamUserSession
+      description: Edit a AWS IAM UserName Session
+      operationId: editAwsIamUserSession
       parameters:
-      - description: AWS Iam User session update uri body
+      - description: AWS Iam UserName Session update uri body
         in: body
         name: Body
         schema:
-          $ref: '#/definitions/UpdateAwsIamUserSessionRequest'
+          $ref: '#/definitions/AwsEditIamUserSessionRequest'
+      - in: path
+        name: id
+        required: true
+        type: string
+        x-go-name: Id
       responses:
         "200":
           description: MessageResponse
@@ -268,10 +352,16 @@ paths:
             $ref: '#/definitions/MessageResponse'
       tags:
       - awsIamUserSession
-  /session/plain/{id}/start:
+  /aws/iam-user-sessions/{id}/start:
     post:
-      description: Start a AWS Iam User Session
+      description: Start an AWS IAM UserName Session
       operationId: startAwsIamUserSession
+      parameters:
+      - in: path
+        name: id
+        required: true
+        type: string
+        x-go-name: Id
       responses:
         "200":
           description: MessageResponse
@@ -279,80 +369,130 @@ paths:
             $ref: '#/definitions/MessageResponse'
       tags:
       - awsIamUserSession
-  /session/trusted:
+  /aws/iam-user-sessions/{id}/stop:
     post:
-      description: Create a new trusted aws session
-      operationId: createAwsIamRoleChainedSession
+      description: Stop an AWS IAM UserName Session
+      operationId: stopAwsIamUserSession
       parameters:
-      - description: This text will appear as description of your request body.
+      - in: path
+        name: id
+        required: true
+        type: string
+        x-go-name: Id
+      responses:
+        "200":
+          description: MessageResponse
+          schema:
+            $ref: '#/definitions/MessageResponse'
+      tags:
+      - awsIamUserSession
+  /gcp/iam-user-account-oauth-sessions:
+    post:
+      description: Create a new GCP Iam UserAccount Oauth Session
+      operationId: createGcpIamUserAccountOauthSession
+      parameters:
+      - description: gcp iam user account oauth session create body
         in: body
         name: Body
         schema:
-          $ref: '#/definitions/CreateAwsIamRoleChainedSessionRequestDto'
+          $ref: '#/definitions/GcpCreateIamUserAccountOauthSessionRequest'
       responses:
         "200":
-          $ref: '#/responses/messageResponse'
-      tags:
-      - session-trusted-aws
-  /session/trusted/{id}:
+          description: MessageResponse
+          schema:
+            $ref: '#/definitions/MessageResponse'
+  /gcp/iam-user-account-oauth-sessions/{id}:
     delete:
-      description: Delete a Trusted AWS Session
-      operationId: deleteAwsIamRoleChainedSession
-      parameters:
-      - description: the id of the trusted aws session
-        in: path
-        name: Id
-        required: true
-        type: string
+      description: Delete a GCP Iam UserAccount Oauth Session
+      operationId: deleteGcpIamUserAccountOauthSession
       responses:
         "200":
-          $ref: '#/responses/messageResponse'
+          description: MessageResponse
+          schema:
+            $ref: '#/definitions/MessageResponse'
       tags:
-      - session-trusted-aws
+      - gcpIamUserAccountOauthSession
     get:
-      description: Get a Trusted AWS Session
-      operationId: getAwsIamRoleChainedSession
-      parameters:
-      - description: the id of the trusted aws session
-        in: path
-        name: Id
-        required: true
-        type: string
+      description: Get a GCP Iam UserAccount Oauth Session
+      operationId: getGcpIamUserAccountOauthSession
       responses:
         "200":
-          $ref: '#/responses/getAwsIamRoleChainedSessionResponse'
+          description: GcpGetIamUserAccountOauthSessionResponse
+          schema:
+            $ref: '#/definitions/GcpGetIamUserAccountOauthSessionResponse'
       tags:
-      - session-trusted-aws
+      - gcpIamUserAccountOauthSession
     put:
-      description: Edit a Trusted AWS Session
-      operationId: editAwsIamRoleChainedSession
+      description: Edit a GCP Iam UserAccount Oauth Session
+      operationId: editGcpIamUserAccountOauthSession
       parameters:
-      - description: This text will appear as description of your request body.
+      - description: gcp gcp-iam-user-account-oauth-session session edit body
         in: body
         name: Body
         schema:
-          $ref: '#/definitions/EditAwsIamRoleChainedSessionRequestDto'
-      - description: the id of the trusted aws session
-        in: path
-        name: Id
-        required: true
-        type: string
+          $ref: '#/definitions/GcpEditIamUserAccountOauthSessionRequest'
       responses:
         "200":
-          $ref: '#/responses/messageResponse'
+          description: MessageResponse
+          schema:
+            $ref: '#/definitions/MessageResponse'
       tags:
-      - session-trusted-aws
+      - gcpIamUserAccountOauthSession
+  /gcp/iam-user-account-oauth-sessions/{id}/start:
+    get:
+      description: Start a GCP Iam UserAccount Oauth Session
+      operationId: startGcpIamUserAccountOauthSession
+      responses:
+        "200":
+          description: MessageResponse
+          schema:
+            $ref: '#/definitions/MessageResponse'
+      tags:
+      - gcpIamUserAccountOauthSession
+  /gcp/iam-user-account-oauth-sessions/{id}/stop:
+    get:
+      description: Stop a GCP Iam UserAccount Oauth Session
+      operationId: stopGcpIamUserAccountOauthSession
+      responses:
+        "200":
+          description: MessageResponse
+          schema:
+            $ref: '#/definitions/MessageResponse'
+      tags:
+      - gcpIamUserAccountOauthSession
+  /gcp/iam-user-account-oauth-url:
+    get:
+      description: Get the GCP OAuth url
+      operationId: getGcpOauthUrl
+      responses:
+        "200":
+          description: GcpOauthUrlResponse
+          schema:
+            $ref: '#/definitions/GcpOauthUrlResponse'
+      tags:
+      - gcpIamUserAccountOauthSession
+produces:
+- application/json
 responses:
+  gcpGetIamUserAccountOauthSessionResponse:
+    description: ""
+    schema:
+      $ref: '#/definitions/GcpGetIamUserAccountOauthSessionResponse'
+  gcpOauthUrlResponse:
+    description: ""
+    schema:
+      $ref: '#/definitions/GcpOauthUrlResponse'
   getAwsIamUserSessionResponse:
     description: ""
     schema:
-      $ref: '#/definitions/GetAwsIamUserSessionResponse'
-  getAwsIamRoleChainedSessionResponse:
-    description: ""
-    schema:
-      $ref: '#/definitions/getAwsIamRoleChainedSessionResponse'
+      $ref: '#/definitions/AwsGetIamUserSessionResponse'
   messageResponse:
     description: ""
     schema:
       $ref: '#/definitions/MessageResponse'
+schemes:
+- http
+- https
+security:
+- api_key: []
 swagger: "2.0"

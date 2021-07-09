@@ -1,12 +1,41 @@
+// Package http Leapp API
+//
+// the purpose of this application is to provide an application
+// that is using plain go code to define an API
+//
+// This should demonstrate all the possible comment annotations
+// that are available to turn go code into a fully compliant swagger 2.0 spec
+//
+// Terms Of Service:
+//
+// there are no TOS at this moment, use at your own risk we take no responsibility
+//
+//     Schemes: http, https
+//     Host: localhost
+//     BasePath: /api/v1
+//     Version: 0.0.1
+//     License: MIT https://opensource.org/licenses/MIT
+//     Contact: John Doe<john.doe@example.com> https://john.doe.com
+//
+//     Consumes:
+//     - application/json
+//
+//     Produces:
+//     - application/json
+//
+//     Security:
+//     - api_key:
+//
+// swagger:meta
 package http
 
 import (
-	"github.com/gin-gonic/gin"
-	"leapp_daemon/infrastructure/logging"
-	"leapp_daemon/adapter/http/dto/request_dto/confirm_mfa_token_request_dto"
-	"leapp_daemon/adapter/http/dto/response_dto"
-	"leapp_daemon/use_case"
-	"net/http"
+  "github.com/gin-gonic/gin"
+  "leapp_daemon/adapter/http/dto/request_dto/confirm_mfa_token_request_dto"
+  "leapp_daemon/adapter/http/dto/response_dto"
+  "leapp_daemon/infrastructure/logging"
+  "leapp_daemon/use_case"
+  "net/http"
 )
 
 //TODO: Blast this struct and refactor in accord with the server architecture!
