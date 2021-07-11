@@ -132,34 +132,47 @@ definitions:
     x-go-package: leapp_daemon/adapter/http/dto/response_dto/aws_iam_user_session_response_dto
   AwsIamUserSession:
     properties:
-      AccessKeyIdLabel:
+      accessKeyIdLabel:
         type: string
-      AccountNumber:
+        x-go-name: AccessKeyIdLabel
+      accountNumber:
         type: string
-      Id:
+        x-go-name: AccountNumber
+      id:
         type: string
-      LastStopTime:
+        x-go-name: Id
+      lastStopTime:
         type: string
-      MfaDevice:
+        x-go-name: LastStopTime
+      mfaDevice:
         type: string
-      Name:
+        x-go-name: MfaDevice
+      name:
         type: string
-      NamedProfileId:
+        x-go-name: Name
+      namedProfileId:
         type: string
-      Region:
+        x-go-name: NamedProfileId
+      region:
         type: string
-      SecretKeyLabel:
+        x-go-name: Region
+      secretKeyLabel:
         type: string
-      SessionTokenExpiration:
+        x-go-name: SecretKeyLabel
+      sessionTokenExpiration:
         type: string
-      SessionTokenLabel:
+        x-go-name: SessionTokenExpiration
+      sessionTokenLabel:
         type: string
-      StartTime:
+        x-go-name: SessionTokenLabel
+      startTime:
         type: string
-      Status:
+        x-go-name: StartTime
+      status:
         $ref: '#/definitions/AwsSessionStatus'
-      UserName:
+      userName:
         type: string
+        x-go-name: UserName
     type: object
     x-go-package: leapp_daemon/domain/domain_aws/aws_iam_user
   AwsSessionStatus:

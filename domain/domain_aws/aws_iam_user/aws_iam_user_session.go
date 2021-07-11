@@ -10,19 +10,20 @@ type AwsIamUserSessionContainer interface {
 	RemoveAwsIamUserSession(session AwsIamUserSession) error
 }
 
+// swagger:model AwsIamUserSession
 type AwsIamUserSession struct {
-	Id                     string
-	Name                   string
-	Region                 string
-	AccountNumber          string
-	UserName               string
-	AccessKeyIdLabel       string
-	SecretKeyLabel         string
-	SessionTokenLabel      string
-	MfaDevice              string
-	NamedProfileId         string
-	Status                 domain_aws.AwsSessionStatus
-	StartTime              string
-	LastStopTime           string
-	SessionTokenExpiration string
+	Id                     string  `json:"id"`
+	Name                   string  `json:"name"`
+	Region                 string  `json:"region"`
+	AccountNumber          string  `json:"accountNumber"`
+	UserName               string  `json:"userName"`
+	AccessKeyIdLabel       string  `json:"accessKeyIdLabel"`
+	SecretKeyLabel         string  `json:"secretKeyLabel"`
+	SessionTokenLabel      string  `json:"sessionTokenLabel"`
+	MfaDevice              string  `json:"mfaDevice"`
+	NamedProfileId         string  `json:"namedProfileId"`
+	Status                 domain_aws.AwsSessionStatus `json:"status"`
+	StartTime              string  `json:"startTime"`
+	LastStopTime           string  `json:"lastStopTime"`
+	SessionTokenExpiration string  `json:"sessionTokenExpiration"`
 }
