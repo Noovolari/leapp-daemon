@@ -16,7 +16,7 @@ var (
 
 func awsSessionsWriterSetup() {
 	awsOldSessions = []aws_iam_user.AwsIamUserSession{}
-	awsNewSessions = []aws_iam_user.AwsIamUserSession{{Id: "ID"}}
+	awsNewSessions = []aws_iam_user.AwsIamUserSession{{ID: "ID"}}
 
 	awsFileRepoMock = mock.NewFileConfigurationRepositoryMock()
 	awsSessionsWriter = &AwsSessionsWriter{

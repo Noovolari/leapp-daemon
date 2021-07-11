@@ -49,10 +49,10 @@ func TestAwsCredentialsApplier_UpdateAwsIamUserSessions(t *testing.T) {
 		"}"
 	awsCredentialApplierNamedProfileFacadeMock.ExpNamedProfile = named_profile.NamedProfile{Id: "ProfileId", Name: "profileName"}
 
-	oldSessions := []aws_iam_user.AwsIamUserSession{{Id: "ID1", Status: domain_aws.Active}}
+	oldSessions := []aws_iam_user.AwsIamUserSession{{ID: "ID1", Status: domain_aws.Active}}
 	newSessions := []aws_iam_user.AwsIamUserSession{
-		{Id: "ID1", Status: domain_aws.Active, SessionTokenLabel: "sessionTokenLabel", NamedProfileId: "ProfileId", Region: "region-1"},
-		{Id: "ID2", Status: domain_aws.NotActive}}
+		{ID: "ID1", Status: domain_aws.Active, SessionTokenLabel: "sessionTokenLabel", NamedProfileID: "ProfileId", Region: "region-1"},
+		{ID: "ID2", Status: domain_aws.NotActive}}
 
 	awsCredentialApplier.UpdateAwsIamUserSessions(oldSessions, newSessions)
 	awsCredentialApplierVerifyExpectedCalls(t, []string{"GetSecret(sessionTokenLabel)"},
@@ -62,8 +62,8 @@ func TestAwsCredentialsApplier_UpdateAwsIamUserSessions(t *testing.T) {
 
 func TestAwsCredentialsApplier_UpdateAwsIamUserSessions_NoActiveSessions(t *testing.T) {
 	awsCredentialApplierSetup()
-	oldSessions := []aws_iam_user.AwsIamUserSession{{Id: "ID1", Status: domain_aws.Active}}
-	newSessions := []aws_iam_user.AwsIamUserSession{{Id: "ID1", Status: domain_aws.NotActive}}
+	oldSessions := []aws_iam_user.AwsIamUserSession{{ID: "ID1", Status: domain_aws.Active}}
+	newSessions := []aws_iam_user.AwsIamUserSession{{ID: "ID1", Status: domain_aws.NotActive}}
 
 	awsCredentialApplier.UpdateAwsIamUserSessions(oldSessions, newSessions)
 	awsCredentialApplierVerifyExpectedCalls(t, []string{}, []string{}, []string{"WriteCredentials([])"})

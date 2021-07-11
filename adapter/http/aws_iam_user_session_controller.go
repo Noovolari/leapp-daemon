@@ -25,7 +25,7 @@ func (controller *EngineController) CreateAwsIamUserSession(context *gin.Context
 	}
 
 	actions := controller.Providers.GetAwsIamUserSessionActions()
-	err = actions.CreateSession(requestDto.SessionName, requestDto.Region, requestDto.AccountNumber, requestDto.UserName,
+	err = actions.CreateSession(requestDto.SessionName, requestDto.Region,
 		requestDto.AwsAccessKeyId, requestDto.AwsSecretKey, requestDto.MfaDevice, requestDto.ProfileName)
 	if err != nil {
 		_ = context.Error(err)
@@ -52,7 +52,7 @@ func (controller *EngineController) GetAwsIamUserSession(context *gin.Context) {
 	}
 
 	actions := controller.Providers.GetAwsIamUserSessionActions()
-	sess, err := actions.GetSession(requestDto.Id)
+	sess, err := actions.GetSession(requestDto.ID)
 	if err != nil {
 		_ = context.Error(err)
 		return
@@ -82,7 +82,7 @@ func (controller *EngineController) StartAwsIamUserSession(context *gin.Context)
 	}
 
 	actions := controller.Providers.GetAwsIamUserSessionActions()
-	err = actions.StartSession(requestDto.Id)
+	err = actions.StartSession(requestDto.ID)
 	if err != nil {
 		_ = context.Error(err)
 		return
@@ -108,7 +108,7 @@ func (controller *EngineController) StopAwsIamUserSession(context *gin.Context) 
 	}
 
 	actions := controller.Providers.GetAwsIamUserSessionActions()
-	err = actions.StopSession(requestDto.Id)
+	err = actions.StopSession(requestDto.ID)
 	if err != nil {
 		_ = context.Error(err)
 		return
@@ -141,7 +141,7 @@ func (controller *EngineController) EditAwsIamUserSession(context *gin.Context) 
 	}
 
 	actions := controller.Providers.GetAwsIamUserSessionActions()
-	err = actions.EditSession(requestUriDto.Id, requestDto.Name, requestDto.Region, requestDto.AccountNumber,
+	err = actions.EditSession(requestUriDto.ID, requestDto.Name, requestDto.Region, requestDto.AccountNumber,
 		requestDto.User, requestDto.AwsAccessKeyId, requestDto.AwsSecretAccessKey, requestDto.MfaDevice, requestDto.ProfileName)
 	if err != nil {
 		_ = context.Error(err)
@@ -168,7 +168,7 @@ func (controller *EngineController) DeleteAwsIamUserSession(context *gin.Context
 	}
 
 	actions := controller.Providers.GetAwsIamUserSessionActions()
-	err = actions.DeleteSession(requestDto.Id)
+	err = actions.DeleteSession(requestDto.ID)
 	if err != nil {
 		_ = context.Error(err)
 		return

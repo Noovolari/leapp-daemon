@@ -21,8 +21,8 @@ func (actions *AwsIamUserSessionActions) GetSession(sessionId string) (aws_iam_u
 	return actions.AwsIamUserSessionsFacade.GetSessionById(sessionId)
 }
 
-func (actions *AwsIamUserSessionActions) CreateSession(sessionName string, region string, accountNumber string,
-	userName string, awsAccessKeyId string, awsSecretKey string, mfaDevice string, profileName string) error {
+func (actions *AwsIamUserSessionActions) CreateSession(sessionName string, region string,
+	 awsAccessKeyId string, awsSecretKey string, mfaDevice string, profileName string) error {
 
 	newSessionId := actions.Environment.GenerateUuid()
 	accessKeyIdLabel := newSessionId + "-aws-iam-user-session-access-key-id"
@@ -34,16 +34,14 @@ func (actions *AwsIamUserSessionActions) CreateSession(sessionName string, regio
 	}
 
 	sess := aws_iam_user.AwsIamUserSession{
-		Id:                     newSessionId,
+		ID:                     newSessionId,
 		Name:                   sessionName,
 		Region:                 region,
-		AccountNumber:          accountNumber,
-		UserName:               userName,
-		AccessKeyIdLabel:       accessKeyIdLabel,
+		AccessKeyIDLabel:       accessKeyIdLabel,
 		SecretKeyLabel:         secretKeyLabel,
 		SessionTokenLabel:      sessionTokenExpirationLabel,
 		MfaDevice:              mfaDevice,
-		NamedProfileId:         namedProfile.Id,
+		NamedProfileID:         namedProfile.Id,
 		Status:                 domain_aws.NotActive,
 		StartTime:              "",
 		LastStopTime:           "",
@@ -82,7 +80,7 @@ func (actions *AwsIamUserSessionActions) StartSession(sessionId string) error {
 		goto StartSessionFailed
 	}
 
-	err = actions.stopActiveSessionsByNamedProfileId(sessionToStart.NamedProfileId)
+	err = actions.stopActiveSessionsByNamedProfileId(sessionToStart.NamedProfileID)
 	if err != nil {
 		goto StartSessionFailed
 	}
@@ -111,7 +109,7 @@ func (actions *AwsIamUserSessionActions) DeleteSession(sessionId string) error {
 		return err
 	}
 
-	_ = actions.Keychain.DeleteSecret(sessionToDelete.AccessKeyIdLabel)
+	_ = actions.Keychain.DeleteSecret(sessionToDelete.AccessKeyIDLabel)
 	_ = actions.Keychain.DeleteSecret(sessionToDelete.SecretKeyLabel)
 	_ = actions.Keychain.DeleteSecret(sessionToDelete.SessionTokenLabel)
 	return facade.RemoveSession(sessionId)
@@ -127,7 +125,7 @@ func (actions *AwsIamUserSessionActions) EditSession(sessionId string, sessionNa
 		return err
 	}
 
-	err = actions.Keychain.SetSecret(awsAccessKeyId, sessionToEdit.AccessKeyIdLabel)
+	err = actions.Keychain.SetSecret(awsAccessKeyId, sessionToEdit.AccessKeyIDLabel)
 	if err != nil {
 		return err
 	}
@@ -162,7 +160,7 @@ func (actions *AwsIamUserSessionActions) RotateSessionTokens() {
 		currentTime := actions.Environment.GetTime()
 		err := actions.refreshSessionTokenIfNeeded(awsSession, currentTime)
 		if err != nil {
-			logging.Entry().Errorf("error rotating session id: %v", awsSession.Id)
+			logging.Entry().Errorf("error rotating session id: %v", awsSession.ID)
 		}
 	}
 }
@@ -206,7 +204,7 @@ func (actions *AwsIamUserSessionActions) isSessionTokenValid(sessionTokenLabel s
 }
 
 func (actions *AwsIamUserSessionActions) refreshSessionToken(session aws_iam_user.AwsIamUserSession) error {
-	accessKeyId, err := actions.Keychain.GetSecret(session.AccessKeyIdLabel)
+	accessKeyId, err := actions.Keychain.GetSecret(session.AccessKeyIDLabel)
 	if err != nil {
 		return http_error.NewInternalServerError(err)
 	}
@@ -231,13 +229,13 @@ func (actions *AwsIamUserSessionActions) refreshSessionToken(session aws_iam_use
 		return err
 	}
 
-	return actions.AwsIamUserSessionsFacade.SetSessionTokenExpiration(session.Id, credentials.Expiration.Format(time.RFC3339))
+	return actions.AwsIamUserSessionsFacade.SetSessionTokenExpiration(session.ID, credentials.Expiration.Format(time.RFC3339))
 }
 
 func (actions *AwsIamUserSessionActions) stopActiveSessionsByNamedProfileId(namedProfileId string) error {
 	for _, awsSession := range actions.AwsIamUserSessionsFacade.GetSessions() {
-		if awsSession.Status == domain_aws.Active && awsSession.NamedProfileId == namedProfileId {
-			err := actions.StopSession(awsSession.Id)
+		if awsSession.Status == domain_aws.Active && awsSession.NamedProfileID == namedProfileId {
+			err := actions.StopSession(awsSession.ID)
 			if err != nil {
 				return err
 			}

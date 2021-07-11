@@ -29,10 +29,11 @@ require (
 	github.com/modern-go/reflect2 v1.0.1 // indirect
 	github.com/sirupsen/logrus v1.8.1
 	github.com/smartystreets/goconvey v1.6.4 // indirect
+	github.com/spf13/cobra v1.2.1
 	github.com/ugorji/go v1.2.6 // indirect
 	github.com/zalando/go-keyring v0.1.1
 	go.mongodb.org/mongo-driver v1.5.4 // indirect
-	golang.org/x/crypto v0.0.0-20210616213533-5ff15b29337e // indirect
+	golang.org/x/crypto v0.0.0-20210711020723-a769d52b0f97 // indirect
 	golang.org/x/oauth2 v0.0.0-20210628180205-a41e5a781914
 	golang.org/x/sys v0.0.0-20210630005230-0f9fa26af87c // indirect
 	gopkg.in/ini.v1 v1.62.0

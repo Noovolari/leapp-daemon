@@ -47,7 +47,7 @@ func CreateAwsIamRoleChainedSession(parentId string, accountName string, account
 		uuidString = strings.Replace(uuidString, "-", "", -1)
 
 		sess := session2.AwsIamRoleChainedSession{
-			Id:        uuidString,
+			ID:        uuidString,
 			Status:    session2.NotActive,
 			StartTime: "",
 			ParentId:  parentId,
@@ -83,7 +83,7 @@ func GetAwsIamRoleChainedSession(id string) (*aws_iam_role_chained.AwsIamRoleCha
 		}
 
 		for _, s := range sessions {
-			if s.Id == id {
+			if s.ID == id {
 				return s, nil
 			}
 		}
@@ -106,7 +106,7 @@ func UpdateAwsIamRoleChainedSession(id string, parentId string, accountName stri
 		}
 
 		for _, s := range sessions {
-			if s.Id == id {
+			if s.ID == id {
 				foundId = true
 
 				if parentId != "" {
@@ -166,7 +166,7 @@ func DeleteAwsIamRoleChainedSession(id string) error {
 
 		found := false
 		for index := range sessions {
-			if sessions[index].Id == id {
+			if sessions[index].ID == id {
 				sessions = append(sessions[:index], sessions[index+1:]...)
 				found = true
 				break
@@ -200,7 +200,7 @@ func CheckParentExist(parentId string, config *domain.Configuration) error {
 			return err
 		}
 		for _, sess := range plains {
-			if sess.Id == parentId {
+			if sess.ID == parentId {
 				foundId = true
 			}
 		}
@@ -210,7 +210,7 @@ func CheckParentExist(parentId string, config *domain.Configuration) error {
 			return err
 		}
 		for _, sess := range feds {
-			if sess.Id == parentId {
+			if sess.ID == parentId {
 				foundId = true
 			}
 		}

@@ -182,7 +182,7 @@ func TestAwsIamUserSessionActions_StartSession(t *testing.T) {
 	awsIamUserSessionActionsSetup()
 	sessionId := "ID1"
 	awsIamUserSessionActionsFacadeMock.ExpGetSessionById = aws_iam_user.AwsIamUserSession{
-		Id:                     sessionId,
+		ID:                     sessionId,
 		Status:                 domain_aws.NotActive,
 		SessionTokenLabel:      "sessionTokenLabel",
 		SessionTokenExpiration: "2020-01-01T12:00:00Z",
@@ -201,16 +201,16 @@ func TestAwsIamUserSessionActions_StartSession_PreviousActiveSessionWithTheSameN
 	awsIamUserSessionActionsSetup()
 	sessionId := "ID1"
 	awsIamUserSessionActionsFacadeMock.ExpGetSessionById = aws_iam_user.AwsIamUserSession{
-		Id:                     sessionId,
+		ID:                     sessionId,
 		Status:                 domain_aws.NotActive,
 		SessionTokenLabel:      "sessionTokenLabel",
 		SessionTokenExpiration: "2020-01-01T12:00:00Z",
-		NamedProfileId:         "ProfileId",
+		NamedProfileID:         "ProfileId",
 	}
 	awsIamUserSessionActionsFacadeMock.ExpGetSessions = []aws_iam_user.AwsIamUserSession{{
-		Id:             "ID2",
+		ID:             "ID2",
 		Status:         domain_aws.Active,
-		NamedProfileId: "ProfileId",
+		NamedProfileID: "ProfileId",
 	}}
 	awsIamUserSessionActionsEnvMock.ExpTime = "2020-01-01T11:00:00Z"
 	awsIamUserSessionActionsKeychainMock.ExpSecretExist = true
@@ -228,16 +228,16 @@ func TestAwsIamUserSessionActions_StartSession_ErrorStoppingSessionWithSameNamed
 	awsIamUserSessionActionsSetup()
 	sessionId := "ID1"
 	awsIamUserSessionActionsFacadeMock.ExpGetSessionById = aws_iam_user.AwsIamUserSession{
-		Id:                     sessionId,
+		ID:                     sessionId,
 		Status:                 domain_aws.NotActive,
 		SessionTokenLabel:      "sessionTokenLabel",
 		SessionTokenExpiration: "2020-01-01T12:00:00Z",
-		NamedProfileId:         "ProfileId",
+		NamedProfileID:         "ProfileId",
 	}
 	awsIamUserSessionActionsFacadeMock.ExpGetSessions = []aws_iam_user.AwsIamUserSession{{
-		Id:             "ID2",
+		ID:             "ID2",
 		Status:         domain_aws.Active,
-		NamedProfileId: "ProfileId",
+		NamedProfileID: "ProfileId",
 	}}
 	awsIamUserSessionActionsFacadeMock.ExpErrorOnStopSession = true
 	awsIamUserSessionActionsEnvMock.ExpTime = "2020-01-01T11:00:00Z"
@@ -266,7 +266,7 @@ func TestAwsIamUserSessionActions_StartSession_FacadeStartingSessionReturnsError
 	awsIamUserSessionActionsSetup()
 	sessionId := "ID1"
 	awsIamUserSessionActionsFacadeMock.ExpGetSessionById = aws_iam_user.AwsIamUserSession{
-		Id:                     sessionId,
+		ID:                     sessionId,
 		Status:                 domain_aws.NotActive,
 		SessionTokenLabel:      "sessionTokenLabel",
 		SessionTokenExpiration: "2020-01-01T12:00:00Z",
@@ -283,11 +283,11 @@ func TestAwsIamUserSessionActions_StartSession_RefreshSessionTokenReturnsError(t
 	awsIamUserSessionActionsSetup()
 	sessionId := "ID1"
 	awsIamUserSessionActionsFacadeMock.ExpGetSessionById = aws_iam_user.AwsIamUserSession{
-		Id:                     sessionId,
+		ID:                     sessionId,
 		Status:                 domain_aws.NotActive,
 		SessionTokenLabel:      "sessionTokenLabel",
 		SessionTokenExpiration: "2020-01-01T12:00:00Z",
-		AccessKeyIdLabel:       "accessKeyId1",
+		AccessKeyIDLabel:       "accessKeyId1",
 	}
 	awsIamUserSessionActionsEnvMock.ExpTime = "2020-01-01T13:00:00Z"
 	awsIamUserSessionActionsKeychainMock.ExpSecretExist = true
@@ -304,7 +304,7 @@ func TestAwsIamUserSessionActions_StartSession_FacadeStartSessionReturnsError(t 
 	awsIamUserSessionActionsSetup()
 	sessionId := "ID1"
 	awsIamUserSessionActionsFacadeMock.ExpGetSessionById = aws_iam_user.AwsIamUserSession{
-		Id:                     sessionId,
+		ID:                     sessionId,
 		Status:                 domain_aws.NotActive,
 		SessionTokenLabel:      "sessionTokenLabel",
 		SessionTokenExpiration: "2020-01-01T12:00:00Z",
@@ -351,8 +351,8 @@ func TestAwsIamUserSessionActions_DeleteSession(t *testing.T) {
 	awsIamUserSessionActionsSetup()
 	sessionId := "ID"
 	awsIamUserSessionActionsFacadeMock.ExpGetSessionById = aws_iam_user.AwsIamUserSession{
-		Id:                "ID",
-		AccessKeyIdLabel:  "accessKeyIdLabel",
+		ID:                "ID",
+		AccessKeyIDLabel:  "accessKeyIdLabel",
 		SecretKeyLabel:    "secretKeyLabel",
 		SessionTokenLabel: "sessionTokenLabel",
 	}
@@ -379,8 +379,8 @@ func TestAwsIamUserSessionActions_DeleteSession_FacadeGetSessionByIdReturnsError
 func TestAwsIamUserSessionActions_DeleteSession_KeychainDeleteSecretReturnsError(t *testing.T) {
 	awsIamUserSessionActionsSetup()
 	awsIamUserSessionActionsFacadeMock.ExpGetSessionById = aws_iam_user.AwsIamUserSession{
-		Id:                "ID",
-		AccessKeyIdLabel:  "accessKeyIdLabel",
+		ID:                "ID",
+		AccessKeyIDLabel:  "accessKeyIdLabel",
 		SecretKeyLabel:    "secretKeyLabel",
 		SessionTokenLabel: "sessionTokenLabel",
 	}
@@ -399,8 +399,8 @@ func TestAwsIamUserSessionActions_DeleteSession_KeychainDeleteSecretReturnsError
 func TestAwsIamUserSessionActions_DeleteSession_FacadeRemoveSessionReturnsError(t *testing.T) {
 	awsIamUserSessionActionsSetup()
 	awsIamUserSessionActionsFacadeMock.ExpGetSessionById = aws_iam_user.AwsIamUserSession{
-		Id:                "ID",
-		AccessKeyIdLabel:  "accessKeyIdLabel",
+		ID:                "ID",
+		AccessKeyIDLabel:  "accessKeyIdLabel",
 		SecretKeyLabel:    "secretKeyLabel",
 		SessionTokenLabel: "sessionTokenLabel",
 	}
@@ -416,8 +416,8 @@ func TestAwsIamUserSessionActions_DeleteSession_FacadeRemoveSessionReturnsError(
 func TestAwsIamUserSessionActions_EditSession(t *testing.T) {
 	awsIamUserSessionActionsSetup()
 	awsIamUserSessionActionsFacadeMock.ExpGetSessionById = aws_iam_user.AwsIamUserSession{
-		Id:                "ID",
-		AccessKeyIdLabel:  "accessKeyIdLabel",
+		ID:                "ID",
+		AccessKeyIDLabel:  "accessKeyIdLabel",
 		SecretKeyLabel:    "secretKeyLabel",
 		SessionTokenLabel: "sessionTokenLabel",
 		Status:            domain_aws.NotActive,
@@ -440,17 +440,17 @@ func TestAwsIamUserSessionActions_EditSession_PreviousActiveSessionWithTheSameNa
 	awsIamUserSessionActionsSetup()
 
 	awsIamUserSessionActionsFacadeMock.ExpGetSessionById = aws_iam_user.AwsIamUserSession{
-		Id:                "ID",
-		AccessKeyIdLabel:  "accessKeyIdLabel",
+		ID:                "ID",
+		AccessKeyIDLabel:  "accessKeyIdLabel",
 		SecretKeyLabel:    "secretKeyLabel",
 		SessionTokenLabel: "sessionTokenLabel",
 		Status:            domain_aws.Active,
-		NamedProfileId:    "ProfileId",
+		NamedProfileID:    "ProfileId",
 	}
 	awsIamUserSessionActionsFacadeMock.ExpGetSessions = []aws_iam_user.AwsIamUserSession{{
-		Id:             "ID2",
+		ID:             "ID2",
 		Status:         domain_aws.Active,
-		NamedProfileId: "ProfileId",
+		NamedProfileID: "ProfileId",
 	}}
 	awsIamUserSessionActionsEnvMock.ExpTime = "stop-time"
 	awsIamUserSessionNamedProfilesActionsMock.ExpNamedProfile = named_profile.NamedProfile{Id: "ProfileId", Name: "profileName"}
@@ -471,17 +471,17 @@ func TestAwsIamUserSessionActions_EditSession_ErrorOnStoppingPreviousActiveSessi
 	awsIamUserSessionActionsSetup()
 
 	awsIamUserSessionActionsFacadeMock.ExpGetSessionById = aws_iam_user.AwsIamUserSession{
-		Id:                "ID",
-		AccessKeyIdLabel:  "accessKeyIdLabel",
+		ID:                "ID",
+		AccessKeyIDLabel:  "accessKeyIdLabel",
 		SecretKeyLabel:    "secretKeyLabel",
 		SessionTokenLabel: "sessionTokenLabel",
 		Status:            domain_aws.Active,
-		NamedProfileId:    "ProfileId",
+		NamedProfileID:    "ProfileId",
 	}
 	awsIamUserSessionActionsFacadeMock.ExpGetSessions = []aws_iam_user.AwsIamUserSession{{
-		Id:             "ID2",
+		ID:             "ID2",
 		Status:         domain_aws.Active,
-		NamedProfileId: "ProfileId",
+		NamedProfileID: "ProfileId",
 	}}
 	awsIamUserSessionActionsFacadeMock.ExpErrorOnStopSession = true
 	awsIamUserSessionActionsEnvMock.ExpTime = "stop-time"
@@ -532,8 +532,8 @@ func TestAwsIamUserSessionActions_EditSession_KeychainSetSecretReturnsError(t *t
 	mfaDevice := "mfaDevice"
 	profileName := "profileName"
 	awsIamUserSessionActionsFacadeMock.ExpGetSessionById = aws_iam_user.AwsIamUserSession{
-		Id:                "ID",
-		AccessKeyIdLabel:  "accessKeyIdLabel",
+		ID:                "ID",
+		AccessKeyIDLabel:  "accessKeyIdLabel",
 		SecretKeyLabel:    "secretKeyLabel",
 		SessionTokenLabel: "sessionTokenLabel",
 	}
@@ -561,8 +561,8 @@ func TestAwsIamUserSessionActions_EditSession_GetOrCreateNamedProfileReturnsErro
 	mfaDevice := "mfaDevice"
 	profileName := "profileName"
 	awsIamUserSessionActionsFacadeMock.ExpGetSessionById = aws_iam_user.AwsIamUserSession{
-		Id:                "ID",
-		AccessKeyIdLabel:  "accessKeyIdLabel",
+		ID:                "ID",
+		AccessKeyIDLabel:  "accessKeyIdLabel",
 		SecretKeyLabel:    "secretKeyLabel",
 		SessionTokenLabel: "sessionTokenLabel",
 	}
@@ -589,8 +589,8 @@ func TestAwsIamUserSessionActions_EditSession_FacadeEditSessionReturnsError(t *t
 	mfaDevice := "mfaDevice"
 	profileName := "profileName"
 	awsIamUserSessionActionsFacadeMock.ExpGetSessionById = aws_iam_user.AwsIamUserSession{
-		Id:                "ID",
-		AccessKeyIdLabel:  "accessKeyIdLabel",
+		ID:                "ID",
+		AccessKeyIDLabel:  "accessKeyIdLabel",
 		SecretKeyLabel:    "secretKeyLabel",
 		SessionTokenLabel: "sessionTokenLabel",
 	}
@@ -609,13 +609,13 @@ func TestAwsIamUserSessionActions_EditSession_FacadeEditSessionReturnsError(t *t
 func TestRotateSessionTokens(t *testing.T) {
 	awsIamUserSessionActionsSetup()
 	awsIamUserSessionActionsFacadeMock.ExpGetSessions = []aws_iam_user.AwsIamUserSession{{
-		Id:                     "ID1",
+		ID:                     "ID1",
 		Status:                 domain_aws.Active,
 		SessionTokenLabel:      "sessionTokenLabel1",
 		SessionTokenExpiration: "2020-01-01T12:00:00Z",
 	},
 		{
-			Id:     "ID2",
+			ID:     "ID2",
 			Status: domain_aws.NotActive,
 		},
 	}
@@ -631,14 +631,14 @@ func TestRotateSessionTokens(t *testing.T) {
 func TestRotateSessionTokens_RefreshSessionTokenIfNeededReturnsError(t *testing.T) {
 	awsIamUserSessionActionsSetup()
 	awsIamUserSessionActionsFacadeMock.ExpGetSessions = []aws_iam_user.AwsIamUserSession{{
-		Id:                     "ID1",
+		ID:                     "ID1",
 		Status:                 domain_aws.Active,
-		AccessKeyIdLabel:       "accessKeyIdLabel1",
+		AccessKeyIDLabel:       "accessKeyIdLabel1",
 		SessionTokenLabel:      "sessionTokenLabel1",
 		SessionTokenExpiration: "2020-01-01T12:00:00Z",
 	},
 		{
-			Id:     "ID2",
+			ID:     "ID2",
 			Status: domain_aws.NotActive,
 		},
 	}
@@ -766,8 +766,8 @@ func TestIsSessionTokenValid_SessionIsExpired(t *testing.T) {
 func TestRefreshSessionToken(t *testing.T) {
 	awsIamUserSessionActionsSetup()
 	session := aws_iam_user.AwsIamUserSession{
-		Id:                "ID",
-		AccessKeyIdLabel:  "accessKeyLabel",
+		ID:                "ID",
+		AccessKeyIDLabel:  "accessKeyLabel",
 		SecretKeyLabel:    "secretKeyLabel",
 		SessionTokenLabel: "sessionTokenLabel",
 		Region:            "region-1",
@@ -790,8 +790,8 @@ func TestRefreshSessionToken(t *testing.T) {
 func TestRefreshSessionToken_KeychainGetSecretReturnsError(t *testing.T) {
 	awsIamUserSessionActionsSetup()
 	session := aws_iam_user.AwsIamUserSession{
-		Id:                "ID",
-		AccessKeyIdLabel:  "accessKeyLabel",
+		ID:                "ID",
+		AccessKeyIDLabel:  "accessKeyLabel",
 		SecretKeyLabel:    "secretKeyLabel",
 		SessionTokenLabel: "sessionTokenLabel",
 		Region:            "region-1",
@@ -810,8 +810,8 @@ func TestRefreshSessionToken_KeychainGetSecretReturnsError(t *testing.T) {
 func TestRefreshSessionToken_StsApiGenerateNewSessionTokenReturnsError(t *testing.T) {
 	awsIamUserSessionActionsSetup()
 	session := aws_iam_user.AwsIamUserSession{
-		Id:                "ID",
-		AccessKeyIdLabel:  "accessKeyLabel",
+		ID:                "ID",
+		AccessKeyIDLabel:  "accessKeyLabel",
 		SecretKeyLabel:    "secretKeyLabel",
 		SessionTokenLabel: "sessionTokenLabel",
 		Region:            "region-1",
@@ -829,8 +829,8 @@ func TestRefreshSessionToken_StsApiGenerateNewSessionTokenReturnsError(t *testin
 func TestRefreshSessionToken_KeychainSetSecretReturnsError(t *testing.T) {
 	awsIamUserSessionActionsSetup()
 	session := aws_iam_user.AwsIamUserSession{
-		Id:                "ID",
-		AccessKeyIdLabel:  "accessKeyLabel",
+		ID:                "ID",
+		AccessKeyIDLabel:  "accessKeyLabel",
 		SecretKeyLabel:    "secretKeyLabel",
 		SessionTokenLabel: "sessionTokenLabel",
 		Region:            "region-1",
@@ -851,8 +851,8 @@ func TestRefreshSessionToken_KeychainSetSecretReturnsError(t *testing.T) {
 func TestRefreshSessionToken_FacadeSetSessionTokenExpirationReturnsError(t *testing.T) {
 	awsIamUserSessionActionsSetup()
 	session := aws_iam_user.AwsIamUserSession{
-		Id:                "ID",
-		AccessKeyIdLabel:  "accessKeyLabel",
+		ID:                "ID",
+		AccessKeyIDLabel:  "accessKeyLabel",
 		SecretKeyLabel:    "secretKeyLabel",
 		SessionTokenLabel: "sessionTokenLabel",
 		Region:            "region-1",

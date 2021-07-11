@@ -23,7 +23,7 @@ func facadeSetup() {
 func TestAwsIamUserSessionsFacade_GetSessions(t *testing.T) {
 	facadeSetup()
 
-	newSessions := []AwsIamUserSession{{Id: "id"}}
+	newSessions := []AwsIamUserSession{{ID: "id"}}
 	facade.awsIamUserSessions = newSessions
 
 	if !reflect.DeepEqual(facade.GetSessions(), newSessions) {
@@ -34,7 +34,7 @@ func TestAwsIamUserSessionsFacade_GetSessions(t *testing.T) {
 func TestAwsIamUserSessionsFacade_SetSessions(t *testing.T) {
 	facadeSetup()
 
-	newSessions := []AwsIamUserSession{{Id: "id"}}
+	newSessions := []AwsIamUserSession{{ID: "id"}}
 	facade.SetSessions(newSessions)
 
 	if !reflect.DeepEqual(facade.awsIamUserSessions, newSessions) {
@@ -46,7 +46,7 @@ func TestAwsIamUserSessionsFacade_AddSession(t *testing.T) {
 	facadeSetup()
 	facade.Subscribe(fakeSessionsObserver{})
 
-	newSession := AwsIamUserSession{Id: "id"}
+	newSession := AwsIamUserSession{ID: "id"}
 	facade.AddSession(newSession)
 
 	if !reflect.DeepEqual(sessionsBeforeUpdate, []AwsIamUserSession{}) {
@@ -62,7 +62,7 @@ func TestAwsIamUserSessionsFacade_AddSession_alreadyExistentId(t *testing.T) {
 	facadeSetup()
 	facade.Subscribe(fakeSessionsObserver{})
 
-	newSession := AwsIamUserSession{Id: "ID"}
+	newSession := AwsIamUserSession{ID: "ID"}
 	facade.awsIamUserSessions = []AwsIamUserSession{newSession}
 
 	err := facade.AddSession(newSession)
@@ -77,9 +77,9 @@ func TestAwsIamUserSessionsFacade_AddSession_alreadyExistentName(t *testing.T) {
 	facadeSetup()
 	facade.Subscribe(fakeSessionsObserver{})
 
-	facade.awsIamUserSessions = []AwsIamUserSession{{Id: "1", Name: "NAME"}}
+	facade.awsIamUserSessions = []AwsIamUserSession{{ID: "1", Name: "NAME"}}
 
-	err := facade.AddSession(AwsIamUserSession{Id: "2", Name: "NAME"})
+	err := facade.AddSession(AwsIamUserSession{ID: "2", Name: "NAME"})
 	test.ExpectHttpError(t, err, http.StatusConflict, "a session named NAME is already present")
 
 	if len(sessionsBeforeUpdate) > 0 || len(sessionsAfterUpdate) > 0 {
@@ -91,8 +91,8 @@ func TestAwsIamUserSessionsFacade_RemoveSession(t *testing.T) {
 	facadeSetup()
 	facade.Subscribe(fakeSessionsObserver{})
 
-	session1 := AwsIamUserSession{Id: "ID1"}
-	session2 := AwsIamUserSession{Id: "ID2"}
+	session1 := AwsIamUserSession{ID: "ID1"}
+	session2 := AwsIamUserSession{ID: "ID2"}
 	facade.awsIamUserSessions = []AwsIamUserSession{session1, session2}
 
 	facade.RemoveSession("ID1")
@@ -122,7 +122,7 @@ func TestAwsIamUserSessionsFacade_SetSessionTokenExpiration(t *testing.T) {
 	facadeSetup()
 	facade.Subscribe(fakeSessionsObserver{})
 
-	newSession := AwsIamUserSession{Id: "ID", SessionTokenExpiration: "sessionTokenExpiration"}
+	newSession := AwsIamUserSession{ID: "ID", SessionTokenExpiration: "sessionTokenExpiration"}
 	facade.awsIamUserSessions = []AwsIamUserSession{newSession}
 
 	facade.SetSessionTokenExpiration("ID", "newSessionTokenExpiration")
@@ -131,7 +131,7 @@ func TestAwsIamUserSessionsFacade_SetSessionTokenExpiration(t *testing.T) {
 		t.Errorf("unexpected session")
 	}
 
-	if !reflect.DeepEqual(sessionsAfterUpdate, []AwsIamUserSession{{Id: "ID", SessionTokenExpiration: "newSessionTokenExpiration"}}) {
+	if !reflect.DeepEqual(sessionsAfterUpdate, []AwsIamUserSession{{ID: "ID", SessionTokenExpiration: "newSessionTokenExpiration"}}) {
 		t.Errorf("sessions were not updated")
 	}
 }
@@ -152,7 +152,7 @@ func TestAwsIamUserSessionsFacade_StartingSession(t *testing.T) {
 	facadeSetup()
 	facade.Subscribe(fakeSessionsObserver{})
 
-	newSession := AwsIamUserSession{Id: "ID", Status: domain_aws.NotActive}
+	newSession := AwsIamUserSession{ID: "ID", Status: domain_aws.NotActive}
 	facade.awsIamUserSessions = []AwsIamUserSession{newSession}
 
 	facade.StartingSession("ID")
@@ -161,7 +161,7 @@ func TestAwsIamUserSessionsFacade_StartingSession(t *testing.T) {
 		t.Errorf("unexpected session")
 	}
 
-	if !reflect.DeepEqual(sessionsAfterUpdate, []AwsIamUserSession{{Id: "ID", Status: domain_aws.Pending, StartTime: "", LastStopTime: ""}}) {
+	if !reflect.DeepEqual(sessionsAfterUpdate, []AwsIamUserSession{{ID: "ID", Status: domain_aws.Pending, StartTime: "", LastStopTime: ""}}) {
 		t.Errorf("sessions were not updated")
 	}
 }
@@ -182,7 +182,7 @@ func TestAwsIamUserSessionsFacade_StartSession(t *testing.T) {
 	facadeSetup()
 	facade.Subscribe(fakeSessionsObserver{})
 
-	newSession := AwsIamUserSession{Id: "ID", Status: domain_aws.NotActive}
+	newSession := AwsIamUserSession{ID: "ID", Status: domain_aws.NotActive}
 	facade.awsIamUserSessions = []AwsIamUserSession{newSession}
 
 	facade.StartSession("ID", "start-time")
@@ -191,7 +191,7 @@ func TestAwsIamUserSessionsFacade_StartSession(t *testing.T) {
 		t.Errorf("unexpected session")
 	}
 
-	if !reflect.DeepEqual(sessionsAfterUpdate, []AwsIamUserSession{{Id: "ID", Status: domain_aws.Active, StartTime: "start-time"}}) {
+	if !reflect.DeepEqual(sessionsAfterUpdate, []AwsIamUserSession{{ID: "ID", Status: domain_aws.Active, StartTime: "start-time"}}) {
 		t.Errorf("sessions were not updated")
 	}
 }
@@ -212,7 +212,7 @@ func TestAwsIamUserSessionsFacade_StopSession(t *testing.T) {
 	facadeSetup()
 	facade.Subscribe(fakeSessionsObserver{})
 
-	newSession := AwsIamUserSession{Id: "ID", Status: domain_aws.Active}
+	newSession := AwsIamUserSession{ID: "ID", Status: domain_aws.Active}
 	facade.awsIamUserSessions = []AwsIamUserSession{newSession}
 
 	facade.StopSession("ID", "stop-time")
@@ -221,7 +221,7 @@ func TestAwsIamUserSessionsFacade_StopSession(t *testing.T) {
 		t.Errorf("unexpected session")
 	}
 
-	if !reflect.DeepEqual(sessionsAfterUpdate, []AwsIamUserSession{{Id: "ID", Status: domain_aws.NotActive, LastStopTime: "stop-time"}}) {
+	if !reflect.DeepEqual(sessionsAfterUpdate, []AwsIamUserSession{{ID: "ID", Status: domain_aws.NotActive, LastStopTime: "stop-time"}}) {
 		t.Errorf("sessions were not updated")
 	}
 }
@@ -242,12 +242,12 @@ func TestAwsIamUserSessionsFacade_EditSession(t *testing.T) {
 	facadeSetup()
 	facade.Subscribe(fakeSessionsObserver{})
 
-	session1 := AwsIamUserSession{Id: "ID1", Name: "Name1", Region: "region", AccessKeyIdLabel: "accessKeyIdLabel",
+	session1 := AwsIamUserSession{ID: "ID1", Name: "Name1", Region: "region", AccessKeyIDLabel: "accessKeyIdLabel",
 		SecretKeyLabel: "secretKeyLabel", SessionTokenLabel: "sessionTokenLabel", MfaDevice: "mfaDevice",
-		SessionTokenExpiration: "sessionTokenExpiration", NamedProfileId: "ProfileId1"}
-	session2 := AwsIamUserSession{Id: "ID2", Name: "Name2", Region: "region2", AccessKeyIdLabel: "accessKeyIdLabel2",
+		SessionTokenExpiration: "sessionTokenExpiration", NamedProfileID: "ProfileId1"}
+	session2 := AwsIamUserSession{ID: "ID2", Name: "Name2", Region: "region2", AccessKeyIDLabel: "accessKeyIdLabel2",
 		SecretKeyLabel: "secretKeyLabel2", SessionTokenLabel: "sessionTokenLabel2", MfaDevice: "mfaDevice2",
-		SessionTokenExpiration: "sessionTokenExpiration2", NamedProfileId: "ProfileId2"}
+		SessionTokenExpiration: "sessionTokenExpiration2", NamedProfileID: "ProfileId2"}
 	facade.awsIamUserSessions = []AwsIamUserSession{session1, session2}
 
 	facade.EditSession("ID1", "newName", "newRegion", "newAccountNumber",
@@ -258,9 +258,9 @@ func TestAwsIamUserSessionsFacade_EditSession(t *testing.T) {
 	}
 
 	if !reflect.DeepEqual(sessionsAfterUpdate, []AwsIamUserSession{
-		{Id: "ID1", Name: "newName", Region: "newRegion", AccountNumber: "newAccountNumber", UserName: "newUserName",
-			AccessKeyIdLabel: "accessKeyIdLabel", SecretKeyLabel: "secretKeyLabel", SessionTokenLabel: "sessionTokenLabel",
-			MfaDevice: "newMfaDevice", NamedProfileId: "newProfileId", Status: domain_aws.NotActive, StartTime: "",
+		{ID: "ID1", Name: "newName", Region: "newRegion", AccountNumber: "newAccountNumber", UserName: "newUserName",
+			AccessKeyIDLabel: "accessKeyIdLabel", SecretKeyLabel: "secretKeyLabel", SessionTokenLabel: "sessionTokenLabel",
+			MfaDevice: "newMfaDevice", NamedProfileID: "newProfileId", Status: domain_aws.NotActive, StartTime: "",
 			LastStopTime: "", SessionTokenExpiration: ""}, session2}) {
 		t.Errorf("sessions were not updated")
 	}
@@ -270,12 +270,12 @@ func TestAwsIamUserSessionsFacade_EditSession_DuplicateSessionNameAttempt(t *tes
 	facadeSetup()
 	facade.Subscribe(fakeSessionsObserver{})
 
-	session1 := AwsIamUserSession{Id: "ID1", Name: "Name1", Region: "region", AccessKeyIdLabel: "accessKeyIdLabel",
+	session1 := AwsIamUserSession{ID: "ID1", Name: "Name1", Region: "region", AccessKeyIDLabel: "accessKeyIdLabel",
 		SecretKeyLabel: "secretKeyLabel", SessionTokenLabel: "sessionTokenLabel", MfaDevice: "mfaDevice",
-		SessionTokenExpiration: "sessionTokenExpiration", NamedProfileId: "ProfileId1"}
-	session2 := AwsIamUserSession{Id: "ID2", Name: "Name2", Region: "region2", AccessKeyIdLabel: "accessKeyIdLabel2",
+		SessionTokenExpiration: "sessionTokenExpiration", NamedProfileID: "ProfileId1"}
+	session2 := AwsIamUserSession{ID: "ID2", Name: "Name2", Region: "region2", AccessKeyIDLabel: "accessKeyIdLabel2",
 		SecretKeyLabel: "secretKeyLabel2", SessionTokenLabel: "sessionTokenLabel2", MfaDevice: "mfaDevice2",
-		SessionTokenExpiration: "sessionTokenExpiration2", NamedProfileId: "ProfileId2"}
+		SessionTokenExpiration: "sessionTokenExpiration2", NamedProfileID: "ProfileId2"}
 	facade.awsIamUserSessions = []AwsIamUserSession{session1, session2}
 
 	err := facade.EditSession("ID1", "Name2", "newRegion", "newAccountNumber",

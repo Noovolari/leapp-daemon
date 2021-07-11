@@ -74,7 +74,7 @@ func CreateAwsIamRoleFederatedSession(sessionContainer Container, name string, a
 	}
 
 	session := AwsIamRoleFederatedSession{
-		Id:        uuidString,
+		ID:        uuidString,
 		AwsSessionStatus:    NotActive,
 		StartTime: "",
 		Account:   &federatedAwsAccount,
@@ -94,7 +94,7 @@ func GetFederatedAwsSession(sessionContainer Container, id string) (*AwsIamRoleF
 	}
 
 	for index, _ := range sessions {
-		if sessions[index].Id == id {
+		if sessions[index].ID == id {
 			return sessions[index], nil
 		}
 	}
@@ -114,7 +114,7 @@ func ListFederatedAwsSession(sessionContainer Container, query string) ([]*AwsIa
 		return append(filteredList, sessions...), nil
 	} else {
 		for _, session := range sessions {
-			if  strings.Contains(session.Id, query) ||
+			if  strings.Contains(session.ID, query) ||
 				strings.Contains(session.Profile, query) ||
 				strings.Contains(session.Account.SessionName, query) ||
 				strings.Contains(session.Account.IdpArn, query) ||
@@ -140,7 +140,7 @@ func UpdateFederatedAwsSession(sessionContainer Container, id string, name strin
 
 	found := false
 	for index := range sessions {
-		if sessions[index].Id == id {
+		if sessions[index].ID == id {
 			namedProfileId, err := named_profile.EditNamedProfile(sessionContainer, sessions[index].Profile, profile)
 			if err != nil { return err }
 
@@ -181,7 +181,7 @@ func DeleteFederatedAwsSession(sessionContainer Container, id string) error {
 
 	found := false
 	for index := range sessions {
-		if sessions[index].Id == id {
+		if sessions[index].ID == id {
 			sessions = append(sessions[:index], sessions[index+1:]...)
 			found = true
 			break
@@ -207,7 +207,7 @@ func StartFederatedAwsSession(sessionContainer Container, id string) error {
 		return err
 	}
 
-	println("Rotating session with id", sess.Id)
+	println("Rotating session with id", sess.ID)
 	err = sess.Rotate(nil)
 	if err != nil { return err }
 

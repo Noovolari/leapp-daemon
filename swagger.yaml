@@ -3,6 +3,8 @@ consumes:
 - application/json
 definitions:
   AwsCreateIamRoleChainedSessionRequestDto:
+    description: AwsCreateIamRoleChainedSessionRequestDto AwsCreateIamRoleChainedSessionRequestDto
+      aws create iam role chained session request dto
     properties:
       accountName:
         description: the name which will be displayed
@@ -17,7 +19,7 @@ definitions:
           the parent session id, can be an aws plain or federated session
           it's generated with an uuid v4
         type: string
-        x-go-name: ParentId
+        x-go-name: ParentID
       region:
         description: the region on which the session will be initialized
         type: string
@@ -27,28 +29,34 @@ definitions:
         type: string
         x-go-name: RoleName
     required:
-    - parentId
     - accountName
     - accountNumber
+    - parentId
     - roleName
     type: object
-    x-go-package: leapp_daemon/adapter/http/dto/request_dto/aws_iam_role_chained_session_request_dto
+    x-go-package: leapp_daemon/models
   AwsCreateIamUserSessionRequest:
+    description: AwsCreateIamUserSessionRequest AwsCreateIamUserSessionRequest aws
+      create iam user session request
     properties:
       accountNumber:
         description: the account number of the aws account related to the role
         type: string
         x-go-name: AccountNumber
       awsAccessKeyId:
+        description: aws access key Id
         type: string
-        x-go-name: AwsAccessKeyId
+        x-go-name: AwsAccessKeyID
       awsSecretKey:
+        description: aws secret key
         type: string
         x-go-name: AwsSecretKey
       mfaDevice:
+        description: mfa device
         type: string
         x-go-name: MfaDevice
       profileName:
+        description: profile name
         type: string
         x-go-name: ProfileName
       region:
@@ -60,15 +68,18 @@ definitions:
         type: string
         x-go-name: SessionName
       userName:
+        description: user name
         type: string
         x-go-name: UserName
     required:
-    - sessionName
     - accountNumber
     - region
+    - sessionName
     type: object
-    x-go-package: leapp_daemon/adapter/http/dto/request_dto/aws_iam_user_session_request_dto
+    x-go-package: leapp_daemon/models
   AwsEditIamRoleChainedSessionRequestDto:
+    description: AwsEditIamRoleChainedSessionRequestDto AwsEditIamRoleChainedSessionRequestDto
+      aws edit iam role chained session request dto
     properties:
       accountName:
         description: the name which will be displayed
@@ -83,7 +94,7 @@ definitions:
           the parent session id, can be an aws plain or federated session
           it's generated with an uuid v4
         type: string
-        x-go-name: ParentId
+        x-go-name: ParentID
       region:
         description: the region on which the session will be initialized
         type: string
@@ -93,98 +104,127 @@ definitions:
         type: string
         x-go-name: RoleName
     type: object
-    x-go-package: leapp_daemon/adapter/http/dto/request_dto/aws_iam_role_chained_session_request_dto
+    x-go-package: leapp_daemon/models
   AwsEditIamUserSessionRequest:
+    description: AwsEditIamUserSessionRequest AwsEditIamUserSessionRequest aws edit
+      iam user session request
     properties:
       accountNumber:
+        description: account number
         type: string
         x-go-name: AccountNumber
       awsAccessKeyId:
+        description: aws access key Id
         type: string
-        x-go-name: AwsAccessKeyId
+        x-go-name: AwsAccessKeyID
       awsSecretAccessKey:
+        description: aws secret access key
         type: string
         x-go-name: AwsSecretAccessKey
       mfaDevice:
+        description: mfa device
         type: string
         x-go-name: MfaDevice
       name:
+        description: name
         type: string
         x-go-name: Name
       profileName:
+        description: profile name
         type: string
         x-go-name: ProfileName
       region:
+        description: region
         type: string
         x-go-name: Region
       user:
+        description: user
         type: string
         x-go-name: User
     type: object
-    x-go-package: leapp_daemon/adapter/http/dto/request_dto/aws_iam_user_session_request_dto
+    x-go-package: leapp_daemon/models
   AwsGetIamUserSessionResponse:
+    description: AwsGetIamUserSessionResponse AwsGetIamUserSessionResponse aws get
+      iam user session response
     properties:
       Data:
         $ref: '#/definitions/AwsIamUserSession'
       Message:
+        description: message
         type: string
     type: object
-    x-go-package: leapp_daemon/adapter/http/dto/response_dto/aws_iam_user_session_response_dto
+    x-go-package: leapp_daemon/models
   AwsIamUserSession:
     properties:
-      accessKeyIdLabel:
+      accessKeyIDLabel:
+        description: access key ID label
         type: string
-        x-go-name: AccessKeyIdLabel
+        x-go-name: AccessKeyIDLabel
       accountNumber:
+        description: account number
         type: string
         x-go-name: AccountNumber
       id:
+        description: ID
         type: string
-        x-go-name: Id
+        x-go-name: ID
       lastStopTime:
+        description: last stop time
         type: string
         x-go-name: LastStopTime
       mfaDevice:
+        description: mfa device
         type: string
         x-go-name: MfaDevice
       name:
+        description: name
         type: string
         x-go-name: Name
-      namedProfileId:
+      namedProfileID:
+        description: named profile ID
         type: string
-        x-go-name: NamedProfileId
+        x-go-name: NamedProfileID
       region:
+        description: region
         type: string
         x-go-name: Region
       secretKeyLabel:
+        description: secret key label
         type: string
         x-go-name: SecretKeyLabel
       sessionTokenExpiration:
+        description: session token expiration
         type: string
         x-go-name: SessionTokenExpiration
       sessionTokenLabel:
+        description: session token label
         type: string
         x-go-name: SessionTokenLabel
       startTime:
+        description: start time
         type: string
         x-go-name: StartTime
       status:
         $ref: '#/definitions/AwsSessionStatus'
       userName:
+        description: user name
         type: string
         x-go-name: UserName
     type: object
     x-go-package: leapp_daemon/domain/domain_aws/aws_iam_user
   AwsSessionStatus:
+    description: AwsSessionStatus AwsSessionStatus aws session status
     format: int64
     type: integer
     x-go-package: leapp_daemon/domain/domain_aws
   GcpCreateIamUserAccountOauthSessionRequest:
+    description: GcpCreateIamUserAccountOauthSessionRequest GcpCreateIamUserAccountOauthSessionRequest
+      gcp create iam user account oauth session request
     properties:
       accountId:
         description: the account identifier of the gcp account
         type: string
-        x-go-name: AccountId
+        x-go-name: AccountID
       name:
         description: the name which will be displayed
         type: string
@@ -198,13 +238,15 @@ definitions:
         type: string
         x-go-name: ProjectName
     required:
-    - name
     - accountId
-    - projectName
+    - name
     - oauthCode
+    - projectName
     type: object
-    x-go-package: leapp_daemon/adapter/http/dto/request_dto/gcp_iam_user_account_oauth_session_request_dto
+    x-go-package: leapp_daemon/models
   GcpEditIamUserAccountOauthSessionRequest:
+    description: GcpEditIamUserAccountOauthSessionRequest GcpEditIamUserAccountOauthSessionRequest
+      gcp edit iam user account oauth session request
     properties:
       name:
         description: the name which will be displayed
@@ -218,7 +260,19 @@ definitions:
     - name
     - projectName
     type: object
-    x-go-package: leapp_daemon/adapter/http/dto/request_dto/gcp_iam_user_account_oauth_session_request_dto
+    x-go-package: leapp_daemon/models
+  GcpEditIamUserAccountOauthSessionURIRequest:
+    description: GcpEditIamUserAccountOauthSessionURIRequest GcpEditIamUserAccountOauthSessionURIRequest
+      gcp edit iam user account oauth session Uri request
+    properties:
+      id:
+        description: 'in: path'
+        type: string
+        x-go-name: ID
+    required:
+    - id
+    type: object
+    x-go-package: leapp_daemon/models
   GcpEditIamUserAccountOauthSessionUriRequest:
     properties:
       id:
@@ -230,33 +284,58 @@ definitions:
     type: object
     x-go-package: leapp_daemon/adapter/http/dto/request_dto/gcp_iam_user_account_oauth_session_request_dto
   GcpGetIamUserAccountOauthSessionResponse:
+    description: GcpGetIamUserAccountOauthSessionResponse GcpGetIamUserAccountOauthSessionResponse
+      gcp get iam user account oauth session response
     properties:
       Data:
         $ref: '#/definitions/GcpIamUserAccountOauthSession'
       Message:
+        description: message
         type: string
     type: object
-    x-go-package: leapp_daemon/adapter/http/dto/response_dto/gcp_iam_user_account_oauth_session_response_dto
+    x-go-package: leapp_daemon/models
   GcpIamUserAccountOauthSession:
+    description: GcpIamUserAccountOauthSession GcpIamUserAccountOauthSession gcp iam
+      user account oauth session
     properties:
       AccountId:
+        description: account Id
         type: string
+        x-go-name: AccountID
       CredentialsLabel:
+        description: credentials label
         type: string
       Id:
+        description: Id
         type: string
+        x-go-name: ID
       LastStopTime:
+        description: last stop time
         type: string
       Name:
+        description: name
         type: string
       ProjectName:
+        description: project name
         type: string
       StartTime:
+        description: start time
         type: string
       Status:
         $ref: '#/definitions/GcpSessionStatus'
     type: object
-    x-go-package: leapp_daemon/domain/domain_gcp/gcp_iam_user_account_oauth
+    x-go-package: leapp_daemon/models
+  GcpOauthURLResponse:
+    description: GcpOauthURLResponse GcpOauthURLResponse gcp oauth Url response
+    properties:
+      Data:
+        description: data
+        type: string
+      Message:
+        description: message
+        type: string
+    type: object
+    x-go-package: leapp_daemon/models
   GcpOauthUrlResponse:
     properties:
       Data:
@@ -266,16 +345,19 @@ definitions:
     type: object
     x-go-package: leapp_daemon/adapter/http/dto/response_dto/gcp_iam_user_account_oauth_session_response_dto
   GcpSessionStatus:
+    description: GcpSessionStatus GcpSessionStatus gcp session status
     format: int64
     type: integer
-    x-go-package: leapp_daemon/domain/domain_gcp
+    x-go-package: leapp_daemon/models
   MessageResponse:
+    description: MessageResponse MessageResponse message response
     properties:
       Message:
+        description: message
         type: string
     type: object
-    x-go-package: leapp_daemon/adapter/http/dto/response_dto
-host: localhost
+    x-go-package: leapp_daemon/models
+host: localhost:8080
 info:
   contact:
     email: john.doe@example.com
@@ -321,7 +403,7 @@ paths:
         name: id
         required: true
         type: string
-        x-go-name: Id
+        x-go-name: ID
       responses:
         "200":
           description: MessageResponse
@@ -337,7 +419,7 @@ paths:
         name: id
         required: true
         type: string
-        x-go-name: Id
+        x-go-name: ID
       responses:
         "200":
           description: AwsGetIamUserSessionResponse
@@ -358,7 +440,7 @@ paths:
         name: id
         required: true
         type: string
-        x-go-name: Id
+        x-go-name: ID
       responses:
         "200":
           description: MessageResponse
@@ -375,7 +457,7 @@ paths:
         name: id
         required: true
         type: string
-        x-go-name: Id
+        x-go-name: ID
       responses:
         "200":
           description: MessageResponse
@@ -392,7 +474,7 @@ paths:
         name: id
         required: true
         type: string
-        x-go-name: Id
+        x-go-name: ID
       responses:
         "200":
           description: MessageResponse
@@ -538,6 +620,4 @@ responses:
 schemes:
 - http
 - https
-security:
-- api_key: []
 swagger: "2.0"

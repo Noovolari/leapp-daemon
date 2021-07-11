@@ -16,7 +16,7 @@ type AwsEditIamUserSessionRequestWrapper struct {
 type AwsEditIamUserSessionUriRequest struct {
   // in: path
   // required: true
-  Id string `json:"id" uri:"id" binding:"required"`
+  ID string `json:"id" uri:"id" binding:"required"`
 }
 
 type AwsEditIamUserSessionRequest struct {

@@ -15,17 +15,12 @@ type AwsCreateIamUserSessionRequestWrapper struct {
 type AwsCreateIamUserSessionRequest struct {
 	// the name which will be displayed
 	// required: true
-	SessionName string `json:"sessionName" binding:"required"`
-
-	// the account number of the aws account related to the role
-	// required: true
-	AccountNumber string `json:"accountNumber" binding:"required,numeric,len=12"`
+	SessionName    string `json:"sessionName" binding:"required"`
 
 	// the region on which the session will be initialized
 	// required: true
-	Region string `json:"region" binding:"required"`
+	Region         string `json:"region" binding:"required"`
 
-	UserName       string `json:"userName" binding:"required"`
 	MfaDevice      string `json:"mfaDevice"`
 	AwsAccessKeyId string `json:"awsAccessKeyId" binding:"required"`
 	AwsSecretKey   string `json:"awsSecretKey" binding:"required"`

@@ -29,7 +29,7 @@ func (applier *AwsCredentialsApplier) UpdateAwsIamUserSessions(oldSessions []aws
 			continue
 		}
 
-		namedProfile, err := applier.NamedProfilesFacade.GetNamedProfileById(newSession.NamedProfileId)
+		namedProfile, err := applier.NamedProfilesFacade.GetNamedProfileById(newSession.NamedProfileID)
 		if err != nil {
 			logging.Entry().Error(err)
 			return

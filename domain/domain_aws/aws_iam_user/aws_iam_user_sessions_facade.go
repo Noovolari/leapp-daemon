@@ -34,7 +34,7 @@ func (facade *AwsIamUserSessionsFacade) GetSessions() []AwsIamUserSession {
 
 func (facade *AwsIamUserSessionsFacade) GetSessionById(sessionId string) (AwsIamUserSession, error) {
 	for _, session := range facade.GetSessions() {
-		if session.Id == sessionId {
+		if session.ID == sessionId {
 			return session, nil
 		}
 	}
@@ -56,8 +56,8 @@ func (facade *AwsIamUserSessionsFacade) AddSession(newSession AwsIamUserSession)
 	currentSessions := facade.GetSessions()
 
 	for _, sess := range currentSessions {
-		if newSession.Id == sess.Id {
-			return http_error.NewConflictError(fmt.Errorf("a session with id %v is already present", newSession.Id))
+		if newSession.ID == sess.ID {
+			return http_error.NewConflictError(fmt.Errorf("a session with id %v is already present", newSession.ID))
 		}
 
 		if newSession.Name == sess.Name {
@@ -79,7 +79,7 @@ func (facade *AwsIamUserSessionsFacade) RemoveSession(sessionId string) error {
 	newSessions := make([]AwsIamUserSession, 0)
 
 	for _, session := range currentSessions {
-		if session.Id != sessionId {
+		if session.ID != sessionId {
 			newSessions = append(newSessions, session)
 		}
 	}
@@ -105,7 +105,7 @@ func (facade *AwsIamUserSessionsFacade) EditSession(sessionId string, sessionNam
 	currentSessions := facade.GetSessions()
 	for _, sess := range currentSessions {
 
-		if sess.Id != sessionId && sess.Name == sessionName {
+		if sess.ID != sessionId && sess.Name == sessionName {
 			return http_error.NewConflictError(fmt.Errorf("a session named %v is already present", sess.Name))
 		}
 	}
@@ -115,7 +115,7 @@ func (facade *AwsIamUserSessionsFacade) EditSession(sessionId string, sessionNam
 	sessionToEdit.AccountNumber = accountNumber
 	sessionToEdit.UserName = userName
 	sessionToEdit.MfaDevice = mfaDevice
-	sessionToEdit.NamedProfileId = namedProfileId
+	sessionToEdit.NamedProfileID = namedProfileId
 	sessionToEdit.SessionTokenExpiration = ""
 	return facade.replaceSession(sessionId, sessionToEdit)
 }
@@ -169,7 +169,7 @@ func (facade *AwsIamUserSessionsFacade) setSessionStatus(sessionId string, statu
 func (facade *AwsIamUserSessionsFacade) replaceSession(sessionId string, newSession AwsIamUserSession) error {
 	newSessions := make([]AwsIamUserSession, 0)
 	for _, session := range facade.GetSessions() {
-		if session.Id == sessionId {
+		if session.ID == sessionId {
 			newSessions = append(newSessions, newSession)
 		} else {
 			newSessions = append(newSessions, session)

@@ -66,7 +66,7 @@ func CreateTrusterAwsSession(AccountName string, AccountNumber string, RoleName 
 
 
   sess := AwsIamUserSession{
-    Id:        uuidString,
+    ID:        uuidString,
     AwsSessionStatus:    NotActive,
     StartTime: "",
     Account:   &awsIamUserAccount,

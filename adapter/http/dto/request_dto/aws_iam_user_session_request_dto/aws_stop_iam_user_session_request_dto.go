@@ -9,7 +9,7 @@ import (
 type AwsStopIamUserSessionRequestDto struct {
   // in: path
   // required: true
-  Id string `json:"id" uri:"id" binding:"required"`
+  ID string `json:"id" uri:"id" binding:"required"`
 }
 
 func (requestDto *AwsStopIamUserSessionRequestDto) Build(context *gin.Context) error {

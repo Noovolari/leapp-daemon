@@ -149,7 +149,7 @@ func getById(sessionContainer Container, id string) (*AwsIamUserSession, error) 
 	if err != nil { return sess, err }
 
 	for index := range sessions {
-		if sessions[index].Id == id {
+		if sessions[index].ID == id {
 			sess = sessions[index]
 			return sess, nil
 		}
@@ -161,7 +161,7 @@ func getById(sessionContainer Container, id string) (*AwsIamUserSession, error) 
 
 func sendMfaRequestMessage(sess *AwsIamUserSession) error {
 	messageData := websocket.MfaTokenRequestData{
-		SessionId: sess.Id,
+		SessionId: sess.ID,
 	}
 
 	messageDataJson, err := json.Marshal(messageData)
@@ -217,7 +217,7 @@ func CreateAwsIamUserSession(sessionContainer Container, name string, accountNum
 	}
 
 	sess := AwsIamUserSession{
-		Id:        uuidString,
+		ID:        uuidString,
 		AwsSessionStatus:    NotActive,
 		StartTime: "",
 		Account:   &awsIamUserAccount,
@@ -251,7 +251,7 @@ func ListAwsIamUserSession(sessionContainer Container, query string) ([]*AwsIamU
 		return append(filteredList, allSessions...), nil
 	} else {
 		for _, sess := range allSessions {
-			if  strings.Contains(sess.Id, query) ||
+			if  strings.Contains(sess.ID, query) ||
 				strings.Contains(sess.Profile, query) ||
 				strings.Contains(sess.Account.SessionName, query) ||
 				strings.Contains(sess.Account.MfaDevice, query) ||
@@ -275,7 +275,7 @@ func UpdateAwsIamUserSession(sessionContainer Container, id string, name string,
 
 	found := false
 	for index := range sessions {
-		if sessions[index].Id == id {
+		if sessions[index].ID == id {
 			namedProfileId, err := named_profile.EditNamedProfile(sessionContainer, sessions[index].Profile, profile)
 			if err != nil { return err }
 
@@ -312,7 +312,7 @@ func DeleteAwsIamUserSession(sessionContainer Container, id string) error {
 
 	found := false
 	for index := range sessions {
-		if sessions[index].Id == id {
+		if sessions[index].ID == id {
 			sessions = append(sessions[:index], sessions[index+1:]...)
 			found = true
 			break

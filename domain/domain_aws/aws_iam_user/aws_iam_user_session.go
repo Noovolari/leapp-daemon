@@ -12,18 +12,18 @@ type AwsIamUserSessionContainer interface {
 
 // swagger:model AwsIamUserSession
 type AwsIamUserSession struct {
-	Id                     string  `json:"id"`
-	Name                   string  `json:"name"`
-	Region                 string  `json:"region"`
-	AccountNumber          string  `json:"accountNumber"`
-	UserName               string  `json:"userName"`
-	AccessKeyIdLabel       string  `json:"accessKeyIdLabel"`
-	SecretKeyLabel         string  `json:"secretKeyLabel"`
-	SessionTokenLabel      string  `json:"sessionTokenLabel"`
-	MfaDevice              string  `json:"mfaDevice"`
-	NamedProfileId         string  `json:"namedProfileId"`
+	ID                     string                      `json:"id"`
+	Name                   string                      `json:"name"`
+	Region                 string                      `json:"region"`
+	AccountNumber          string                      `json:"accountNumber"`
+	UserName               string                      `json:"userName"`
+	AccessKeyIDLabel       string                      `json:"accessKeyIDLabel"`
+	SecretKeyLabel         string                      `json:"secretKeyLabel"`
+	SessionTokenLabel      string                      `json:"sessionTokenLabel"`
+	MfaDevice              string                      `json:"mfaDevice"`
+	NamedProfileID         string                      `json:"namedProfileID"`
 	Status                 domain_aws.AwsSessionStatus `json:"status"`
-	StartTime              string  `json:"startTime"`
-	LastStopTime           string  `json:"lastStopTime"`
-	SessionTokenExpiration string  `json:"sessionTokenExpiration"`
+	StartTime              string                      `json:"startTime"`
+	LastStopTime           string                      `json:"lastStopTime"`
+	SessionTokenExpiration string                      `json:"sessionTokenExpiration"`
 }

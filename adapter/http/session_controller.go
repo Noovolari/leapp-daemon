@@ -11,7 +11,7 @@
 // there are no TOS at this moment, use at your own risk we take no responsibility
 //
 //     Schemes: http, https
-//     Host: localhost
+//     Host: localhost:8080
 //     BasePath: /api/v1
 //     Version: 0.0.1
 //     License: MIT https://opensource.org/licenses/MIT
@@ -22,9 +22,6 @@
 //
 //     Produces:
 //     - application/json
-//
-//     Security:
-//     - api_key:
 //
 // swagger:meta
 package http
