@@ -11,11 +11,11 @@ func GetAwsIamUserSession(id string) error {
   params := aws_iam_user_session.NewGetAwsIamUserSessionParams()
   params.ID = id
   resp, err := client.Default.AwsIamUserSession.GetAwsIamUserSession(params)
-  fmt.Println(resp)
-  fmt.Println(err)
   if err != nil {
     return err
   }
-  return resp
+  data := resp.GetPayload().Data
+  fmt.Println(data)
+  return err
 }
 

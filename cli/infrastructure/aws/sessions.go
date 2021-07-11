@@ -39,7 +39,7 @@ var (
     Short: "List a new Leapp session",
     Long:  `List a new Plain Leapp session`,
     Run: func(cmd *cobra.Command, args []string) {
-      aws.GetAwsIamUserSession(args[0])
+      _ = aws.GetAwsIamUserSession(args[0])
     },
   }
 
