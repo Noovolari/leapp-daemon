@@ -135,7 +135,7 @@ func (actions *AlibabaRamRoleFederatedSessionActions) Update(id string, name str
 		Account: &federatedAlibabaAccount,
 	}
 
-	err = actions.AlibabaRamRoleFederatedSessionsFacade.UpdateSession(sess)
+	actions.AlibabaRamRoleFederatedSessionsFacade.UpdateSession(sess)
 	if err != nil {
 		return http_error.NewInternalServerError(err)
 	}

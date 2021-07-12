@@ -70,25 +70,25 @@ func (actions *AlibabaRamUserSessionActions) Update(id string, name string, regi
 		return err //TODO: return right error
 	}
 
-	sess := alibaba_ram_user.AlibabaRamUserSession{
+	/*sess := alibaba_ram_user.AlibabaRamUserSession{
 		Id:             id,
 		Name:           name,
 		Status:         domain_alibaba.NotActive,
 		Region:         regionName,
 		NamedProfileId: np.Id,
-	}
+	}*/
 
-	err = actions.AlibabaRamUserSessionsFacade.UpdateSession(sess)
+	err = actions.AlibabaRamUserSessionsFacade.EditSession(id, name, regionName, np.Id)
 	if err != nil {
 		return http_error.NewInternalServerError(err)
 	}
 
-	err = actions.Keychain.SetSecret(alibabaAccessKeyId, sess.Id+domain_alibaba.PlainAlibabaKeyIdSuffix)
+	err = actions.Keychain.SetSecret(alibabaAccessKeyId, id+domain_alibaba.PlainAlibabaKeyIdSuffix)
 	if err != nil {
 		return http_error.NewInternalServerError(err)
 	}
 
-	err = actions.Keychain.SetSecret(alibabaSecretAccessKey, sess.Id+domain_alibaba.PlainAlibabaSecretAccessKeySuffix)
+	err = actions.Keychain.SetSecret(alibabaSecretAccessKey, id+domain_alibaba.PlainAlibabaSecretAccessKeySuffix)
 	if err != nil {
 		return http_error.NewInternalServerError(err)
 	}
@@ -128,12 +128,12 @@ func (actions *AlibabaRamUserSessionActions) Delete(id string) error {
 
 func (actions *AlibabaRamUserSessionActions) Start(sessionId string) error {
 
-	err := actions.AlibabaRamUserSessionsFacade.SetSessionStatusToPending(sessionId)
+	err := actions.AlibabaRamUserSessionsFacade.StartingSession(sessionId)
 	if err != nil {
 		return err
 	}
 
-	err = actions.AlibabaRamUserSessionsFacade.SetSessionStatusToActive(sessionId)
+	err = actions.AlibabaRamUserSessionsFacade.StartSession(sessionId)
 	if err != nil {
 		return err
 	}
@@ -143,7 +143,7 @@ func (actions *AlibabaRamUserSessionActions) Start(sessionId string) error {
 
 func (actions *AlibabaRamUserSessionActions) Stop(sessionId string) error {
 
-	err := actions.AlibabaRamUserSessionsFacade.SetSessionStatusToInactive(sessionId)
+	err := actions.AlibabaRamUserSessionsFacade.StopSession(sessionId)
 	if err != nil {
 		return err
 	}

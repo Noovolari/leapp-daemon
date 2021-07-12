@@ -107,11 +107,11 @@ type AlibabaRamUserSessionsFacade interface {
 	SetSessions(sessions []alibaba_ram_user.AlibabaRamUserSession) error
 	AddSession(session alibaba_ram_user.AlibabaRamUserSession) error
 	RemoveSession(id string) error
-	UpdateSession(session alibaba_ram_user.AlibabaRamUserSession) error
+	EditSession(sessionId string, sessionName string, region string, namedProfileId string) error
 	GetSessionById(id string) (*alibaba_ram_user.AlibabaRamUserSession, error)
-	SetSessionStatusToPending(id string) error
-	SetSessionStatusToActive(id string) error
-	SetSessionStatusToInactive(id string) error
+	StartingSession(id string) error
+	StartSession(id string) error
+	StopSession(id string) error
 }
 
 type AlibabaRamRoleFederatedSessionsFacade interface {
