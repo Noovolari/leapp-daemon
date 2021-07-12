@@ -4,12 +4,12 @@ import (
 	"leapp_daemon/domain/named_profile"
 )
 
-func ListAllSessions(gcpIamUserAccountOauthSessionFacade GcpIamUserAccountOauthSessionsFacade) (*map[string]interface{}, error) {
-
-	sessions := gcpIamUserAccountOauthSessionFacade.GetSessions()
+func ListAllSessions(gcpIamUserAccountOauthSessionFacade GcpIamUserAccountOauthSessionsFacade,
+	awsIamUserSessionFacade AwsIamUserSessionsFacade) (*map[string]interface{}, error) {
 
 	return &map[string]interface{}{
-		"GcpSessions": sessions,
+		"AwsSessions": awsIamUserSessionFacade.GetSessions(),
+		"GcpSessions": gcpIamUserAccountOauthSessionFacade.GetSessions(),
 	}, nil
 }
 

@@ -1,14 +1,16 @@
 package use_case
 
 import (
-	"leapp_daemon/domain/session"
+	"leapp_daemon/domain/domain_alibaba/alibaba_ram_role_chained"
+	"leapp_daemon/domain/domain_alibaba/alibaba_ram_role_federated"
+	"leapp_daemon/domain/domain_alibaba/alibaba_ram_user"
 )
 
 type AlibabaSessionsWriter struct {
 	ConfigurationRepository ConfigurationRepository
 }
 
-func (sessionWriter *AlibabaSessionsWriter) UpdateAlibabaRamUserSessions(oldSessions []session.AlibabaRamUserSession, newSessions []session.AlibabaRamUserSession) error {
+func (sessionWriter *AlibabaSessionsWriter) UpdateAlibabaRamUserSessions(oldSessions []alibaba_ram_user.AlibabaRamUserSession, newSessions []alibaba_ram_user.AlibabaRamUserSession) error {
 	config, err := sessionWriter.ConfigurationRepository.GetConfiguration()
 	if err != nil {
 		return err
@@ -20,7 +22,7 @@ func (sessionWriter *AlibabaSessionsWriter) UpdateAlibabaRamUserSessions(oldSess
 	return err
 }
 
-func (sessionWriter *AlibabaSessionsWriter) UpdateAlibabaRamRoleFederatedSessions(oldSessions []session.AlibabaRamRoleFederatedSession, newSessions []session.AlibabaRamRoleFederatedSession) error {
+func (sessionWriter *AlibabaSessionsWriter) UpdateAlibabaRamRoleFederatedSessions(oldSessions []alibaba_ram_role_federated.AlibabaRamRoleFederatedSession, newSessions []alibaba_ram_role_federated.AlibabaRamRoleFederatedSession) error {
 	config, err := sessionWriter.ConfigurationRepository.GetConfiguration()
 	if err != nil {
 		return err
@@ -32,7 +34,7 @@ func (sessionWriter *AlibabaSessionsWriter) UpdateAlibabaRamRoleFederatedSession
 	return err
 }
 
-func (sessionWriter *AlibabaSessionsWriter) UpdateAlibabaRamRoleChainedSessions(oldSessions []session.AlibabaRamRoleChainedSession, newSessions []session.AlibabaRamRoleChainedSession) error {
+func (sessionWriter *AlibabaSessionsWriter) UpdateAlibabaRamRoleChainedSessions(oldSessions []alibaba_ram_role_chained.AlibabaRamRoleChainedSession, newSessions []alibaba_ram_role_chained.AlibabaRamRoleChainedSession) error {
 	config, err := sessionWriter.ConfigurationRepository.GetConfiguration()
 	if err != nil {
 		return err

@@ -3,8 +3,10 @@ package use_case
 import (
 	"encoding/json"
 	"io/ioutil"
-	"leapp_daemon/domain/constant"
-	"leapp_daemon/domain/session"
+	"leapp_daemon/domain/domain_alibaba"
+	"leapp_daemon/domain/domain_alibaba/alibaba_ram_role_chained"
+	"leapp_daemon/domain/domain_alibaba/alibaba_ram_role_federated"
+	"leapp_daemon/domain/domain_alibaba/alibaba_ram_user"
 	"leapp_daemon/infrastructure/http/http_error"
 	"os"
 )
@@ -44,25 +46,25 @@ type AlibabaCredentialsApplier struct {
 	NamedProfilesFacade NamedProfilesFacade
 }
 
-func (alibabaCredentialsApplier *AlibabaCredentialsApplier) UpdateAlibabaRamUserSessions(oldAlibabaRamUserSessions []session.AlibabaRamUserSession, newAlibabaRamUserSessions []session.AlibabaRamUserSession) error {
+func (alibabaCredentialsApplier *AlibabaCredentialsApplier) UpdateAlibabaRamUserSessions(oldAlibabaRamUserSessions []alibaba_ram_user.AlibabaRamUserSession, newAlibabaRamUserSessions []alibaba_ram_user.AlibabaRamUserSession) error {
 	for i, oldSess := range oldAlibabaRamUserSessions {
 		if i < len(newAlibabaRamUserSessions) {
 			newSess := newAlibabaRamUserSessions[i]
 
-			if oldSess.Status == session.NotActive && newSess.Status == session.Pending {
+			if oldSess.Status == domain_alibaba.NotActive && newSess.Status == domain_alibaba.Pending {
 
 				homeDir, err := alibabaCredentialsApplier.FileSystem.GetHomeDir()
 				if err != nil {
 					return err
 				}
 
-				credentialsFilePath := homeDir + "/" + constant.AlibabaCredentialsFilePath
-				profile, err := alibabaCredentialsApplier.NamedProfilesFacade.GetNamedProfileById(newSess.Account.NamedProfileId)
+				credentialsFilePath := homeDir + "/" + domain_alibaba.AlibabaCredentialsFilePath
+				profile, err := alibabaCredentialsApplier.NamedProfilesFacade.GetNamedProfileById(newSess.NamedProfileId)
 				if err != nil {
 					return err
 				}
 				profileName := profile.Name
-				region := newSess.Account.Region
+				region := newSess.Region
 
 				accessKeyId, secretAccessKey, err := alibabaCredentialsApplier.getPlainCreds(newSess.Id)
 				if err != nil {
@@ -76,7 +78,7 @@ func (alibabaCredentialsApplier *AlibabaCredentialsApplier) UpdateAlibabaRamUser
 				alibabaCredentialsApplier.overwriteFile(out, credentialsFilePath)
 			}
 
-			if oldSess.Status == session.Active && newSess.Status == session.NotActive {
+			if oldSess.Status == domain_alibaba.Active && newSess.Status == domain_alibaba.NotActive {
 				err := alibabaCredentialsApplier.deleteConfig()
 				if err != nil {
 					return err
@@ -88,19 +90,19 @@ func (alibabaCredentialsApplier *AlibabaCredentialsApplier) UpdateAlibabaRamUser
 	return nil
 }
 
-func (alibabaCredentialsApplier *AlibabaCredentialsApplier) UpdateAlibabaRamRoleFederatedSessions(oldAlibabaRamRoleFederatedSessions []session.AlibabaRamRoleFederatedSession, newAlibabaRamRoleFederatedSessions []session.AlibabaRamRoleFederatedSession) error {
+func (alibabaCredentialsApplier *AlibabaCredentialsApplier) UpdateAlibabaRamRoleFederatedSessions(oldAlibabaRamRoleFederatedSessions []alibaba_ram_role_federated.AlibabaRamRoleFederatedSession, newAlibabaRamRoleFederatedSessions []alibaba_ram_role_federated.AlibabaRamRoleFederatedSession) error {
 	for i, oldSess := range oldAlibabaRamRoleFederatedSessions {
 		if i < len(newAlibabaRamRoleFederatedSessions) {
 			newSess := newAlibabaRamRoleFederatedSessions[i]
 
-			if oldSess.Status == session.NotActive && newSess.Status == session.Pending {
+			if oldSess.Status == domain_alibaba.NotActive && newSess.Status == domain_alibaba.Pending {
 
 				homeDir, err := alibabaCredentialsApplier.FileSystem.GetHomeDir()
 				if err != nil {
 					return err
 				}
 
-				credentialsFilePath := homeDir + "/" + constant.AlibabaCredentialsFilePath
+				credentialsFilePath := homeDir + "/" + domain_alibaba.AlibabaCredentialsFilePath
 				profile, err := alibabaCredentialsApplier.NamedProfilesFacade.GetNamedProfileById(newSess.Account.NamedProfileId)
 				if err != nil {
 					return err
@@ -120,7 +122,7 @@ func (alibabaCredentialsApplier *AlibabaCredentialsApplier) UpdateAlibabaRamRole
 				alibabaCredentialsApplier.overwriteFile(out, credentialsFilePath)
 			}
 
-			if oldSess.Status == session.Active && newSess.Status == session.NotActive {
+			if oldSess.Status == domain_alibaba.Active && newSess.Status == domain_alibaba.NotActive {
 				err := alibabaCredentialsApplier.deleteConfig()
 				if err != nil {
 					return err
@@ -131,19 +133,19 @@ func (alibabaCredentialsApplier *AlibabaCredentialsApplier) UpdateAlibabaRamRole
 	return nil
 }
 
-func (alibabaCredentialsApplier *AlibabaCredentialsApplier) UpdateAlibabaRamRoleChainedSessions(oldAlibabaRamRoleChainedSessions []session.AlibabaRamRoleChainedSession, newAlibabaRamRoleChainedSessions []session.AlibabaRamRoleChainedSession) error {
+func (alibabaCredentialsApplier *AlibabaCredentialsApplier) UpdateAlibabaRamRoleChainedSessions(oldAlibabaRamRoleChainedSessions []alibaba_ram_role_chained.AlibabaRamRoleChainedSession, newAlibabaRamRoleChainedSessions []alibaba_ram_role_chained.AlibabaRamRoleChainedSession) error {
 	for i, oldSess := range oldAlibabaRamRoleChainedSessions {
 		if i < len(newAlibabaRamRoleChainedSessions) {
 			newSess := newAlibabaRamRoleChainedSessions[i]
 
-			if oldSess.Status == session.NotActive && newSess.Status == session.Pending {
+			if oldSess.Status == domain_alibaba.NotActive && newSess.Status == domain_alibaba.Pending {
 
 				homeDir, err := alibabaCredentialsApplier.FileSystem.GetHomeDir()
 				if err != nil {
 					return err
 				}
 
-				credentialsFilePath := homeDir + "/" + constant.AlibabaCredentialsFilePath
+				credentialsFilePath := homeDir + "/" + domain_alibaba.AlibabaCredentialsFilePath
 				profileName := newSess.Account.Name
 				region := newSess.Account.Region
 
@@ -159,7 +161,7 @@ func (alibabaCredentialsApplier *AlibabaCredentialsApplier) UpdateAlibabaRamRole
 				alibabaCredentialsApplier.overwriteFile(out, credentialsFilePath)
 			}
 
-			if oldSess.Status == session.Active && newSess.Status == session.NotActive {
+			if oldSess.Status == domain_alibaba.Active && newSess.Status == domain_alibaba.NotActive {
 				err := alibabaCredentialsApplier.deleteConfig()
 				if err != nil {
 					return err
@@ -174,13 +176,13 @@ func (alibabaCredentialsApplier *AlibabaCredentialsApplier) getPlainCreds(sessio
 	accessKeyId = ""
 	secretAccessKey = ""
 
-	accessKeyIdSecretName := sessionId + constant.PlainAlibabaKeyIdSuffix
+	accessKeyIdSecretName := sessionId + domain_alibaba.PlainAlibabaKeyIdSuffix
 	accessKeyId, err = alibabaCredentialsApplier.Keychain.GetSecret(accessKeyIdSecretName)
 	if err != nil {
 		return accessKeyId, secretAccessKey, http_error.NewUnprocessableEntityError(err)
 	}
 
-	secretAccessKeySecretName := sessionId + constant.PlainAlibabaSecretAccessKeySuffix
+	secretAccessKeySecretName := sessionId + domain_alibaba.PlainAlibabaSecretAccessKeySuffix
 	secretAccessKey, err = alibabaCredentialsApplier.Keychain.GetSecret(secretAccessKeySecretName)
 	if err != nil {
 		return accessKeyId, secretAccessKey, http_error.NewUnprocessableEntityError(err)
@@ -193,19 +195,19 @@ func (alibabaCredentialsApplier *AlibabaCredentialsApplier) getFederatedCreds(se
 	accessKeyId = ""
 	secretAccessKey = ""
 
-	accessKeyIdSecretName := sessionId + constant.FederatedAlibabaKeyIdSuffix
+	accessKeyIdSecretName := sessionId + domain_alibaba.FederatedAlibabaKeyIdSuffix
 	accessKeyId, err = alibabaCredentialsApplier.Keychain.GetSecret(accessKeyIdSecretName)
 	if err != nil {
 		return accessKeyId, secretAccessKey, stsToken, http_error.NewUnprocessableEntityError(err)
 	}
 
-	secretAccessKeySecretName := sessionId + constant.FederatedAlibabaSecretAccessKeySuffix
+	secretAccessKeySecretName := sessionId + domain_alibaba.FederatedAlibabaSecretAccessKeySuffix
 	secretAccessKey, err = alibabaCredentialsApplier.Keychain.GetSecret(secretAccessKeySecretName)
 	if err != nil {
 		return accessKeyId, secretAccessKey, stsToken, http_error.NewUnprocessableEntityError(err)
 	}
 
-	stsTokenName := sessionId + constant.FederatedAlibabaStsTokenSuffix
+	stsTokenName := sessionId + domain_alibaba.FederatedAlibabaStsTokenSuffix
 	stsToken, err = alibabaCredentialsApplier.Keychain.GetSecret(stsTokenName)
 	if err != nil {
 		return accessKeyId, secretAccessKey, stsToken, http_error.NewUnprocessableEntityError(err)
@@ -218,19 +220,19 @@ func (alibabaCredentialsApplier *AlibabaCredentialsApplier) getTrustedCreds(sess
 	accessKeyId = ""
 	secretAccessKey = ""
 
-	accessKeyIdSecretName := sessionId + constant.TrustedAlibabaKeyIdSuffix
+	accessKeyIdSecretName := sessionId + domain_alibaba.TrustedAlibabaKeyIdSuffix
 	accessKeyId, err = alibabaCredentialsApplier.Keychain.GetSecret(accessKeyIdSecretName)
 	if err != nil {
 		return accessKeyId, secretAccessKey, stsToken, http_error.NewUnprocessableEntityError(err)
 	}
 
-	secretAccessKeySecretName := sessionId + constant.TrustedAlibabaSecretAccessKeySuffix
+	secretAccessKeySecretName := sessionId + domain_alibaba.TrustedAlibabaSecretAccessKeySuffix
 	secretAccessKey, err = alibabaCredentialsApplier.Keychain.GetSecret(secretAccessKeySecretName)
 	if err != nil {
 		return accessKeyId, secretAccessKey, stsToken, http_error.NewUnprocessableEntityError(err)
 	}
 
-	stsTokenName := sessionId + constant.TrustedAlibabaStsTokenSuffix
+	stsTokenName := sessionId + domain_alibaba.TrustedAlibabaStsTokenSuffix
 	stsToken, err = alibabaCredentialsApplier.Keychain.GetSecret(stsTokenName)
 	if err != nil {
 		return accessKeyId, secretAccessKey, stsToken, http_error.NewUnprocessableEntityError(err)
@@ -256,7 +258,7 @@ func (alibabaCredentialsApplier *AlibabaCredentialsApplier) deleteConfig() error
 		return err
 	}
 
-	credentialsFilePath := homeDir + "/" + constant.AlibabaCredentialsFilePath
+	credentialsFilePath := homeDir + "/" + domain_alibaba.AlibabaCredentialsFilePath
 	err = os.Remove(credentialsFilePath)
 	if err != nil {
 		return err

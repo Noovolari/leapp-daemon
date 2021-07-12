@@ -1,11 +1,16 @@
 package use_case
 
 import (
-	"leapp_daemon/domain/configuration"
+	"leapp_daemon/adapter/aws"
+	"leapp_daemon/domain"
+	"leapp_daemon/domain/domain_alibaba/alibaba_ram_role_chained"
+	"leapp_daemon/domain/domain_alibaba/alibaba_ram_role_federated"
+	"leapp_daemon/domain/domain_alibaba/alibaba_ram_user"
+	"leapp_daemon/domain/domain_aws/aws_iam_user"
+	"leapp_daemon/domain/domain_gcp/gcp_iam_user_account_oauth"
 	"leapp_daemon/domain/named_profile"
-	"leapp_daemon/domain/session"
-	"time"
 
+	"github.com/aws/aws-sdk-go/service/sts"
 	"golang.org/x/oauth2"
 )
 
@@ -26,6 +31,10 @@ type Keychain interface {
 	SetSecret(secret string, label string) error
 }
 
+type StsApi interface {
+	GenerateNewSessionToken(accessKeyId string, secretKey string, region string, mfaDevice string, mfaToken *string) (*sts.Credentials, error)
+}
+
 type GcpApi interface {
 	GetOauthUrl() (string, error)
 	GetOauthToken(authCode string) (*oauth2.Token, error)
@@ -33,9 +42,13 @@ type GcpApi interface {
 }
 
 type ConfigurationRepository interface {
-	CreateConfiguration(configuration.Configuration) error
-	GetConfiguration() (configuration.Configuration, error)
-	UpdateConfiguration(configuration.Configuration) error
+	CreateConfiguration(domain.Configuration) error
+	GetConfiguration() (domain.Configuration, error)
+	UpdateConfiguration(domain.Configuration) error
+}
+
+type AwsConfigurationRepository interface {
+	WriteCredentials(credentials []aws.AwsTempCredentials) error
 }
 
 type GcpConfigurationRepository interface {
@@ -66,21 +79,22 @@ type NamedProfilesActionsInterface interface {
 }
 
 type AwsIamUserSessionsFacade interface {
-	Subscribe(observer session.AwsIamUserSessionsObserver)
-	GetSessions() []session.AwsIamUserSession
-	SetSessions(sessions []session.AwsIamUserSession)
-	AddSession(session session.AwsIamUserSession) error
-	RemoveSession(id string) error
-	GetSessionById(id string) (*session.AwsIamUserSession, error)
-	SetSessionStatusToPending(id string) error
-	SetSessionStatusToActive(id string) error
-	SetSessionTokenExpiration(sessionId string, sessionTokenExpiration time.Time) error
+	GetSessions() []aws_iam_user.AwsIamUserSession
+	GetSessionById(sessionId string) (aws_iam_user.AwsIamUserSession, error)
+	AddSession(session aws_iam_user.AwsIamUserSession) error
+	RemoveSession(sessionId string) error
+	EditSession(sessionId string, sessionName string, region string, accountNumber string, userName string,
+		mfaDevice string, namedProfileId string) error
+	SetSessionTokenExpiration(sessionId string, sessionTokenExpiration string) error
+	StartingSession(sessionId string) error
+	StartSession(sessionId string, startTime string) error
+	StopSession(sessionId string, stopTime string) error
 }
 
 type GcpIamUserAccountOauthSessionsFacade interface {
-	GetSessions() []session.GcpIamUserAccountOauthSession
-	GetSessionById(sessionId string) (session.GcpIamUserAccountOauthSession, error)
-	AddSession(session session.GcpIamUserAccountOauthSession) error
+	GetSessions() []gcp_iam_user_account_oauth.GcpIamUserAccountOauthSession
+	GetSessionById(sessionId string) (gcp_iam_user_account_oauth.GcpIamUserAccountOauthSession, error)
+	AddSession(session gcp_iam_user_account_oauth.GcpIamUserAccountOauthSession) error
 	StartSession(sessionId string, startTime string) error
 	StopSession(sessionId string, stopTime string) error
 	RemoveSession(sessionId string) error
@@ -88,39 +102,39 @@ type GcpIamUserAccountOauthSessionsFacade interface {
 }
 
 type AlibabaRamUserSessionsFacade interface {
-	Subscribe(observer session.AlibabaRamUserSessionsObserver)
-	GetSessions() []session.AlibabaRamUserSession
-	SetSessions(sessions []session.AlibabaRamUserSession) error
-	AddSession(session session.AlibabaRamUserSession) error
+	Subscribe(observer alibaba_ram_user.AlibabaRamUserSessionsObserver)
+	GetSessions() []alibaba_ram_user.AlibabaRamUserSession
+	SetSessions(sessions []alibaba_ram_user.AlibabaRamUserSession) error
+	AddSession(session alibaba_ram_user.AlibabaRamUserSession) error
 	RemoveSession(id string) error
-	UpdateSession(session session.AlibabaRamUserSession) error
-	GetSessionById(id string) (*session.AlibabaRamUserSession, error)
+	UpdateSession(session alibaba_ram_user.AlibabaRamUserSession) error
+	GetSessionById(id string) (*alibaba_ram_user.AlibabaRamUserSession, error)
 	SetSessionStatusToPending(id string) error
 	SetSessionStatusToActive(id string) error
 	SetSessionStatusToInactive(id string) error
 }
 
 type AlibabaRamRoleFederatedSessionsFacade interface {
-	Subscribe(observer session.AlibabaRamRoleFederatedSessionsObserver)
-	GetSessions() []session.AlibabaRamRoleFederatedSession
-	SetSessions(sessions []session.AlibabaRamRoleFederatedSession) error
-	AddSession(session session.AlibabaRamRoleFederatedSession) error
+	Subscribe(observer alibaba_ram_role_federated.AlibabaRamRoleFederatedSessionsObserver)
+	GetSessions() []alibaba_ram_role_federated.AlibabaRamRoleFederatedSession
+	SetSessions(sessions []alibaba_ram_role_federated.AlibabaRamRoleFederatedSession) error
+	AddSession(session alibaba_ram_role_federated.AlibabaRamRoleFederatedSession) error
 	RemoveSession(id string) error
-	UpdateSession(session session.AlibabaRamRoleFederatedSession) error
-	GetSessionById(id string) (*session.AlibabaRamRoleFederatedSession, error)
+	UpdateSession(session alibaba_ram_role_federated.AlibabaRamRoleFederatedSession) error
+	GetSessionById(id string) (*alibaba_ram_role_federated.AlibabaRamRoleFederatedSession, error)
 	SetSessionStatusToPending(id string) error
 	SetSessionStatusToActive(id string) error
 	SetSessionStatusToInactive(id string) error
 }
 
 type AlibabaRamRoleChainedSessionsFacade interface {
-	Subscribe(observer session.AlibabaRamRoleChainedSessionsObserver)
-	GetSessions() []session.AlibabaRamRoleChainedSession
-	SetSessions(sessions []session.AlibabaRamRoleChainedSession) error
-	AddSession(session session.AlibabaRamRoleChainedSession) error
+	Subscribe(observer alibaba_ram_role_chained.AlibabaRamRoleChainedSessionsObserver)
+	GetSessions() []alibaba_ram_role_chained.AlibabaRamRoleChainedSession
+	SetSessions(sessions []alibaba_ram_role_chained.AlibabaRamRoleChainedSession) error
+	AddSession(session alibaba_ram_role_chained.AlibabaRamRoleChainedSession) error
 	RemoveSession(id string) error
-	GetSessionById(id string) (*session.AlibabaRamRoleChainedSession, error)
-	SetSessionById(newSession *session.AlibabaRamRoleChainedSession) error
+	GetSessionById(id string) (*alibaba_ram_role_chained.AlibabaRamRoleChainedSession, error)
+	SetSessionById(newSession *alibaba_ram_role_chained.AlibabaRamRoleChainedSession) error
 	SetSessionStatusToPending(id string) error
 	SetSessionStatusToActive(id string) error
 	SetSessionStatusToInactive(id string) error

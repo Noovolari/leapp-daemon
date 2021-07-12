@@ -1,7 +1,7 @@
 package providers
 
 import (
-	"leapp_daemon/interface/gcp"
+	"leapp_daemon/adapter/gcp"
 	"sync"
 )
 

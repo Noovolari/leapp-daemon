@@ -2,9 +2,9 @@ package use_case
 
 import (
 	"fmt"
-	"leapp_daemon/domain/configuration"
-	session2 "leapp_daemon/domain/session"
-	http_error2 "leapp_daemon/infrastructure/http/http_error"
+	"leapp_daemon/domain"
+	"leapp_daemon/domain/domain_aws/aws_iam_role_chained"
+	"leapp_daemon/infrastructure/http/http_error"
 )
 
 func CreateAwsIamRoleChainedSession(parentId string, accountName string, accountNumber string, roleName string, region string) error {
@@ -26,17 +26,17 @@ func CreateAwsIamRoleChainedSession(parentId string, accountName string, account
 
 		for _, sess := range sessions {
 			account := sess.Account
-			if sess.ParentId == parentId && account.AccountNumber == accountNumber && account.Role.Name == roleName {
-				err := http_error2.NewConflictError(fmt.Errorf("a session with the same parent, account number and role name already exists"))
+			if sess.ParentId == parentId && account.AccountNumber == accountNumber && account.Role.SessionName == roleName {
+				err := http_error.NewConflictError(fmt.Errorf("a session with the same parent, account number and role name already exists"))
 				return err
 			}
 		}
 
 		trustedAwsAccount := session2.AwsIamRoleChainedAccount{
 			AccountNumber: accountNumber,
-			Name:          accountName,
+			SessionName:          accountName,
 			Role: &session2.AwsIamRole{
-				Name: roleName,
+				SessionName: roleName,
 				Arn:  fmt.Sprintf("arn:aws:iam::%s:role/%s", accountNumber, roleName),
 			},
 			Region: region,
@@ -68,7 +68,7 @@ func CreateAwsIamRoleChainedSession(parentId string, accountName string, account
 	return nil
 }
 
-func GetAwsIamRoleChainedSession(id string) (*session2.AwsIamRoleChainedSession, error) {
+func GetAwsIamRoleChainedSession(id string) (*aws_iam_role_chained.AwsIamRoleChainedSession, error) {
 	/*
 		var sess *session2.AwsIamRoleChainedSession
 
@@ -89,7 +89,7 @@ func GetAwsIamRoleChainedSession(id string) (*session2.AwsIamRoleChainedSession,
 		}
 	*/
 
-	return nil, http_error2.NewNotFoundError(fmt.Errorf("no session found with id %s", id))
+	return nil, http_error.NewNotFoundError(fmt.Errorf("no session found with id %s", id))
 }
 
 func UpdateAwsIamRoleChainedSession(id string, parentId string, accountName string, accountNumber string, roleName string, region string) error {
@@ -122,17 +122,17 @@ func UpdateAwsIamRoleChainedSession(id string, parentId string, accountName stri
 				}
 
 				if accountName != "" {
-					s.Account.Name = accountName
+					s.Account.SessionName = accountName
 				}
 				if roleName != "" {
-					s.Account.Role.Name = roleName
+					s.Account.Role.SessionName = roleName
 				}
 				if region != "" {
 					s.Account.Region = region
 				}
 
 				if accountNumber != "" || roleName != "" {
-					s.Account.Role.Arn = fmt.Sprintf("arn:aws:iam::%s:role/%s", s.Account.AccountNumber, s.Account.Role.Name)
+					s.Account.Role.Arn = fmt.Sprintf("arn:aws:iam::%s:role/%s", s.Account.AccountNumber, s.Account.Role.SessionName)
 				}
 
 				break
@@ -140,7 +140,7 @@ func UpdateAwsIamRoleChainedSession(id string, parentId string, accountName stri
 		}
 
 		if !foundId {
-			return http_error2.NewNotFoundError(fmt.Errorf("no session found with id %s", id))
+			return http_error.NewNotFoundError(fmt.Errorf("no session found with id %s", id))
 		}
 
 		err = config.Update()
@@ -174,7 +174,7 @@ func DeleteAwsIamRoleChainedSession(id string) error {
 		}
 
 		if found == false {
-			err = http_error2.NewNotFoundError(fmt.Errorf("trusted aws session with id %s not found", id))
+			err = http_error.NewNotFoundError(fmt.Errorf("trusted aws session with id %s not found", id))
 			return err
 		}
 
@@ -192,7 +192,7 @@ func DeleteAwsIamRoleChainedSession(id string) error {
 	return nil
 }
 
-func CheckParentExist(parentId string, config *configuration.Configuration) error {
+func CheckParentExist(parentId string, config *domain.Configuration) error {
 	/*
 		foundId := false
 		plains, err := config.GetSessions()
@@ -216,7 +216,7 @@ func CheckParentExist(parentId string, config *configuration.Configuration) erro
 		}
 
 		if !foundId {
-			err := http_error2.NewNotFoundError(fmt.Errorf("no plain or federated session with id %s found", parentId))
+			err := http_error.NewNotFoundError(fmt.Errorf("no plain or federated session with id %s found", parentId))
 			return err
 		}
 	*/

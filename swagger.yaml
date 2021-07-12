@@ -33,7 +33,7 @@ definitions:
     - accountNumber
     - region
     type: object
-    x-go-package: leapp_daemon/interface/http/controller/dto/request_dto/plain_aws_session_dto
+    x-go-package: leapp_daemon/adapter/http/controller/dto/request_dto/plain_aws_session_dto
   CreateAwsIamRoleChainedSessionRequestDto:
     properties:
       accountName:
@@ -64,7 +64,7 @@ definitions:
     - accountNumber
     - roleName
     type: object
-    x-go-package: leapp_daemon/interface/http/controller/dto/request_dto/trusted_aws_session_dto
+    x-go-package: leapp_daemon/adapter/http/controller/dto/request_dto/trusted_aws_session_dto
   EditAwsIamRoleChainedSessionRequestDto:
     properties:
       accountName:
@@ -90,7 +90,7 @@ definitions:
         type: string
         x-go-name: RoleName
     type: object
-    x-go-package: leapp_daemon/interface/http/controller/dto/request_dto/trusted_aws_session_dto
+    x-go-package: leapp_daemon/adapter/http/controller/dto/request_dto/trusted_aws_session_dto
   GetAwsIamUserSessionResponse:
     properties:
       Data:
@@ -98,13 +98,13 @@ definitions:
       Message:
         type: string
     type: object
-    x-go-package: leapp_daemon/interface/http/controller/dto/response_dto/plain_aws_session_dto
+    x-go-package: leapp_daemon/adapter/http/controller/dto/response_dto/plain_aws_session_dto
   MessageResponse:
     properties:
       Message:
         type: string
     type: object
-    x-go-package: leapp_daemon/interface/http/controller/dto/response_dto
+    x-go-package: leapp_daemon/adapter/http/controller/dto/response_dto
   PlainAwsAccount:
     properties:
       MfaDevice:
@@ -198,13 +198,13 @@ definitions:
         type: string
         x-go-name: User
     type: object
-    x-go-package: leapp_daemon/interface/http/controller/dto/request_dto/plain_aws_session_dto
+    x-go-package: leapp_daemon/adapter/http/controller/dto/request_dto/plain_aws_session_dto
   UpdateAwsIamUserSessionUriRequest:
     properties:
       Id:
         type: string
     type: object
-    x-go-package: leapp_daemon/interface/http/controller/dto/request_dto/plain_aws_session_dto
+    x-go-package: leapp_daemon/adapter/http/controller/dto/request_dto/plain_aws_session_dto
   getAwsIamRoleChainedSessionResponse:
     properties:
       Data:
@@ -212,7 +212,7 @@ definitions:
       Message:
         type: string
     type: object
-    x-go-package: leapp_daemon/interface/http/controller
+    x-go-package: leapp_daemon/adapter/http/controller
 paths:
   /session/plain:
     post:

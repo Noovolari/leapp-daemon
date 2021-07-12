@@ -2,10 +2,10 @@ package use_case
 
 import (
 	"fmt"
-	"leapp_daemon/domain/constant"
-	"leapp_daemon/domain/region"
-
-	"leapp_daemon/domain/session"
+	"leapp_daemon/domain/domain_alibaba"
+	"leapp_daemon/domain/domain_alibaba/alibaba_ram_role_chained"
+	"leapp_daemon/domain/domain_alibaba/alibaba_ram_role_federated"
+	"leapp_daemon/domain/domain_alibaba/alibaba_ram_user"
 	"leapp_daemon/infrastructure/http/http_error"
 
 	"github.com/aliyun/alibaba-cloud-sdk-go/services/sts"
@@ -40,10 +40,10 @@ func (actions *AlibabaRamRoleChainedSessionActions) Create(parentId string, acco
 		}
 	}
 
-	alibabaRamRoleChainedAccount := session.AlibabaRamRoleChainedAccount{
+	alibabaRamRoleChainedAccount := alibaba_ram_role_chained.AlibabaRamRoleChainedAccount{
 		AccountNumber: accountNumber,
 		Name:          accountName,
-		Role: &session.AlibabaRamRole{
+		Role: &alibaba_ram_role_federated.AlibabaRamRole{
 			Name: roleName,
 			Arn:  fmt.Sprintf("acs:ram::%s:role/%s", accountNumber, roleName),
 		},
@@ -51,9 +51,9 @@ func (actions *AlibabaRamRoleChainedSessionActions) Create(parentId string, acco
 		NamedProfileId: namedProfile.Id,
 	}
 
-	sess := session.AlibabaRamRoleChainedSession{
+	sess := alibaba_ram_role_chained.AlibabaRamRoleChainedSession{
 		Id:         actions.Environment.GenerateUuid(),
-		Status:     session.NotActive,
+		Status:     domain_alibaba.NotActive,
 		StartTime:  "",
 		ParentId:   parentSession.GetId(),
 		ParentType: parentSession.GetTypeString(),
@@ -65,7 +65,7 @@ func (actions *AlibabaRamRoleChainedSessionActions) Create(parentId string, acco
 	return nil
 }
 
-func (actions *AlibabaRamRoleChainedSessionActions) Get(id string) (*session.AlibabaRamRoleChainedSession, error) {
+func (actions *AlibabaRamRoleChainedSessionActions) Get(id string) (*alibaba_ram_role_chained.AlibabaRamRoleChainedSession, error) {
 	return actions.AlibabaRamRoleChainedSessionsFacade.GetSessionById(id)
 }
 
@@ -75,7 +75,7 @@ func (actions *AlibabaRamRoleChainedSessionActions) Update(id string, parentId s
 		return err
 	}
 
-	isRegionValid := region.IsAlibabaRegionValid(regionName)
+	isRegionValid := domain_alibaba.IsAlibabaRegionValid(regionName)
 	if !isRegionValid {
 		return http_error.NewUnprocessableEntityError(fmt.Errorf("Region " + regionName + " not valid"))
 	}
@@ -85,10 +85,10 @@ func (actions *AlibabaRamRoleChainedSessionActions) Update(id string, parentId s
 		return err //TODO: return right error
 	}
 
-	alibabaRamRoleChainedAccount := session.AlibabaRamRoleChainedAccount{
+	alibabaRamRoleChainedAccount := alibaba_ram_role_chained.AlibabaRamRoleChainedAccount{
 		AccountNumber: accountNumber,
 		Name:          accountName,
-		Role: &session.AlibabaRamRole{
+		Role: &alibaba_ram_role_federated.AlibabaRamRole{
 			Name: roleName,
 			Arn:  fmt.Sprintf("acs:ram::%s:role/%s", accountNumber, roleName),
 		},
@@ -96,9 +96,9 @@ func (actions *AlibabaRamRoleChainedSessionActions) Update(id string, parentId s
 		NamedProfileId: np.Id,
 	}
 
-	sess := session.AlibabaRamRoleChainedSession{
+	sess := alibaba_ram_role_chained.AlibabaRamRoleChainedSession{
 		Id:     id,
-		Status: session.NotActive,
+		Status: domain_alibaba.NotActive,
 		//StartTime string
 		ParentId:   parentId,
 		ParentType: parentSession.GetTypeString(),
@@ -119,7 +119,7 @@ func (actions *AlibabaRamRoleChainedSessionActions) Delete(id string) error {
 		return http_error.NewInternalServerError(err)
 	}
 
-	if sess.Status != session.NotActive {
+	if sess.Status != domain_alibaba.NotActive {
 		err = actions.Stop(id)
 		if err != nil {
 			return err
@@ -131,17 +131,17 @@ func (actions *AlibabaRamRoleChainedSessionActions) Delete(id string) error {
 		return http_error.NewInternalServerError(err)
 	}
 
-	err = actions.Keychain.DeleteSecret(id + constant.TrustedAlibabaKeyIdSuffix)
+	err = actions.Keychain.DeleteSecret(id + domain_alibaba.TrustedAlibabaKeyIdSuffix)
 	if err != nil {
 		return err
 	}
 
-	err = actions.Keychain.DeleteSecret(id + constant.TrustedAlibabaSecretAccessKeySuffix)
+	err = actions.Keychain.DeleteSecret(id + domain_alibaba.TrustedAlibabaSecretAccessKeySuffix)
 	if err != nil {
 		return err
 	}
 
-	err = actions.Keychain.DeleteSecret(id + constant.TrustedAlibabaStsTokenSuffix)
+	err = actions.Keychain.DeleteSecret(id + domain_alibaba.TrustedAlibabaStsTokenSuffix)
 	if err != nil {
 		return err
 	}
@@ -195,25 +195,25 @@ func (actions *AlibabaRamRoleChainedSessionActions) Start(sessionId string) erro
 	}
 
 	// saves credentials into keychain
-	err = actions.Keychain.SetSecret(response.Credentials.AccessKeyId, sess.Id+constant.TrustedAlibabaKeyIdSuffix)
+	err = actions.Keychain.SetSecret(response.Credentials.AccessKeyId, sess.Id+domain_alibaba.TrustedAlibabaKeyIdSuffix)
 	if err != nil {
 		return http_error.NewInternalServerError(err)
 	}
-	err = actions.Keychain.SetSecret(response.Credentials.AccessKeySecret, sess.Id+constant.TrustedAlibabaSecretAccessKeySuffix)
+	err = actions.Keychain.SetSecret(response.Credentials.AccessKeySecret, sess.Id+domain_alibaba.TrustedAlibabaSecretAccessKeySuffix)
 	if err != nil {
 		return http_error.NewInternalServerError(err)
 	}
-	err = actions.Keychain.SetSecret(response.Credentials.SecurityToken, sess.Id+constant.TrustedAlibabaStsTokenSuffix)
+	err = actions.Keychain.SetSecret(response.Credentials.SecurityToken, sess.Id+domain_alibaba.TrustedAlibabaStsTokenSuffix)
 	if err != nil {
 		return http_error.NewInternalServerError(err)
 	}
 
-	err = session.GetAlibabaRamRoleChainedSessionsFacade().SetSessionStatusToPending(sessionId)
+	err = alibaba_ram_role_chained.GetAlibabaRamRoleChainedSessionsFacade().SetSessionStatusToPending(sessionId)
 	if err != nil {
 		return err
 	}
 
-	err = session.GetAlibabaRamRoleChainedSessionsFacade().SetSessionStatusToActive(sessionId)
+	err = alibaba_ram_role_chained.GetAlibabaRamRoleChainedSessionsFacade().SetSessionStatusToActive(sessionId)
 	if err != nil {
 		return err
 	}
@@ -222,7 +222,7 @@ func (actions *AlibabaRamRoleChainedSessionActions) Start(sessionId string) erro
 }
 
 func (actions *AlibabaRamRoleChainedSessionActions) Stop(sessionId string) error {
-	err := session.GetAlibabaRamRoleChainedSessionsFacade().SetSessionStatusToInactive(sessionId)
+	err := alibaba_ram_role_chained.GetAlibabaRamRoleChainedSessionsFacade().SetSessionStatusToInactive(sessionId)
 	if err != nil {
 		return err
 	}
@@ -230,10 +230,10 @@ func (actions *AlibabaRamRoleChainedSessionActions) Stop(sessionId string) error
 	return nil
 }
 
-func GetAlibabaParentById(parentId string) (session.AlibabaParentSession, error) {
-	plain, err := session.GetAlibabaRamUserSessionsFacade().GetSessionById(parentId)
+func GetAlibabaParentById(parentId string) (alibaba_ram_role_chained.AlibabaParentSession, error) {
+	plain, err := alibaba_ram_user.GetAlibabaRamUserSessionsFacade().GetSessionById(parentId)
 	if err != nil {
-		federated, err := session.GetAlibabaRamRoleFederatedSessionsFacade().GetSessionById(parentId)
+		federated, err := alibaba_ram_role_federated.GetAlibabaRamRoleFederatedSessionsFacade().GetSessionById(parentId)
 		if err != nil {
 			return nil, http_error.NewNotFoundError(fmt.Errorf("no user or role session with id %s found", parentId))
 		}

@@ -36,7 +36,7 @@ func (chainMock *KeychainMock) SetSecret(secret string, label string) error {
 func (chainMock *KeychainMock) GetSecret(label string) (string, error) {
 	chainMock.calls = append(chainMock.calls, fmt.Sprintf("GetSecret(%v)", label))
 	if chainMock.ExpErrorOnGetSecret {
-		return "", http_error.NewUnprocessableEntityError(nil)
+		return "", http_error.NewUnprocessableEntityError(errors.New("unable to get secret"))
 	}
 
 	return chainMock.ExpGetSecret, nil
@@ -45,7 +45,7 @@ func (chainMock *KeychainMock) GetSecret(label string) (string, error) {
 func (chainMock *KeychainMock) DeleteSecret(label string) error {
 	chainMock.calls = append(chainMock.calls, fmt.Sprintf("DeleteSecret(%v)", label))
 	if chainMock.ExpErrorOnDeleteSecret {
-		return http_error.NewNotFoundError(nil)
+		return http_error.NewNotFoundError(errors.New("unable to delete secret"))
 	}
 
 	return nil
@@ -54,7 +54,7 @@ func (chainMock *KeychainMock) DeleteSecret(label string) error {
 func (chainMock *KeychainMock) DoesSecretExist(label string) (bool, error) {
 	chainMock.calls = append(chainMock.calls, fmt.Sprintf("DoesSecretExist(%v)", label))
 	if chainMock.ExpErrorOnSecretExist {
-		return false, http_error.NewUnprocessableEntityError(nil)
+		return false, http_error.NewUnprocessableEntityError(errors.New("unable to check secret existence"))
 	}
 
 	return chainMock.ExpSecretExist, nil

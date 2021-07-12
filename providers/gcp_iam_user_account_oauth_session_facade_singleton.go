@@ -1,19 +1,19 @@
 package providers
 
 import (
-	"leapp_daemon/domain/session"
+	"leapp_daemon/domain/domain_gcp/gcp_iam_user_account_oauth"
 	"sync"
 )
 
-var gcpSessionsFacadeSingleton *session.GcpIamUserAccountOauthSessionsFacade
+var gcpSessionsFacadeSingleton *gcp_iam_user_account_oauth.GcpIamUserAccountOauthSessionsFacade
 var gcpSessionsFacadeLock sync.Mutex
 
-func (prov *Providers) GetGcpIamUserAccountOauthSessionFacade() *session.GcpIamUserAccountOauthSessionsFacade {
+func (prov *Providers) GetGcpIamUserAccountOauthSessionFacade() *gcp_iam_user_account_oauth.GcpIamUserAccountOauthSessionsFacade {
 	gcpSessionsFacadeLock.Lock()
 	defer gcpSessionsFacadeLock.Unlock()
 
 	if gcpSessionsFacadeSingleton == nil {
-		gcpSessionsFacadeSingleton = session.NewGcpIamUserAccountOauthSessionsFacade()
+		gcpSessionsFacadeSingleton = gcp_iam_user_account_oauth.NewGcpIamUserAccountOauthSessionsFacade()
 	}
 	return gcpSessionsFacadeSingleton
 }

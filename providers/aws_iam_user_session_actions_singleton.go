@@ -14,9 +14,10 @@ func (prov *Providers) GetAwsIamUserSessionActions() *use_case.AwsIamUserSession
 
 	if awsIamUserSessionActionsSingleton == nil {
 		awsIamUserSessionActionsSingleton = &use_case.AwsIamUserSessionActions{
-			NamedProfilesActions:     prov.GetNamedProfilesActions(),
 			Environment:              prov.GetEnvironment(),
 			Keychain:                 prov.GetKeychain(),
+			StsApi:                   prov.GetStsApi(),
+			NamedProfilesActions:     prov.GetNamedProfilesActions(),
 			AwsIamUserSessionsFacade: prov.GetAwsIamUserSessionFacade(),
 		}
 	}

@@ -36,3 +36,7 @@ func (env *Environment) GenerateUuid() string {
 func (env *Environment) GetTime() string {
 	return time.Now().Format(time.RFC3339)
 }
+
+func (env *Environment) GetFormattedTime(format string) string {
+	return time.Now().Format(format)
+}

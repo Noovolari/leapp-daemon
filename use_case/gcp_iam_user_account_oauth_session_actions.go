@@ -1,7 +1,8 @@
 package use_case
 
 import (
-	"leapp_daemon/domain/session"
+	"leapp_daemon/domain/domain_gcp"
+	"leapp_daemon/domain/domain_gcp/gcp_iam_user_account_oauth"
 	"leapp_daemon/infrastructure/http/http_error"
 )
 
@@ -12,7 +13,7 @@ type GcpIamUserAccountOauthSessionActions struct {
 	GcpIamUserAccountOauthSessionFacade GcpIamUserAccountOauthSessionsFacade
 }
 
-func (actions *GcpIamUserAccountOauthSessionActions) GetSession(sessionId string) (session.GcpIamUserAccountOauthSession, error) {
+func (actions *GcpIamUserAccountOauthSessionActions) GetSession(sessionId string) (gcp_iam_user_account_oauth.GcpIamUserAccountOauthSession, error) {
 	return actions.GcpIamUserAccountOauthSessionFacade.GetSessionById(sessionId)
 }
 
@@ -25,13 +26,13 @@ func (actions *GcpIamUserAccountOauthSessionActions) CreateSession(name string, 
 	newSessionId := actions.Environment.GenerateUuid()
 	credentialsLabel := newSessionId + "-gcp-iam-user-account-oauth-session-credentials"
 
-	gcpSession := session.GcpIamUserAccountOauthSession{
+	gcpSession := gcp_iam_user_account_oauth.GcpIamUserAccountOauthSession{
 		Id:               newSessionId,
 		Name:             name,
 		AccountId:        accountId,
 		ProjectName:      projectName,
 		CredentialsLabel: credentialsLabel,
-		Status:           session.NotActive,
+		Status:           domain_gcp.NotActive,
 		StartTime:        "",
 		LastStopTime:     "",
 	}
@@ -57,7 +58,7 @@ func (actions *GcpIamUserAccountOauthSessionActions) StartSession(sessionId stri
 	currentTime := actions.Environment.GetTime()
 
 	for _, currentSession := range facade.GetSessions() {
-		if currentSession.Status != session.NotActive && currentSession.Id != sessionId {
+		if currentSession.Status != domain_gcp.NotActive && currentSession.Id != sessionId {
 			err := facade.StopSession(currentSession.Id, currentTime)
 			if err != nil {
 				return err

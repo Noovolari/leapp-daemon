@@ -8,6 +8,7 @@ type EnvironmentMock struct {
 	calls                 []string
 	ExpUuid               string
 	ExpTime               string
+	ExpFormattedTime      string
 	ExpIsCommandAvailable bool
 	ExpIsWindows          bool
 }
@@ -41,5 +42,11 @@ func (env *EnvironmentMock) GenerateUuid() string {
 }
 
 func (env *EnvironmentMock) GetTime() string {
+	env.calls = append(env.calls, "GetTime()")
 	return env.ExpTime
+}
+
+func (env *EnvironmentMock) GetFormattedTime(format string) string {
+	env.calls = append(env.calls, fmt.Sprintf("GetFormattedTime(%v)", format))
+	return env.ExpFormattedTime
 }

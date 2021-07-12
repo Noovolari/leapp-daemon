@@ -2,9 +2,8 @@ package use_case
 
 import (
 	"fmt"
-	"leapp_daemon/domain/constant"
-	"leapp_daemon/domain/region"
-	"leapp_daemon/domain/session"
+	"leapp_daemon/domain/domain_alibaba"
+	"leapp_daemon/domain/domain_alibaba/alibaba_ram_role_federated"
 	"leapp_daemon/infrastructure/http/http_error"
 
 	"github.com/aliyun/alibaba-cloud-sdk-go/services/sts"
@@ -46,17 +45,17 @@ func (actions *AlibabaRamRoleFederatedSessionActions) Create(name string, roleNa
 		return err
 	}
 
-	isRegionValid := region.IsAlibabaRegionValid(regionName)
+	isRegionValid := domain_alibaba.IsAlibabaRegionValid(regionName)
 	if !isRegionValid {
 		return http_error.NewUnprocessableEntityError(fmt.Errorf("Region " + regionName + " not valid"))
 	}
 
-	alibabaRole := session.AlibabaRamRole{
+	alibabaRole := alibaba_ram_role_federated.AlibabaRamRole{
 		Name: roleName,
 		Arn:  roleArn,
 	}
 
-	federatedAlibabaAccount := session.AlibabaRamRoleFederatedAccount{
+	federatedAlibabaAccount := alibaba_ram_role_federated.AlibabaRamRoleFederatedAccount{
 		Name:           name,
 		Role:           &alibabaRole,
 		IdpArn:         idpArn,
@@ -65,9 +64,9 @@ func (actions *AlibabaRamRoleFederatedSessionActions) Create(name string, roleNa
 		NamedProfileId: namedProfile.Id,
 	}
 
-	sess := session.AlibabaRamRoleFederatedSession{
+	sess := alibaba_ram_role_federated.AlibabaRamRoleFederatedSession{
 		Id:      actions.Environment.GenerateUuid(),
-		Status:  session.NotActive,
+		Status:  domain_alibaba.NotActive,
 		Account: &federatedAlibabaAccount,
 	}
 
@@ -81,17 +80,17 @@ func (actions *AlibabaRamRoleFederatedSessionActions) Create(name string, roleNa
 		return err
 	}
 
-	err = actions.Keychain.SetSecret(alibabaAccessKeyId, sess.Id+constant.FederatedAlibabaKeyIdSuffix)
+	err = actions.Keychain.SetSecret(alibabaAccessKeyId, sess.Id+domain_alibaba.FederatedAlibabaKeyIdSuffix)
 	if err != nil {
 		return http_error.NewInternalServerError(err)
 	}
 
-	err = actions.Keychain.SetSecret(alibabaSecretAccessKey, sess.Id+constant.FederatedAlibabaSecretAccessKeySuffix)
+	err = actions.Keychain.SetSecret(alibabaSecretAccessKey, sess.Id+domain_alibaba.FederatedAlibabaSecretAccessKeySuffix)
 	if err != nil {
 		return http_error.NewInternalServerError(err)
 	}
 
-	err = actions.Keychain.SetSecret(alibabaStsToken, sess.Id+constant.FederatedAlibabaStsTokenSuffix)
+	err = actions.Keychain.SetSecret(alibabaStsToken, sess.Id+domain_alibaba.FederatedAlibabaStsTokenSuffix)
 	if err != nil {
 		return http_error.NewInternalServerError(err)
 	}
@@ -99,14 +98,14 @@ func (actions *AlibabaRamRoleFederatedSessionActions) Create(name string, roleNa
 	return nil
 }
 
-func (actions *AlibabaRamRoleFederatedSessionActions) Get(id string) (*session.AlibabaRamRoleFederatedSession, error) {
+func (actions *AlibabaRamRoleFederatedSessionActions) Get(id string) (*alibaba_ram_role_federated.AlibabaRamRoleFederatedSession, error) {
 	return actions.AlibabaRamRoleFederatedSessionsFacade.GetSessionById(id)
 }
 
 func (actions *AlibabaRamRoleFederatedSessionActions) Update(id string, name string, roleName string, roleArn string,
 	idpArn string, regionName string, ssoUrl string, assertion string, profileName string) error {
 
-	isRegionValid := region.IsAlibabaRegionValid(regionName)
+	isRegionValid := domain_alibaba.IsAlibabaRegionValid(regionName)
 	if !isRegionValid {
 		return http_error.NewUnprocessableEntityError(fmt.Errorf("Region " + regionName + " not valid"))
 	}
@@ -116,12 +115,12 @@ func (actions *AlibabaRamRoleFederatedSessionActions) Update(id string, name str
 		return err //TODO: return right error
 	}
 
-	alibabaRole := session.AlibabaRamRole{
+	alibabaRole := alibaba_ram_role_federated.AlibabaRamRole{
 		Name: roleName,
 		Arn:  roleArn,
 	}
 
-	federatedAlibabaAccount := session.AlibabaRamRoleFederatedAccount{
+	federatedAlibabaAccount := alibaba_ram_role_federated.AlibabaRamRoleFederatedAccount{
 		Name:           name,
 		Role:           &alibabaRole,
 		IdpArn:         idpArn,
@@ -130,9 +129,9 @@ func (actions *AlibabaRamRoleFederatedSessionActions) Update(id string, name str
 		NamedProfileId: np.Id,
 	}
 
-	sess := session.AlibabaRamRoleFederatedSession{
+	sess := alibaba_ram_role_federated.AlibabaRamRoleFederatedSession{
 		Id:      id,
-		Status:  session.NotActive,
+		Status:  domain_alibaba.NotActive,
 		Account: &federatedAlibabaAccount,
 	}
 
@@ -146,17 +145,17 @@ func (actions *AlibabaRamRoleFederatedSessionActions) Update(id string, name str
 		return err
 	}
 
-	err = actions.Keychain.SetSecret(alibabaAccessKeyId, id+constant.FederatedAlibabaKeyIdSuffix)
+	err = actions.Keychain.SetSecret(alibabaAccessKeyId, id+domain_alibaba.FederatedAlibabaKeyIdSuffix)
 	if err != nil {
 		return http_error.NewInternalServerError(err)
 	}
 
-	err = actions.Keychain.SetSecret(alibabaSecretAccessKey, id+constant.FederatedAlibabaSecretAccessKeySuffix)
+	err = actions.Keychain.SetSecret(alibabaSecretAccessKey, id+domain_alibaba.FederatedAlibabaSecretAccessKeySuffix)
 	if err != nil {
 		return http_error.NewInternalServerError(err)
 	}
 
-	err = actions.Keychain.SetSecret(alibabaStsToken, id+constant.FederatedAlibabaStsTokenSuffix)
+	err = actions.Keychain.SetSecret(alibabaStsToken, id+domain_alibaba.FederatedAlibabaStsTokenSuffix)
 	if err != nil {
 		return http_error.NewInternalServerError(err)
 	}
@@ -165,12 +164,12 @@ func (actions *AlibabaRamRoleFederatedSessionActions) Update(id string, name str
 }
 
 func (actions *AlibabaRamRoleFederatedSessionActions) Delete(id string) error {
-	sess, err := session.GetAlibabaRamRoleFederatedSessionsFacade().GetSessionById(id)
+	sess, err := alibaba_ram_role_federated.GetAlibabaRamRoleFederatedSessionsFacade().GetSessionById(id)
 	if err != nil {
 		return http_error.NewInternalServerError(err)
 	}
 
-	if sess.Status != session.NotActive {
+	if sess.Status != domain_alibaba.NotActive {
 		err = actions.Stop(id)
 		if err != nil {
 			return err
@@ -182,17 +181,17 @@ func (actions *AlibabaRamRoleFederatedSessionActions) Delete(id string) error {
 		return http_error.NewInternalServerError(err)
 	}
 
-	err = actions.Keychain.DeleteSecret(id + constant.FederatedAlibabaKeyIdSuffix)
+	err = actions.Keychain.DeleteSecret(id + domain_alibaba.FederatedAlibabaKeyIdSuffix)
 	if err != nil {
 		return err
 	}
 
-	err = actions.Keychain.DeleteSecret(id + constant.FederatedAlibabaSecretAccessKeySuffix)
+	err = actions.Keychain.DeleteSecret(id + domain_alibaba.FederatedAlibabaSecretAccessKeySuffix)
 	if err != nil {
 		return err
 	}
 
-	err = actions.Keychain.DeleteSecret(id + constant.FederatedAlibabaStsTokenSuffix)
+	err = actions.Keychain.DeleteSecret(id + domain_alibaba.FederatedAlibabaStsTokenSuffix)
 	if err != nil {
 		return err
 	}

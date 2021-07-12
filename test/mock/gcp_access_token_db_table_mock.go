@@ -19,10 +19,10 @@ func (table *GcpAccessTokensDbTableMock) GetCalls() []string {
 }
 
 func (table *GcpAccessTokensDbTableMock) RemoveAccessToken(sqlFilePath string, accountId string) error {
+	table.calls = append(table.calls, fmt.Sprintf("RemoveAccessToken(%v, %v)", sqlFilePath, accountId))
+
 	if table.ExpErrorOnExecDeleteQuery {
 		return errors.New("error executing delete query")
 	}
-
-	table.calls = append(table.calls, fmt.Sprintf("RemoveAccessToken(%v, %v)", sqlFilePath, accountId))
 	return nil
 }

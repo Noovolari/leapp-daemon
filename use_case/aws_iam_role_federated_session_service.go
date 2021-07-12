@@ -1,7 +1,7 @@
 package use_case
 
 import (
-	session2 "leapp_daemon/domain/session"
+	"leapp_daemon/domain/domain_aws/aws_iam_role_federated"
 )
 
 func CreateAwsIamRoleFederatedSession(name string, accountNumber string, roleName string, roleArn string,
@@ -21,8 +21,8 @@ func CreateAwsIamRoleFederatedSession(name string, accountNumber string, roleNam
 	return nil
 }
 
-func GetAwsIamRoleFederatedSession(id string) (*session2.AwsIamRoleFederatedSession, error) {
-	var sess *session2.AwsIamRoleFederatedSession
+func GetAwsIamRoleFederatedSession(id string) (*aws_iam_role_federated.AwsIamRoleFederatedSession, error) {
+	var sess *aws_iam_role_federated.AwsIamRoleFederatedSession
 
 	/*
 		config, err := configuration.ReadConfiguration()

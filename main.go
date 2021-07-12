@@ -7,9 +7,11 @@ import (
 )
 
 func main() {
+	//TODO: Move under providers singleton
 	defer logging.CloseLogFile()
 
 	prov := providers.NewProviders()
+	defer prov.Close()
 
 	config := ConfigurationBootstrap(prov)
 	NamedProfilesBootstrap(prov, config)
@@ -18,10 +20,6 @@ func main() {
 	AlibabaRamUserBootstrap(prov, config)
 	AlibabaRamRoleFederatedBootstrap(prov, config)
 	AlibabaRamRoleChainedBootstrap(prov, config)
-
-	//timer.Initialize(1, use_case.RotateAllSessionsCredentials)
-	//defer timer.Close()
-	//go websocket.Hub.Run()
 
 	eng := engine.Engine(prov)
 	eng.Serve(8080)

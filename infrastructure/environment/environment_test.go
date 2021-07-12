@@ -113,3 +113,14 @@ func TestGetTime(t *testing.T) {
 		t.Fatalf("getTime is returning a time after now")
 	}
 }
+
+func TestGetFormattedTime(t *testing.T) {
+	env := Environment{}
+
+	formatOnlyYear := "2006"
+	year := env.GetFormattedTime(formatOnlyYear)
+
+	if time.Now().Format("2006") != year {
+		t.Fatalf("getTime is returning a different year")
+	}
+}

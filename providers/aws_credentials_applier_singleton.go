@@ -14,9 +14,9 @@ func (prov *Providers) GetAwsCredentialsApplier() *use_case.AwsCredentialsApplie
 
 	if awsCredentialsApplierSingleton == nil {
 		awsCredentialsApplierSingleton = &use_case.AwsCredentialsApplier{
-			FileSystem:          prov.GetFileSystem(),
 			Keychain:            prov.GetKeychain(),
 			NamedProfilesFacade: prov.GetNamedProfilesFacade(),
+			Repository:          prov.GetAwsConfigurationRepository(),
 		}
 	}
 	return awsCredentialsApplierSingleton

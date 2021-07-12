@@ -1,19 +1,19 @@
 package providers
 
 import (
-	"leapp_daemon/domain/session"
+	"leapp_daemon/domain/domain_alibaba/alibaba_ram_user"
 	"sync"
 )
 
-var alibabaRamUserSessionsFacadeSingleton *session.AlibabaRamUserSessionsFacade
+var alibabaRamUserSessionsFacadeSingleton *alibaba_ram_user.AlibabaRamUserSessionsFacade
 var alibabaRamUserSessionsFacadeLock sync.Mutex
 
-func (prov *Providers) GetAlibabaRamUserSessionFacade() *session.AlibabaRamUserSessionsFacade {
+func (prov *Providers) GetAlibabaRamUserSessionFacade() *alibaba_ram_user.AlibabaRamUserSessionsFacade {
 	alibabaRamUserSessionsFacadeLock.Lock()
 	defer alibabaRamUserSessionsFacadeLock.Unlock()
 
 	if alibabaRamUserSessionsFacadeSingleton == nil {
-		alibabaRamUserSessionsFacadeSingleton = session.GetAlibabaRamUserSessionsFacade()
+		alibabaRamUserSessionsFacadeSingleton = alibaba_ram_user.GetAlibabaRamUserSessionsFacade()
 	}
 	return alibabaRamUserSessionsFacadeSingleton
 }

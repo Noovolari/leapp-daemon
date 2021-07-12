@@ -1,43 +1,39 @@
 package timer
 
 import (
-	"leapp_daemon/infrastructure/logging"
 	"time"
 )
 
-type ScheduledFunction func() error
+type timer struct {
+	done   chan bool
+	ticker *time.Ticker
+}
 
-var done = make(chan bool, 1)
-var ticker *time.Ticker
+type ScheduledFunction func()
 
-func Initialize(ticksInSeconds int, scheduledFunction ScheduledFunction) {
-	timerTick := time.Duration(ticksInSeconds) * time.Second
+func NewTimer(intervalInMilliseconds int, scheduledFunction ScheduledFunction) *timer {
+	tickDuration := time.Duration(intervalInMilliseconds) * time.Millisecond
 
-	if ticker == nil {
-		ticker = time.NewTicker(timerTick)
-	}
-
-	if done == nil {
-		done = make(chan bool)
+	timer := timer{
+		done:   make(chan bool),
+		ticker: time.NewTicker(tickDuration),
 	}
 
 	go func() {
 		for {
 			select {
-			case <-done:
+			case <-timer.done:
 				return
-			case <-ticker.C:
-				err := scheduledFunction()
-				if err != nil {
-					logging.Entry().Error(err)
-					panic(err)
-				}
+			case <-timer.ticker.C:
+				scheduledFunction()
 			}
 		}
 	}()
+
+	return &timer
 }
 
-func Close() {
-	ticker.Stop()
-	done <- true
+func (timer *timer) Close() {
+	timer.ticker.Stop()
+	timer.done <- true
 }
