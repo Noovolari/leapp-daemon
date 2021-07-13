@@ -27,7 +27,7 @@ var (
 func gcpConfigurationRepositorySetup() {
 	expectedHomeDirPath = filepath.Join("c:/", "appdata")
 	expectedConfigDirPath = filepath.Join(expectedHomeDirPath, "gcloud")
-	expectedConfigFilePath = filepath.Join(expectedConfigDirPath, "configurations", "config_leapp")
+	expectedConfigFilePath = filepath.Join(expectedConfigDirPath, "configurations", "config_configuration-name")
 	expectedActiveConfigFilePath = filepath.Join(expectedConfigDirPath, "active_config")
 	expectedDefaultCredentialsFilePath = filepath.Join(expectedConfigDirPath, "application_default_credentials.json")
 	expectedCredentialsDbFilePath = filepath.Join(expectedConfigDirPath, "credentials.db")
@@ -173,7 +173,7 @@ func TestCreateConfiguration(t *testing.T) {
 	gcpConfigurationRepositorySetup()
 	gcpEnvMock.ExpIsWindows = true
 
-	err := repo.CreateConfiguration("accountId", "projectId")
+	err := repo.CreateConfiguration("accountId", "projectId", "configuration-name")
 	if err != nil {
 		t.Fatalf("unexpected error %v", err)
 	}
@@ -189,7 +189,7 @@ func TestCreateConfiguration_errorGettingHomeDir(t *testing.T) {
 	gcpConfigurationRepositorySetup()
 	gcpFsMock.ExpErrorOnGetHomeDir = true
 
-	err := repo.CreateConfiguration("accountId", "projectId")
+	err := repo.CreateConfiguration("accountId", "projectId", "configuration-name")
 	test.ExpectHttpError(t, err, 500, "error getting home dir")
 
 	verifyExpectedCalls(t, []string{"IsWindows()"}, []string{"GetHomeDir()"}, []string{}, []string{})
@@ -200,7 +200,7 @@ func TestCreateConfiguration_errorWritingFile(t *testing.T) {
 	gcpFsMock.ExpErrorOnWriteToFile = true
 	gcpEnvMock.ExpIsWindows = true
 
-	err := repo.CreateConfiguration("accountId", "projectId")
+	err := repo.CreateConfiguration("accountId", "projectId", "configuration-name")
 	test.ExpectHttpError(t, err, 500, "error writing file")
 
 	expectedFileContent := "[core]\naccount = accountId\nproject = projectId\n"
@@ -213,7 +213,7 @@ func TestRemoveConfiguration(t *testing.T) {
 	gcpConfigurationRepositorySetup()
 	gcpEnvMock.ExpIsWindows = true
 
-	err := repo.RemoveConfiguration()
+	err := repo.RemoveConfiguration("configuration-name")
 	if err != nil {
 		t.Fatalf("unexpected error %v", err)
 	}
@@ -227,7 +227,7 @@ func TestRemoveConfiguration_errorGettingHomeDir(t *testing.T) {
 	gcpConfigurationRepositorySetup()
 	gcpFsMock.ExpErrorOnGetHomeDir = true
 
-	err := repo.RemoveConfiguration()
+	err := repo.RemoveConfiguration("configuration-name")
 	test.ExpectHttpError(t, err, 500, "error getting home dir")
 
 	verifyExpectedCalls(t, []string{"IsWindows()"}, []string{"GetHomeDir()"}, []string{}, []string{})
@@ -238,7 +238,7 @@ func TestRemoveConfiguration_errorRemovingFile(t *testing.T) {
 	gcpEnvMock.ExpIsWindows = true
 	gcpFsMock.ExpErrorOnRemoveFile = true
 
-	err := repo.RemoveConfiguration()
+	err := repo.RemoveConfiguration("configuration-name")
 	test.ExpectHttpError(t, err, 500, "error removing file")
 
 	expectedFile := fmt.Sprintf("RemoveFile(%v)", expectedConfigFilePath)
@@ -255,8 +255,7 @@ func TestActivateConfiguration(t *testing.T) {
 		t.Fatalf("unexpected error %v", err)
 	}
 
-	fullActiveConfigurationName := fmt.Sprintf("leapp")
-	expectedFile := fmt.Sprintf("WriteToFile(%v, %v)", expectedActiveConfigFilePath, []byte(fullActiveConfigurationName))
+	expectedFile := fmt.Sprintf("WriteToFile(%v, %v)", expectedActiveConfigFilePath, []byte("leapp-default"))
 	verifyExpectedCalls(t, []string{"IsWindows()", "GetEnvironmentVariable(APPDATA)"},
 		[]string{expectedFile}, []string{}, []string{})
 }
@@ -279,10 +278,9 @@ func TestActivateConfiguration_errorWritingFile(t *testing.T) {
 	err := repo.ActivateConfiguration()
 	test.ExpectHttpError(t, err, 500, "error writing file")
 
-	expectedFile := fmt.Sprintf("WriteToFile(%v, %v)", expectedActiveConfigFilePath,
-		[]byte("leapp"))
-	verifyExpectedCalls(t, []string{"IsWindows()", "GetEnvironmentVariable(APPDATA)"},
-		[]string{expectedFile}, []string{}, []string{})
+	expectedFile := fmt.Sprintf("WriteToFile(%v, %v)", expectedActiveConfigFilePath, []byte("leapp-default"))
+	verifyExpectedCalls(t, []string{"IsWindows()", "GetEnvironmentVariable(APPDATA)"}, []string{expectedFile},
+		[]string{}, []string{})
 }
 
 func TestDeactivateConfiguration(t *testing.T) {

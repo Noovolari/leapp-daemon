@@ -2,6 +2,7 @@ package repository
 
 import (
 	"fmt"
+	"leapp_daemon/domain/domain_gcp/named_configuration"
 	"leapp_daemon/infrastructure/http/http_error"
 	"path/filepath"
 )
@@ -49,13 +50,13 @@ func (repo *GcpConfigurationRepository) gcloudConfigDir() (string, error) {
 	return filepath.Join(dir, ".config", gcloudDirectory), nil
 }
 
-func (repo *GcpConfigurationRepository) getGcloudConfigFilePath() (string, error) {
+func (repo *GcpConfigurationRepository) getGcloudConfigFilePath(configurationName string) (string, error) {
 	configDir, err := repo.gcloudConfigDir()
 	if err != nil {
 		return "", err
 	}
 
-	return filepath.Join(configDir, "configurations", "config_leapp"), nil
+	return filepath.Join(configDir, "configurations", fmt.Sprintf("config_%v", configurationName)), nil
 }
 
 func (repo *GcpConfigurationRepository) getGcloudActiveConfigFilePath() (string, error) {
@@ -107,8 +108,8 @@ func (repo *GcpConfigurationRepository) DoesGcloudConfigFolderExist() (bool, err
 	return repo.FileSystem.DoesFileExist(configDir), nil
 }
 
-func (repo *GcpConfigurationRepository) CreateConfiguration(account string, project string) error {
-	configFilePath, err := repo.getGcloudConfigFilePath()
+func (repo *GcpConfigurationRepository) CreateConfiguration(account string, project string, configurationName string) error {
+	configFilePath, err := repo.getGcloudConfigFilePath(configurationName)
 	if err != nil {
 		return err
 	}
@@ -122,8 +123,8 @@ func (repo *GcpConfigurationRepository) CreateConfiguration(account string, proj
 	return nil
 }
 
-func (repo *GcpConfigurationRepository) RemoveConfiguration() error {
-	configFilePath, err := repo.getGcloudConfigFilePath()
+func (repo *GcpConfigurationRepository) RemoveConfiguration(configurationName string) error {
+	configFilePath, err := repo.getGcloudConfigFilePath(configurationName)
 	if err != nil {
 		return err
 	}
@@ -141,7 +142,7 @@ func (repo *GcpConfigurationRepository) ActivateConfiguration() error {
 		return err
 	}
 
-	err = repo.FileSystem.WriteToFile(activeConfigFilePath, []byte("leapp"))
+	err = repo.FileSystem.WriteToFile(activeConfigFilePath, []byte(named_configuration.DefaultNamedConfigurationName))
 	if err != nil {
 		return http_error.NewInternalServerError(err)
 	}

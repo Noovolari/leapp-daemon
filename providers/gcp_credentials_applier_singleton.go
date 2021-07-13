@@ -14,8 +14,9 @@ func (prov *Providers) GetGcpCredentialsApplier() *use_case.GcpCredentialsApplie
 
 	if gcpCredentialsApplierSingleton == nil {
 		gcpCredentialsApplierSingleton = &use_case.GcpCredentialsApplier{
-			Repository: prov.GetGcpConfigurationRepository(),
-			Keychain:   prov.GetKeychain(),
+			Repository:                prov.GetGcpConfigurationRepository(),
+			Keychain:                  prov.GetKeychain(),
+			NamedConfigurationsFacade: prov.GetNamedConfigurationFacade(),
 		}
 	}
 	return gcpCredentialsApplierSingleton

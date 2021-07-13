@@ -61,19 +61,18 @@ func (actions *GcpIamUserAccountOauthSessionActions) CreateSession(name string, 
 }
 
 func (actions *GcpIamUserAccountOauthSessionActions) StartSession(sessionId string) error {
-
 	facade := actions.GcpIamUserAccountOauthSessionFacade
-	currentTime := actions.Environment.GetTime()
-
-	for _, currentSession := range facade.GetSessions() {
-		if currentSession.Status != domain_gcp.NotActive && currentSession.Id != sessionId {
-			err := facade.StopSession(currentSession.Id, currentTime)
-			if err != nil {
-				return err
-			}
-		}
+	currentSession, err := facade.GetSessionById(sessionId)
+	if err != nil {
+		return err
 	}
-	return facade.StartSession(sessionId, currentTime)
+
+	err = actions.stopActiveSessionsByNamedConfigurationId(currentSession.NamedConfigurationId)
+	if err != nil {
+		return err
+	}
+
+	return facade.StartSession(sessionId, actions.Environment.GetTime())
 }
 
 func (actions *GcpIamUserAccountOauthSessionActions) StopSession(sessionId string) error {
@@ -125,6 +124,5 @@ func (actions *GcpIamUserAccountOauthSessionActions) stopActiveSessionsByNamedCo
 			}
 		}
 	}
-
 	return nil
 }

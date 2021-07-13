@@ -22,13 +22,13 @@ func (repo *GcpConfigurationRepositoryMock) DoesGcloudConfigFolderExist() (bool,
 	return repo.ExpGcpConfigFolderExist, nil
 }
 
-func (repo *GcpConfigurationRepositoryMock) CreateConfiguration(account string, project string) error {
-	repo.calls = append(repo.calls, fmt.Sprintf("CreateConfiguration(%v, %v)", account, project))
+func (repo *GcpConfigurationRepositoryMock) CreateConfiguration(account string, project string, configurationName string) error {
+	repo.calls = append(repo.calls, fmt.Sprintf("CreateConfiguration(%v, %v, %v)", account, project, configurationName))
 	return nil
 }
 
-func (repo *GcpConfigurationRepositoryMock) RemoveConfiguration() error {
-	repo.calls = append(repo.calls, "RemoveConfiguration()")
+func (repo *GcpConfigurationRepositoryMock) RemoveConfiguration(configurationName string) error {
+	repo.calls = append(repo.calls, fmt.Sprintf("RemoveConfiguration(%v)", configurationName))
 	return nil
 }
 
@@ -53,7 +53,7 @@ func (repo *GcpConfigurationRepositoryMock) RemoveDefaultCredentials() error {
 }
 
 func (repo *GcpConfigurationRepositoryMock) WriteCredentialsToDb(accountId string, credentialsJson string) error {
-	repo.calls = append(repo.calls, fmt.Sprintf("WriteDefaultCredentials(%v, %v)", accountId, credentialsJson))
+	repo.calls = append(repo.calls, fmt.Sprintf("WriteCredentialsToDb(%v, %v)", accountId, credentialsJson))
 	return nil
 }
 

@@ -50,8 +50,8 @@ type AwsConfigurationRepository interface {
 
 type GcpConfigurationRepository interface {
 	DoesGcloudConfigFolderExist() (bool, error)
-	CreateConfiguration(account string, project string) error
-	RemoveConfiguration() error
+	CreateConfiguration(account string, project string, configurationName string) error
+	RemoveConfiguration(configurationName string) error
 	ActivateConfiguration() error
 	DeactivateConfiguration() error
 	WriteDefaultCredentials(credentialsJson string) error

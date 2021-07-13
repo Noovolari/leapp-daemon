@@ -104,18 +104,11 @@ func TestGetOAuthUrl_GcpApiReturnsError(t *testing.T) {
 func TestCreateSession(t *testing.T) {
 	gcpIamUserAccountOauthSessionActionsSetup()
 
-	sessionName := "sessionName"
-	accountId := "accountId"
-	projectName := "projectName"
-	configurationName := "configurationName"
-	oauthCode := "oauthCode"
-	uuid := "uuid"
-	credentials := "credentialsJson"
-	envMock.ExpUuid = uuid
+	envMock.ExpUuid = "uuid"
 	gcpApiMock.ExpOauthToken = oauth2.Token{}
-	gcpApiMock.ExpCredentials = credentials
+	gcpApiMock.ExpCredentials = "credentialsJson"
 
-	err := gcpIamUserAccountOauthSessionActions.CreateSession(sessionName, accountId, projectName, configurationName, oauthCode)
+	err := gcpIamUserAccountOauthSessionActions.CreateSession("sessionName", "accountId", "projectName", "configurationName", "oauthCode")
 	if err != nil {
 		t.Fatalf("Unexpected error")
 	}
@@ -127,19 +120,12 @@ func TestCreateSession(t *testing.T) {
 func TestCreateSession_NamedConfigurationGetOrCreateReturnsError(t *testing.T) {
 	gcpIamUserAccountOauthSessionActionsSetup()
 
-	sessionName := "sessionName"
-	accountId := "accountId"
-	projectName := "projectName"
-	configurationName := "configurationName"
-	oauthCode := "oauthCode"
-	uuid := "uuid"
-	credentials := "credentialsJson"
-	envMock.ExpUuid = uuid
+	envMock.ExpUuid = "uuid"
 	gcpApiMock.ExpOauthToken = oauth2.Token{}
-	gcpApiMock.ExpCredentials = credentials
+	gcpApiMock.ExpCredentials = "credentialsJson"
 	namedConfigurationsActionsMock.ExpErrorOnGetOrCreateNamedConfiguration = true
 
-	err := gcpIamUserAccountOauthSessionActions.CreateSession(sessionName, accountId, projectName, configurationName, oauthCode)
+	err := gcpIamUserAccountOauthSessionActions.CreateSession("sessionName", "accountId", "projectName", "configurationName", "oauthCode")
 	test.ExpectHttpError(t, err, http.StatusBadRequest, "configuration name is invalid")
 
 	gcpIamUserAccountOauthSessionActionsVerifyExpectedCalls(t, []string{}, []string{"GenerateUuid()"}, []string{},
@@ -149,16 +135,10 @@ func TestCreateSession_NamedConfigurationGetOrCreateReturnsError(t *testing.T) {
 func TestCreateSession_GcpApiGetOauthTokenReturnsError(t *testing.T) {
 	gcpIamUserAccountOauthSessionActionsSetup()
 
-	sessionName := "sessionName"
-	accountId := "accountId"
-	projectName := "projectName"
-	configurationName := "configurationName"
-	oauthCode := "oauthCode"
-	uuid := "uuid"
-	envMock.ExpUuid = uuid
+	envMock.ExpUuid = "uuid"
 	gcpApiMock.ExpErrorOnGetOauth = true
 
-	err := gcpIamUserAccountOauthSessionActions.CreateSession(sessionName, accountId, projectName, configurationName, oauthCode)
+	err := gcpIamUserAccountOauthSessionActions.CreateSession("sessionName", "accountId", "projectName", "configurationName", "oauthCode")
 	test.ExpectHttpError(t, err, http.StatusBadRequest, "error getting oauth token")
 	gcpIamUserAccountOauthSessionActionsVerifyExpectedCalls(t, []string{"GetOauthUrl(oauthCode)"},
 		[]string{"GenerateUuid()"}, []string{}, []string{}, []string{"GetOrCreateNamedConfiguration(configurationName)"})
@@ -167,19 +147,12 @@ func TestCreateSession_GcpApiGetOauthTokenReturnsError(t *testing.T) {
 func TestCreateSession_KeychainSetSecretReturnsError(t *testing.T) {
 	gcpIamUserAccountOauthSessionActionsSetup()
 
-	sessionName := "sessionName"
-	accountId := "accountId"
-	projectName := "projectName"
-	configurationName := "configurationName"
-	oauthCode := "oauthCode"
-	uuid := "uuid"
-	credentials := "credentialsJson"
-	envMock.ExpUuid = uuid
+	envMock.ExpUuid = "uuid"
 	gcpApiMock.ExpOauthToken = oauth2.Token{}
-	gcpApiMock.ExpCredentials = credentials
+	gcpApiMock.ExpCredentials = "credentialsJson"
 	gcpIamUserAccountOauthSessionActionsKeychainMock.ExpErrorOnSetSecret = true
 
-	err := gcpIamUserAccountOauthSessionActions.CreateSession(sessionName, accountId, projectName, configurationName, oauthCode)
+	err := gcpIamUserAccountOauthSessionActions.CreateSession("sessionName", "accountId", "projectName", "configurationName", "oauthCode")
 	test.ExpectHttpError(t, err, http.StatusInternalServerError, "unable to set secret")
 	gcpIamUserAccountOauthSessionActionsVerifyExpectedCalls(t, []string{"GetOauthUrl(oauthCode)", "GetCredentials()"},
 		[]string{"GenerateUuid()"}, []string{"SetSecret(credentialsJson, uuid-gcp-iam-user-account-oauth-session-credentials)"},
@@ -189,19 +162,12 @@ func TestCreateSession_KeychainSetSecretReturnsError(t *testing.T) {
 func TestCreateSession_FacadeAddSessionReturnsError(t *testing.T) {
 	gcpIamUserAccountOauthSessionActionsSetup()
 
-	sessionName := "sessionName"
-	accountId := "accountId"
-	projectName := "projectName"
-	configurationName := "configurationName"
-	oauthCode := "oauthCode"
-	uuid := "uuid"
-	credentials := "credentialsJson"
-	envMock.ExpUuid = uuid
+	envMock.ExpUuid = "uuid"
 	gcpApiMock.ExpOauthToken = oauth2.Token{}
-	gcpApiMock.ExpCredentials = credentials
+	gcpApiMock.ExpCredentials = "credentialsJson"
 	gcpIamUserAccountOauthSessionFacadeMock.ExpErrorOnAddSession = true
 
-	err := gcpIamUserAccountOauthSessionActions.CreateSession(sessionName, accountId, projectName, configurationName, oauthCode)
+	err := gcpIamUserAccountOauthSessionActions.CreateSession("sessionName", "accountId", "projectName", "configurationName", "oauthCode")
 	test.ExpectHttpError(t, err, http.StatusConflict, "session already exist")
 	gcpIamUserAccountOauthSessionActionsVerifyExpectedCalls(t, []string{"GetOauthUrl(oauthCode)", "GetCredentials()"},
 		[]string{"GenerateUuid()"}, []string{"SetSecret(credentialsJson, uuid-gcp-iam-user-account-oauth-session-credentials)"},
@@ -214,83 +180,92 @@ func TestStartSession_NoPreviousActiveSession(t *testing.T) {
 		{Id: "ID2", Status: domain_gcp.NotActive},
 	}
 	envMock.ExpTime = "start-time"
-	sessionId := "ID1"
-
-	err := gcpIamUserAccountOauthSessionActions.StartSession(sessionId)
+	err := gcpIamUserAccountOauthSessionActions.StartSession("ID1")
 	if err != nil {
 		t.Fatalf("Unexpected error")
 	}
 	gcpIamUserAccountOauthSessionActionsVerifyExpectedCalls(t, []string{}, []string{"GetTime()"}, []string{},
-		[]string{"GetSessions()", "StartSession(ID1, start-time)"}, []string{})
+		[]string{"GetSessionById(ID1)", "GetSessions()", "StartSession(ID1, start-time)"}, []string{})
 }
 
-func TestStartSession_PreviousActiveSessionDiffersFromNewActiveSession(t *testing.T) {
+func TestStartSession_PreviousActiveSessionWithDifferentNamedConfiguration(t *testing.T) {
 	gcpIamUserAccountOauthSessionActionsSetup()
+	gcpIamUserAccountOauthSessionFacadeMock.ExpGetSessionById = gcp_iam_user_account_oauth.GcpIamUserAccountOauthSession{
+		Id: "ID1", Status: domain_gcp.Active, NamedConfigurationId: "NAMED1"}
+
 	gcpIamUserAccountOauthSessionFacadeMock.ExpGetSessions = []gcp_iam_user_account_oauth.GcpIamUserAccountOauthSession{
-		{Id: "ID2", Status: domain_gcp.Active},
+		{Id: "ID2", Status: domain_gcp.Active, NamedConfigurationId: "NAMED2"},
 	}
 	envMock.ExpTime = "start-time"
-	sessionId := "ID1"
-
-	err := gcpIamUserAccountOauthSessionActions.StartSession(sessionId)
+	err := gcpIamUserAccountOauthSessionActions.StartSession("ID1")
 	if err != nil {
 		t.Fatalf("Unexpected error")
 	}
 	gcpIamUserAccountOauthSessionActionsVerifyExpectedCalls(t, []string{}, []string{"GetTime()"}, []string{},
-		[]string{"GetSessions()", "StopSession(ID2, start-time)", "StartSession(ID1, start-time)"}, []string{})
+		[]string{"GetSessionById(ID1)", "GetSessions()", "StartSession(ID1, start-time)"}, []string{})
 }
 
-func TestStartSession_SessionWasAlreadyActive(t *testing.T) {
+func TestStartSession_PreviousActiveSessionWithSameNamedConfiguration(t *testing.T) {
 	gcpIamUserAccountOauthSessionActionsSetup()
+	gcpIamUserAccountOauthSessionFacadeMock.ExpGetSessionById = gcp_iam_user_account_oauth.GcpIamUserAccountOauthSession{
+		Id: "ID1", Status: domain_gcp.Active, NamedConfigurationId: "NAMED1"}
+
 	gcpIamUserAccountOauthSessionFacadeMock.ExpGetSessions = []gcp_iam_user_account_oauth.GcpIamUserAccountOauthSession{
-		{Id: "ID1", Status: domain_gcp.Active},
+		{Id: "ID2", Status: domain_gcp.Active, NamedConfigurationId: "NAMED1"},
 	}
 	envMock.ExpTime = "start-time"
-	sessionId := "ID1"
-
-	err := gcpIamUserAccountOauthSessionActions.StartSession(sessionId)
+	err := gcpIamUserAccountOauthSessionActions.StartSession("ID1")
 	if err != nil {
 		t.Fatalf("Unexpected error")
 	}
-	gcpIamUserAccountOauthSessionActionsVerifyExpectedCalls(t, []string{}, []string{"GetTime()"}, []string{},
-		[]string{"GetSessions()", "StartSession(ID1, start-time)"}, []string{})
+	gcpIamUserAccountOauthSessionActionsVerifyExpectedCalls(t, []string{}, []string{"GetTime()", "GetTime()"}, []string{},
+		[]string{"GetSessionById(ID1)", "GetSessions()", "StopSession(ID2, start-time)", "StartSession(ID1, start-time)"}, []string{})
 }
 
-func TestStartSession_PreviousActiveSessionDifferentAndFacadeSetSessionStatusReturnsError(t *testing.T) {
+func TestStartSession_GetSessionByIdReturnsError(t *testing.T) {
 	gcpIamUserAccountOauthSessionActionsSetup()
+	gcpIamUserAccountOauthSessionFacadeMock.ExpErrorOnGetSessionById = true
+
+	err := gcpIamUserAccountOauthSessionActions.StartSession("ID1")
+	test.ExpectHttpError(t, err, http.StatusNotFound, "session not found")
+	gcpIamUserAccountOauthSessionActionsVerifyExpectedCalls(t, []string{}, []string{}, []string{},
+		[]string{"GetSessionById(ID1)"}, []string{})
+}
+
+func TestStartSession_StopSessionReturnsError(t *testing.T) {
+	gcpIamUserAccountOauthSessionActionsSetup()
+	gcpIamUserAccountOauthSessionFacadeMock.ExpGetSessionById = gcp_iam_user_account_oauth.GcpIamUserAccountOauthSession{
+		Id: "ID1", Status: domain_gcp.Active, NamedConfigurationId: "NAMED1"}
+
 	gcpIamUserAccountOauthSessionFacadeMock.ExpGetSessions = []gcp_iam_user_account_oauth.GcpIamUserAccountOauthSession{
-		{Id: "ID2", Status: domain_gcp.Active},
+		{Id: "ID2", Status: domain_gcp.Active, NamedConfigurationId: "NAMED1"},
 	}
 	gcpIamUserAccountOauthSessionFacadeMock.ExpErrorOnStopSession = true
 	envMock.ExpTime = "start-time"
-	sessionId := "ID1"
 
-	err := gcpIamUserAccountOauthSessionActions.StartSession(sessionId)
+	err := gcpIamUserAccountOauthSessionActions.StartSession("ID1")
 	test.ExpectHttpError(t, err, http.StatusInternalServerError, "unable to stop the session")
 	gcpIamUserAccountOauthSessionActionsVerifyExpectedCalls(t, []string{}, []string{"GetTime()"}, []string{},
-		[]string{"GetSessions()", "StopSession(ID2, start-time)"}, []string{})
+		[]string{"GetSessionById(ID1)", "GetSessions()", "StopSession(ID2, start-time)"}, []string{})
 }
 
-func TestStartSession_FacadeSetSessionStatusReturnsError(t *testing.T) {
+func TestStartSession_StartSessionReturnsError(t *testing.T) {
 	gcpIamUserAccountOauthSessionActionsSetup()
-	gcpIamUserAccountOauthSessionFacadeMock.ExpGetSessions = []gcp_iam_user_account_oauth.GcpIamUserAccountOauthSession{
-		{Id: "ID2", Status: domain_gcp.NotActive},
-	}
+	gcpIamUserAccountOauthSessionFacadeMock.ExpGetSessionById = gcp_iam_user_account_oauth.GcpIamUserAccountOauthSession{
+		Id: "ID1", Status: domain_gcp.Active, NamedConfigurationId: "NAMED1"}
 	gcpIamUserAccountOauthSessionFacadeMock.ExpErrorOnStartSession = true
 	envMock.ExpTime = "start-time"
-	sessionId := "ID1"
 
-	err := gcpIamUserAccountOauthSessionActions.StartSession(sessionId)
+	err := gcpIamUserAccountOauthSessionActions.StartSession("ID1")
 	test.ExpectHttpError(t, err, http.StatusInternalServerError, "unable to start the session")
 	gcpIamUserAccountOauthSessionActionsVerifyExpectedCalls(t, []string{}, []string{"GetTime()"}, []string{},
-		[]string{"GetSessions()", "StartSession(ID1, start-time)"}, []string{})
+		[]string{"GetSessionById(ID1)", "GetSessions()", "StartSession(ID1, start-time)"}, []string{})
 }
 
 func TestStopSession(t *testing.T) {
 	gcpIamUserAccountOauthSessionActionsSetup()
 	envMock.ExpTime = "stop-time"
-	sessionId := "ID"
-	err := gcpIamUserAccountOauthSessionActions.StopSession(sessionId)
+	err := gcpIamUserAccountOauthSessionActions.StopSession("ID")
 	if err != nil {
 		t.Fatalf("Unexpected error")
 	}
@@ -302,8 +277,7 @@ func TestStopSession_FacadeReturnsError(t *testing.T) {
 	gcpIamUserAccountOauthSessionActionsSetup()
 	gcpIamUserAccountOauthSessionFacadeMock.ExpErrorOnStopSession = true
 	envMock.ExpTime = "stop-time"
-	sessionId := "ID"
-	err := gcpIamUserAccountOauthSessionActions.StopSession(sessionId)
+	err := gcpIamUserAccountOauthSessionActions.StopSession("ID")
 	test.ExpectHttpError(t, err, http.StatusInternalServerError, "unable to stop the session")
 	gcpIamUserAccountOauthSessionActionsVerifyExpectedCalls(t, []string{}, []string{"GetTime()"}, []string{},
 		[]string{"StopSession(ID, stop-time)"}, []string{})
@@ -311,14 +285,12 @@ func TestStopSession_FacadeReturnsError(t *testing.T) {
 
 func TestDeleteSession(t *testing.T) {
 	gcpIamUserAccountOauthSessionActionsSetup()
-	sessionId := "ID"
-	credentialsLabel := "credentialLabel"
 	gcpIamUserAccountOauthSessionFacadeMock.ExpGetSessionById = gcp_iam_user_account_oauth.GcpIamUserAccountOauthSession{
 		Id:               "ID",
-		CredentialsLabel: credentialsLabel,
+		CredentialsLabel: "credentialLabel",
 	}
 
-	err := gcpIamUserAccountOauthSessionActions.DeleteSession(sessionId)
+	err := gcpIamUserAccountOauthSessionActions.DeleteSession("ID")
 	if err != nil {
 		t.Fatalf("Unexpected error")
 	}
@@ -328,10 +300,9 @@ func TestDeleteSession(t *testing.T) {
 
 func TestDeleteSession_FacadeGetSessionByIdReturnsError(t *testing.T) {
 	gcpIamUserAccountOauthSessionActionsSetup()
-	sessionId := "ID"
 	gcpIamUserAccountOauthSessionFacadeMock.ExpErrorOnGetSessionById = true
 
-	err := gcpIamUserAccountOauthSessionActions.DeleteSession(sessionId)
+	err := gcpIamUserAccountOauthSessionActions.DeleteSession("ID")
 	test.ExpectHttpError(t, err, http.StatusNotFound, "session not found")
 	gcpIamUserAccountOauthSessionActionsVerifyExpectedCalls(t, []string{}, []string{}, []string{},
 		[]string{"GetSessionById(ID)"}, []string{})
@@ -339,15 +310,13 @@ func TestDeleteSession_FacadeGetSessionByIdReturnsError(t *testing.T) {
 
 func TestDeleteSession_KeychainDeleteSecretReturnsError(t *testing.T) {
 	gcpIamUserAccountOauthSessionActionsSetup()
-	sessionId := "ID"
-	credentialsLabel := "credentialLabel"
 	gcpIamUserAccountOauthSessionFacadeMock.ExpGetSessionById = gcp_iam_user_account_oauth.GcpIamUserAccountOauthSession{
 		Id:               "ID",
-		CredentialsLabel: credentialsLabel,
+		CredentialsLabel: "credentialLabel",
 	}
 	gcpIamUserAccountOauthSessionActionsKeychainMock.ExpErrorOnDeleteSecret = true
 
-	err := gcpIamUserAccountOauthSessionActions.DeleteSession(sessionId)
+	err := gcpIamUserAccountOauthSessionActions.DeleteSession("ID")
 	if err != nil {
 		t.Fatalf("Unexpected error")
 	}
@@ -357,15 +326,13 @@ func TestDeleteSession_KeychainDeleteSecretReturnsError(t *testing.T) {
 
 func TestDeleteSession_FacadeRemoveSessionReturnsError(t *testing.T) {
 	gcpIamUserAccountOauthSessionActionsSetup()
-	sessionId := "ID"
-	credentialsLabel := "credentialLabel"
 	gcpIamUserAccountOauthSessionFacadeMock.ExpGetSessionById = gcp_iam_user_account_oauth.GcpIamUserAccountOauthSession{
 		Id:               "ID",
-		CredentialsLabel: credentialsLabel,
+		CredentialsLabel: "credentialLabel",
 	}
 	gcpIamUserAccountOauthSessionFacadeMock.ExpErrorOnRemoveSession = true
 
-	err := gcpIamUserAccountOauthSessionActions.DeleteSession(sessionId)
+	err := gcpIamUserAccountOauthSessionActions.DeleteSession("ID")
 	test.ExpectHttpError(t, err, http.StatusNotFound, "session not found")
 	gcpIamUserAccountOauthSessionActionsVerifyExpectedCalls(t, []string{}, []string{},
 		[]string{"DeleteSecret(credentialLabel)"}, []string{"GetSessionById(ID)", "RemoveSession(ID)"}, []string{})
@@ -374,16 +341,13 @@ func TestDeleteSession_FacadeRemoveSessionReturnsError(t *testing.T) {
 func TestEditSession(t *testing.T) {
 	gcpIamUserAccountOauthSessionActionsSetup()
 
-	sessionId := "ID"
-	sessionName := "sessionName"
-	projectName := "projectName"
 	configurationName := "configurationName"
 	namedConfigurationsActionsMock.ExpNamedConfiguration = named_configuration.NamedConfiguration{
 		Id:   "ConfigurationID",
 		Name: configurationName,
 	}
 
-	err := gcpIamUserAccountOauthSessionActions.EditSession(sessionId, sessionName, projectName, configurationName)
+	err := gcpIamUserAccountOauthSessionActions.EditSession("ID", "sessionName", "projectName", configurationName)
 	if err != nil {
 		t.Fatalf("Unexpected error")
 	}
@@ -392,28 +356,94 @@ func TestEditSession(t *testing.T) {
 		[]string{"GetOrCreateNamedConfiguration(configurationName)"})
 }
 
+func TestEditSession_StopPreviousActiveSessionWithSameNamedConfiguration(t *testing.T) {
+	gcpIamUserAccountOauthSessionActionsSetup()
+
+	configurationId := "config-id-1"
+	configurationName := "config-name"
+	namedConfigurationsActionsMock.ExpNamedConfiguration = named_configuration.NamedConfiguration{
+		Id:   configurationId,
+		Name: configurationName,
+	}
+
+	gcpIamUserAccountOauthSessionFacadeMock.ExpGetSessionById =
+		gcp_iam_user_account_oauth.GcpIamUserAccountOauthSession{Id: "session-id1", Status: domain_gcp.Active}
+
+	gcpIamUserAccountOauthSessionFacadeMock.ExpGetSessions =
+		[]gcp_iam_user_account_oauth.GcpIamUserAccountOauthSession{
+			{Id: "session-id2", Status: domain_gcp.NotActive},
+			{Id: "session-id3", Status: domain_gcp.Active, NamedConfigurationId: "config-id-2"},
+			{Id: "session-id4", Status: domain_gcp.Active, NamedConfigurationId: configurationId},
+		}
+
+	envMock.ExpTime = "stop-time"
+
+	err := gcpIamUserAccountOauthSessionActions.EditSession("session-id1", "sessionName", "projectName", configurationName)
+	if err != nil {
+		t.Fatalf("Unexpected error")
+	}
+	gcpIamUserAccountOauthSessionActionsVerifyExpectedCalls(t, []string{}, []string{"GetTime()"}, []string{},
+		[]string{"GetSessionById(session-id1)", "GetSessions()", "StopSession(session-id4, stop-time)",
+			"EditSession(session-id1, sessionName, projectName, config-id-1)"},
+		[]string{"GetOrCreateNamedConfiguration(config-name)"})
+}
+
 func TestEditSession_NamedConfigurationsActionsGetOrCreateReturnsError(t *testing.T) {
 	gcpIamUserAccountOauthSessionActionsSetup()
 
-	sessionId := "ID"
-	sessionName := "sessionName"
-	projectName := "projectName"
-	configurationName := "configurationName"
 	namedConfigurationsActionsMock.ExpErrorOnGetOrCreateNamedConfiguration = true
 
-	err := gcpIamUserAccountOauthSessionActions.EditSession(sessionId, sessionName, projectName, configurationName)
+	err := gcpIamUserAccountOauthSessionActions.EditSession("ID", "sessionName", "projectName", "configurationName")
 	test.ExpectHttpError(t, err, http.StatusBadRequest, "configuration name is invalid")
 
 	gcpIamUserAccountOauthSessionActionsVerifyExpectedCalls(t, []string{}, []string{}, []string{}, []string{},
 		[]string{"GetOrCreateNamedConfiguration(configurationName)"})
 }
 
+func TestEditSession_GetSessionByIdReturnsError(t *testing.T) {
+	gcpIamUserAccountOauthSessionActionsSetup()
+
+	gcpIamUserAccountOauthSessionFacadeMock.ExpErrorOnGetSessionById = true
+
+	err := gcpIamUserAccountOauthSessionActions.EditSession("ID", "sessionName", "projectName", "configurationName")
+	test.ExpectHttpError(t, err, http.StatusNotFound, "session not found")
+
+	gcpIamUserAccountOauthSessionActionsVerifyExpectedCalls(t, []string{}, []string{}, []string{},
+		[]string{"GetSessionById(ID)"}, []string{"GetOrCreateNamedConfiguration(configurationName)"})
+}
+
+func TestEditSession_StopPreviousActiveSessionReturnsError(t *testing.T) {
+	gcpIamUserAccountOauthSessionActionsSetup()
+
+	configurationId := "config-id-1"
+	configurationName := "config-name"
+	namedConfigurationsActionsMock.ExpNamedConfiguration = named_configuration.NamedConfiguration{
+		Id:   configurationId,
+		Name: configurationName,
+	}
+
+	gcpIamUserAccountOauthSessionFacadeMock.ExpGetSessionById =
+		gcp_iam_user_account_oauth.GcpIamUserAccountOauthSession{Id: "session-id1", Status: domain_gcp.Active}
+
+	gcpIamUserAccountOauthSessionFacadeMock.ExpGetSessions =
+		[]gcp_iam_user_account_oauth.GcpIamUserAccountOauthSession{
+			{Id: "session-id4", Status: domain_gcp.Active, NamedConfigurationId: configurationId},
+		}
+
+	gcpIamUserAccountOauthSessionFacadeMock.ExpErrorOnStopSession = true
+
+	envMock.ExpTime = "stop-time"
+
+	err := gcpIamUserAccountOauthSessionActions.EditSession("session-id1", "sessionName", "projectName", configurationName)
+	test.ExpectHttpError(t, err, http.StatusInternalServerError, "unable to stop the session")
+	gcpIamUserAccountOauthSessionActionsVerifyExpectedCalls(t, []string{}, []string{"GetTime()"}, []string{},
+		[]string{"GetSessionById(session-id1)", "GetSessions()", "StopSession(session-id4, stop-time)"},
+		[]string{"GetOrCreateNamedConfiguration(config-name)"})
+}
+
 func TestEditSession_FacadeEditSessionReturnsError(t *testing.T) {
 	gcpIamUserAccountOauthSessionActionsSetup()
 
-	sessionId := "ID"
-	sessionName := "sessionName"
-	projectName := "projectName"
 	configurationName := "configurationName"
 	gcpIamUserAccountOauthSessionFacadeMock.ExpErrorOnEditSession = true
 	namedConfigurationsActionsMock.ExpNamedConfiguration = named_configuration.NamedConfiguration{
@@ -421,7 +451,7 @@ func TestEditSession_FacadeEditSessionReturnsError(t *testing.T) {
 		Name: configurationName,
 	}
 
-	err := gcpIamUserAccountOauthSessionActions.EditSession(sessionId, sessionName, projectName, configurationName)
+	err := gcpIamUserAccountOauthSessionActions.EditSession("ID", "sessionName", "projectName", configurationName)
 	test.ExpectHttpError(t, err, http.StatusConflict, "unable to edit session, collision detected")
 
 	gcpIamUserAccountOauthSessionActionsVerifyExpectedCalls(t, []string{}, []string{}, []string{},
