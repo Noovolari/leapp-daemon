@@ -50,24 +50,16 @@ func (actions *AlibabaRamRoleFederatedSessionActions) Create(name string, roleNa
 		return http_error.NewUnprocessableEntityError(fmt.Errorf("Region " + regionName + " not valid"))
 	}
 
-	alibabaRole := alibaba_ram_role_federated.AlibabaRamRole{
-		Name: roleName,
-		Arn:  roleArn,
-	}
-
-	federatedAlibabaAccount := alibaba_ram_role_federated.AlibabaRamRoleFederatedAccount{
+	sess := alibaba_ram_role_federated.AlibabaRamRoleFederatedSession{
+		Id:             actions.Environment.GenerateUuid(),
+		Status:         domain_alibaba.NotActive,
 		Name:           name,
-		Role:           &alibabaRole,
+		RoleName:       roleName,
+		RoleArn:        roleArn,
 		IdpArn:         idpArn,
 		Region:         regionName,
 		SsoUrl:         ssoUrl,
 		NamedProfileId: namedProfile.Id,
-	}
-
-	sess := alibaba_ram_role_federated.AlibabaRamRoleFederatedSession{
-		Id:      actions.Environment.GenerateUuid(),
-		Status:  domain_alibaba.NotActive,
-		Account: &federatedAlibabaAccount,
 	}
 
 	err = actions.AlibabaRamRoleFederatedSessionsFacade.AddSession(sess)
@@ -115,27 +107,7 @@ func (actions *AlibabaRamRoleFederatedSessionActions) Update(id string, name str
 		return err //TODO: return right error
 	}
 
-	alibabaRole := alibaba_ram_role_federated.AlibabaRamRole{
-		Name: roleName,
-		Arn:  roleArn,
-	}
-
-	federatedAlibabaAccount := alibaba_ram_role_federated.AlibabaRamRoleFederatedAccount{
-		Name:           name,
-		Role:           &alibabaRole,
-		IdpArn:         idpArn,
-		Region:         regionName,
-		SsoUrl:         ssoUrl,
-		NamedProfileId: np.Id,
-	}
-
-	sess := alibaba_ram_role_federated.AlibabaRamRoleFederatedSession{
-		Id:      id,
-		Status:  domain_alibaba.NotActive,
-		Account: &federatedAlibabaAccount,
-	}
-
-	actions.AlibabaRamRoleFederatedSessionsFacade.UpdateSession(sess)
+	actions.AlibabaRamRoleFederatedSessionsFacade.EditSession(id, name, roleName, roleArn, idpArn, regionName, ssoUrl, np.Id)
 	if err != nil {
 		return http_error.NewInternalServerError(err)
 	}
@@ -200,12 +172,12 @@ func (actions *AlibabaRamRoleFederatedSessionActions) Delete(id string) error {
 
 func (actions *AlibabaRamRoleFederatedSessionActions) Start(sessionId string) error {
 
-	err := actions.AlibabaRamRoleFederatedSessionsFacade.SetSessionStatusToPending(sessionId)
+	err := actions.AlibabaRamRoleFederatedSessionsFacade.StartingSession(sessionId)
 	if err != nil {
 		return err
 	}
 
-	err = actions.AlibabaRamRoleFederatedSessionsFacade.SetSessionStatusToActive(sessionId)
+	err = actions.AlibabaRamRoleFederatedSessionsFacade.StartSession(sessionId)
 	if err != nil {
 		return err
 	}
@@ -215,7 +187,7 @@ func (actions *AlibabaRamRoleFederatedSessionActions) Start(sessionId string) er
 
 func (actions *AlibabaRamRoleFederatedSessionActions) Stop(sessionId string) error {
 
-	err := actions.AlibabaRamRoleFederatedSessionsFacade.SetSessionStatusToInactive(sessionId)
+	err := actions.AlibabaRamRoleFederatedSessionsFacade.StopSession(sessionId)
 	if err != nil {
 		return err
 	}

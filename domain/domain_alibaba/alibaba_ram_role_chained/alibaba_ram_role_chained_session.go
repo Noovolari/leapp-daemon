@@ -2,7 +2,6 @@ package alibaba_ram_role_chained
 
 import (
 	"leapp_daemon/domain/domain_alibaba"
-	"leapp_daemon/domain/domain_alibaba/alibaba_ram_role_federated"
 )
 
 /*type AlibabaRamRoleChainedSessionContainer interface {
@@ -17,24 +16,21 @@ type AlibabaParentSession interface {
 }
 
 type AlibabaRamRoleChainedSession struct {
-	Id         string
-	Status     domain_alibaba.AlibabaSessionStatus
-	StartTime  string
-	ParentId   string
-	ParentType string
-	Account    *AlibabaRamRoleChainedAccount
-	Profile    string
-}
-
-type AlibabaRamRoleChainedAccount struct {
-	AccountNumber string
+	Id            string
 	Name          string
-	Role          *alibaba_ram_role_federated.AlibabaRamRole //AlibabaRamRoleChainedRole
+	Status        domain_alibaba.AlibabaSessionStatus
+	StartTime     string
+	AccountNumber string
+	RoleName      string
+	RoleArn       string
 	Region        string
+	ParentId      string
+	ParentType    string
 	// Type            string
 	// ParentSessionId string
 	// ParentRole      string
 	NamedProfileId string
+	Profile        string
 }
 
 /*type AlibabaRamRoleChainedRole struct {

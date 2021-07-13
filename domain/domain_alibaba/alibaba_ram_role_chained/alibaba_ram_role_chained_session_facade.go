@@ -20,6 +20,12 @@ type AlibabaRamRoleChainedSessionsFacade struct {
 	observers                     []AlibabaRamRoleChainedSessionsObserver
 }
 
+func NewAlibabaRamRoleChainedSessionsFacade() *AlibabaRamRoleChainedSessionsFacade {
+	return &AlibabaRamRoleChainedSessionsFacade{
+		alibabaRamRoleChainedSessions: make([]AlibabaRamRoleChainedSession, 0),
+	}
+}
+
 func GetAlibabaRamRoleChainedSessionsFacade() *AlibabaRamRoleChainedSessionsFacade {
 	alibabaRamRoleChainedSessionsFacadeLock.Lock()
 	defer alibabaRamRoleChainedSessionsFacadeLock.Unlock()
@@ -41,85 +47,85 @@ func (fac *AlibabaRamRoleChainedSessionsFacade) GetSessions() []AlibabaRamRoleCh
 	return fac.alibabaRamRoleChainedSessions
 }
 
-func (fac *AlibabaRamRoleChainedSessionsFacade) SetSessions(alibabaRamRoleChainedSessions []AlibabaRamRoleChainedSession) error {
-	oldAlibabaRamRoleChainedSessions := fac.GetSessions()
-	fac.alibabaRamRoleChainedSessions = alibabaRamRoleChainedSessions
+func (fac *AlibabaRamRoleChainedSessionsFacade) SetSessions(newSessions []AlibabaRamRoleChainedSession) error {
+	fac.alibabaRamRoleChainedSessions = newSessions
 
-	for _, observer := range fac.observers {
-		err := observer.UpdateAlibabaRamRoleChainedSessions(oldAlibabaRamRoleChainedSessions, alibabaRamRoleChainedSessions)
-		if err != nil {
-			return err
-		}
+	err := fac.updateState(newSessions)
+	if err != nil {
+		return err
 	}
 	return nil
 }
 
-func (fac *AlibabaRamRoleChainedSessionsFacade) AddSession(alibabaRamRoleChainedSession AlibabaRamRoleChainedSession) error {
+func (facade *AlibabaRamRoleChainedSessionsFacade) AddSession(newSession AlibabaRamRoleChainedSession) error {
 	alibabaRamRoleChainedSessionsLock.Lock()
 	defer alibabaRamRoleChainedSessionsLock.Unlock()
 
-	oldAlibabaRamRoleChainedSessions := fac.GetSessions()
-	newAlibabaRamRoleChainedSessions := make([]AlibabaRamRoleChainedSession, 0)
+	currentSessions := facade.GetSessions()
 
-	for i := range oldAlibabaRamRoleChainedSessions {
-		newAlibabaRamRoleChainedSession := oldAlibabaRamRoleChainedSessions[i]
-		newAlibabaRamRoleChainedSessionAccount := *oldAlibabaRamRoleChainedSessions[i].Account
-		newAlibabaRamRoleChainedSession.Account = &newAlibabaRamRoleChainedSessionAccount
-		newAlibabaRamRoleChainedSessions = append(newAlibabaRamRoleChainedSessions, newAlibabaRamRoleChainedSession)
-	}
-
-	for _, sess := range newAlibabaRamRoleChainedSessions {
-		if alibabaRamRoleChainedSession.Id == sess.Id {
-			return http_error.NewConflictError(fmt.Errorf("a AlibabaRamRoleChainedSession with id " + alibabaRamRoleChainedSession.Id +
-				" is already present"))
+	for _, sess := range currentSessions {
+		if newSession.Id == sess.Id {
+			return http_error.NewConflictError(fmt.Errorf("a session with id %v is already present", newSession.Id))
 		}
 
-		/*if alibabaRamRoleChainedSession.Alias == sess.Alias {
-			return http_error.NewUnprocessableEntityError(fmt.Errorf("a session with the same alias " +
-				"is already present"))
-		}*/
+		if newSession.Name == sess.Name {
+			return http_error.NewConflictError(fmt.Errorf("a session named %v is already present", sess.Name))
+		}
 	}
 
-	newAlibabaRamRoleChainedSessions = append(newAlibabaRamRoleChainedSessions, alibabaRamRoleChainedSession)
+	newSessions := append(currentSessions, newSession)
 
-	err := fac.updateState(newAlibabaRamRoleChainedSessions)
+	facade.updateState(newSessions)
+	return nil
+}
+
+func (facade *AlibabaRamRoleChainedSessionsFacade) EditSession(sessionId string, sessionName string, roleName string, accountNumber string, roleArn string,
+	region string, parentId string, parentType string, namedProfileId string) error {
+	alibabaRamRoleChainedSessionsLock.Lock()
+	defer alibabaRamRoleChainedSessionsLock.Unlock()
+
+	sessionToEdit, err := facade.GetSessionById(sessionId)
 	if err != nil {
 		return err
 	}
 
-	return nil
+	currentSessions := facade.GetSessions()
+	for _, sess := range currentSessions {
+
+		if sess.Id != sessionId && sess.Name == sessionName {
+			return http_error.NewConflictError(fmt.Errorf("a session named %v is already present", sess.Name))
+		}
+	}
+
+	sessionToEdit.Name = sessionName
+	sessionToEdit.RoleName = roleName
+	sessionToEdit.AccountNumber = accountNumber
+	sessionToEdit.RoleArn = roleArn
+	sessionToEdit.Region = region
+	sessionToEdit.ParentId = parentId
+	sessionToEdit.ParentType = parentType
+	sessionToEdit.NamedProfileId = namedProfileId
+	return facade.replaceSession(sessionToEdit)
 }
 
 func (fac *AlibabaRamRoleChainedSessionsFacade) RemoveSession(id string) error {
 	alibabaRamRoleChainedSessionsLock.Lock()
 	defer alibabaRamRoleChainedSessionsLock.Unlock()
 
-	oldAlibabaRamRoleChainedSessions := fac.GetSessions()
-	newAlibabaRamRoleChainedSessions := make([]AlibabaRamRoleChainedSession, 0)
+	currentSessions := fac.GetSessions()
+	newSessions := make([]AlibabaRamRoleChainedSession, 0)
 
-	for i := range oldAlibabaRamRoleChainedSessions {
-		newAlibabaRamRoleChainedSession := oldAlibabaRamRoleChainedSessions[i]
-		newAlibabaRamRoleChainedSessionAccount := *oldAlibabaRamRoleChainedSessions[i].Account
-		newAlibabaRamRoleChainedSession.Account = &newAlibabaRamRoleChainedSessionAccount
-		newAlibabaRamRoleChainedSessions = append(newAlibabaRamRoleChainedSessions, newAlibabaRamRoleChainedSession)
-	}
-
-	for i, sess := range newAlibabaRamRoleChainedSessions {
-		if sess.Id == id {
-			newAlibabaRamRoleChainedSessions = append(newAlibabaRamRoleChainedSessions[:i], newAlibabaRamRoleChainedSessions[i+1:]...)
-			break
+	for _, session := range currentSessions {
+		if session.Id != id {
+			newSessions = append(newSessions, session)
 		}
 	}
 
-	if len(fac.GetSessions()) == len(newAlibabaRamRoleChainedSessions) {
-		return http_error.NewNotFoundError(fmt.Errorf("trusted Alibaba session with id %s not found", id))
+	if len(fac.GetSessions()) == len(newSessions) {
+		return http_error.NewNotFoundError(fmt.Errorf("session with id %s not found", id))
 	}
 
-	err := fac.updateState(newAlibabaRamRoleChainedSessions)
-	if err != nil {
-		return err
-	}
-
+	fac.updateState(newSessions)
 	return nil
 }
 
@@ -129,22 +135,31 @@ func (fac *AlibabaRamRoleChainedSessionsFacade) GetSessionById(id string) (*Alib
 			return &alibabaRamRoleChainedSession, nil
 		}
 	}
-	return nil, http_error.NewNotFoundError(fmt.Errorf("trusted Alibaba session with id %s not found", id))
+	return nil, http_error.NewNotFoundError(fmt.Errorf("session with id %s not found", id))
 }
 
-func (fac *AlibabaRamRoleChainedSessionsFacade) SetSessionById(newSession *AlibabaRamRoleChainedSession) error {
-	allSessions := fac.GetSessions()
-	for i, alibabaRamRoleChainedSession := range allSessions {
-		if alibabaRamRoleChainedSession.Id == newSession.Id {
-			allSessions[i] = *newSession
-			fac.SetSessions(allSessions)
-			return nil
+func (fac *AlibabaRamRoleChainedSessionsFacade) SetSessionById(newSession *AlibabaRamRoleChainedSession) {
+	currentSessions := fac.GetSessions()
+	for i, session := range currentSessions {
+		if session.Id == newSession.Id {
+			currentSessions[i] = *newSession
 		}
 	}
-	return http_error.NewNotFoundError(fmt.Errorf("trusted Alibaba session with id %s not found", newSession.Id))
+	fac.SetSessions(currentSessions)
 }
 
-func (fac *AlibabaRamRoleChainedSessionsFacade) SetSessionStatusToPending(id string) error {
+func (facade *AlibabaRamRoleChainedSessionsFacade) StartingSession(sessionId string) error {
+	return facade.setSessionStatus(sessionId, domain_alibaba.Pending)
+}
+
+func (facade *AlibabaRamRoleChainedSessionsFacade) StartSession(sessionId string) error {
+	return facade.setSessionStatus(sessionId, domain_alibaba.Active)
+}
+
+func (facade *AlibabaRamRoleChainedSessionsFacade) StopSession(sessionId string) error {
+	return facade.setSessionStatus(sessionId, domain_alibaba.NotActive)
+}
+/*func (fac *AlibabaRamRoleChainedSessionsFacade) SetSessionStatusToPending(id string) error {
 
 	alibabaRamRoleChainedSessionsLock.Lock()
 	defer alibabaRamRoleChainedSessionsLock.Unlock()
@@ -155,7 +170,7 @@ func (fac *AlibabaRamRoleChainedSessionsFacade) SetSessionStatusToPending(id str
 	}
 
 	if !(alibabaRamRoleChainedSession.Status == domain_alibaba.NotActive) {
-		return http_error.NewUnprocessableEntityError(fmt.Errorf("trusted Alibaba session with id " + id + "cannot be started because it's in pending or active state"))
+		return http_error.NewUnprocessableEntityError(fmt.Errorf("session with id " + id + "cannot be started because it's in pending or active state"))
 	}
 
 	oldAlibabaRamRoleChainedSessions := fac.GetSessions()
@@ -163,8 +178,6 @@ func (fac *AlibabaRamRoleChainedSessionsFacade) SetSessionStatusToPending(id str
 
 	for i := range oldAlibabaRamRoleChainedSessions {
 		newAlibabaRamRoleChainedSession := oldAlibabaRamRoleChainedSessions[i]
-		newAlibabaRamRoleChainedSessionAccount := *oldAlibabaRamRoleChainedSessions[i].Account
-		newAlibabaRamRoleChainedSession.Account = &newAlibabaRamRoleChainedSessionAccount
 		newAlibabaRamRoleChainedSessions = append(newAlibabaRamRoleChainedSessions, newAlibabaRamRoleChainedSession)
 	}
 
@@ -192,7 +205,7 @@ func (fac *AlibabaRamRoleChainedSessionsFacade) SetSessionStatusToActive(id stri
 	}
 
 	if !(alibabaRamRoleChainedSession.Status == domain_alibaba.Pending) {
-		return http_error.NewUnprocessableEntityError(fmt.Errorf("trusted Alibaba session with id " + id + "cannot be started because it's not in pending state"))
+		return http_error.NewUnprocessableEntityError(fmt.Errorf("session with id " + id + "cannot be started because it's not in pending state"))
 	}
 
 	oldAlibabaRamRoleChainedSessions := fac.GetSessions()
@@ -200,8 +213,6 @@ func (fac *AlibabaRamRoleChainedSessionsFacade) SetSessionStatusToActive(id stri
 
 	for i := range oldAlibabaRamRoleChainedSessions {
 		newAlibabaRamRoleChainedSession := oldAlibabaRamRoleChainedSessions[i]
-		newAlibabaRamRoleChainedSessionAccount := *oldAlibabaRamRoleChainedSessions[i].Account
-		newAlibabaRamRoleChainedSession.Account = &newAlibabaRamRoleChainedSessionAccount
 		newAlibabaRamRoleChainedSessions = append(newAlibabaRamRoleChainedSessions, newAlibabaRamRoleChainedSession)
 	}
 
@@ -229,7 +240,7 @@ func (fac *AlibabaRamRoleChainedSessionsFacade) SetSessionStatusToInactive(id st
 	}
 	if alibabaRamRoleChainedSession.Status != domain_alibaba.Active {
 		fmt.Println(alibabaRamRoleChainedSession.Status)
-		return http_error.NewUnprocessableEntityError(fmt.Errorf("trusted Alibaba session with id " + id + "cannot be stopped because it's not in active state"))
+		return http_error.NewUnprocessableEntityError(fmt.Errorf("session with id " + id + "cannot be stopped because it's not in active state"))
 	}
 
 	oldAlibabaRamRoleChainedSessions := fac.GetSessions()
@@ -237,8 +248,6 @@ func (fac *AlibabaRamRoleChainedSessionsFacade) SetSessionStatusToInactive(id st
 
 	for i := range oldAlibabaRamRoleChainedSessions {
 		newAlibabaRamRoleChainedSession := oldAlibabaRamRoleChainedSessions[i]
-		newAlibabaRamRoleChainedSessionAccount := *oldAlibabaRamRoleChainedSessions[i].Account
-		newAlibabaRamRoleChainedSession.Account = &newAlibabaRamRoleChainedSessionAccount
 		newAlibabaRamRoleChainedSessions = append(newAlibabaRamRoleChainedSessions, newAlibabaRamRoleChainedSession)
 	}
 
@@ -253,6 +262,41 @@ func (fac *AlibabaRamRoleChainedSessionsFacade) SetSessionStatusToInactive(id st
 		return err
 	}
 
+	return nil
+}*/
+
+func (facade *AlibabaRamRoleChainedSessionsFacade) setSessionStatus(id string, status domain_alibaba.AlibabaSessionStatus) error {
+	alibabaRamRoleChainedSessionsLock.Lock()
+	defer alibabaRamRoleChainedSessionsLock.Unlock()
+
+	sessionToUpdate, err := facade.GetSessionById(id)
+	if err != nil {
+		return err
+	}
+
+	sessionToUpdate.Status = status
+	/*if startTime != "" {
+		sessionToUpdate.StartTime = startTime
+		sessionToUpdate.LastStopTime = ""
+	}
+	if lastStopTime != "" {
+		sessionToUpdate.StartTime = ""
+		sessionToUpdate.LastStopTime = lastStopTime
+	}*/
+	return facade.replaceSession(sessionToUpdate)
+}
+
+func (facade *AlibabaRamRoleChainedSessionsFacade) replaceSession(newSession *AlibabaRamRoleChainedSession) error {
+	newSessions := make([]AlibabaRamRoleChainedSession, 0)
+	for _, session := range facade.GetSessions() {
+		if session.Id == newSession.Id {
+			newSessions = append(newSessions, *newSession)
+		} else {
+			newSessions = append(newSessions, session)
+		}
+	}
+
+	facade.updateState(newSessions)
 	return nil
 }
 

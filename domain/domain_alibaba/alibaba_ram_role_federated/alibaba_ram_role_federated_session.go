@@ -12,24 +12,16 @@ import (
 }*/
 
 type AlibabaRamRoleFederatedSession struct {
-	Id        string
-	Status    domain_alibaba.AlibabaSessionStatus
-	StartTime string
-	Account   *AlibabaRamRoleFederatedAccount
-}
-
-type AlibabaRamRoleFederatedAccount struct {
+	Id             string
+	Status         domain_alibaba.AlibabaSessionStatus
+	StartTime      string
 	Name           string
-	Role           *AlibabaRamRole
+	RoleName       string
+	RoleArn        string
 	IdpArn         string
 	Region         string
 	SsoUrl         string
 	NamedProfileId string
-}
-
-type AlibabaRamRole struct {
-	Name string
-	Arn  string
 }
 
 func (sess *AlibabaRamRoleFederatedSession) IsRotationIntervalExpired() (bool, error) {

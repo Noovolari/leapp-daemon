@@ -103,12 +103,12 @@ func (alibabaCredentialsApplier *AlibabaCredentialsApplier) UpdateAlibabaRamRole
 				}
 
 				credentialsFilePath := homeDir + "/" + domain_alibaba.AlibabaCredentialsFilePath
-				profile, err := alibabaCredentialsApplier.NamedProfilesFacade.GetNamedProfileById(newSess.Account.NamedProfileId)
+				profile, err := alibabaCredentialsApplier.NamedProfilesFacade.GetNamedProfileById(newSess.NamedProfileId)
 				if err != nil {
 					return err
 				}
 				profileName := profile.Name
-				region := newSess.Account.Region
+				region := newSess.Region
 
 				accessKeyId, secretAccessKey, stsToken, err := alibabaCredentialsApplier.getFederatedCreds(newSess.Id)
 				if err != nil {
@@ -146,8 +146,8 @@ func (alibabaCredentialsApplier *AlibabaCredentialsApplier) UpdateAlibabaRamRole
 				}
 
 				credentialsFilePath := homeDir + "/" + domain_alibaba.AlibabaCredentialsFilePath
-				profileName := newSess.Account.Name
-				region := newSess.Account.Region
+				profileName := newSess.Name
+				region := newSess.Region
 
 				accessKeyId, secretAccessKey, stsToken, err := alibabaCredentialsApplier.getTrustedCreds(newSess.Id)
 				if err != nil {

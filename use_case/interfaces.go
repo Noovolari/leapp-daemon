@@ -119,11 +119,12 @@ type AlibabaRamRoleFederatedSessionsFacade interface {
 	SetSessions(sessions []alibaba_ram_role_federated.AlibabaRamRoleFederatedSession) error
 	AddSession(session alibaba_ram_role_federated.AlibabaRamRoleFederatedSession) error
 	RemoveSession(id string) error
-	UpdateSession(session alibaba_ram_role_federated.AlibabaRamRoleFederatedSession) error
+	EditSession(sessionId string, sessionName string, roleName string, roleArn string, idpArn string,
+		region string, ssoUrl string, namedProfileId string) error
 	GetSessionById(id string) (*alibaba_ram_role_federated.AlibabaRamRoleFederatedSession, error)
-	SetSessionStatusToPending(id string) error
-	SetSessionStatusToActive(id string) error
-	SetSessionStatusToInactive(id string) error
+	StartingSession(id string) error
+	StartSession(id string) error
+	StopSession(id string) error
 }
 
 type AlibabaRamRoleChainedSessionsFacade interface {
@@ -132,9 +133,11 @@ type AlibabaRamRoleChainedSessionsFacade interface {
 	SetSessions(sessions []alibaba_ram_role_chained.AlibabaRamRoleChainedSession) error
 	AddSession(session alibaba_ram_role_chained.AlibabaRamRoleChainedSession) error
 	RemoveSession(id string) error
+	EditSession(sessionId string, sessionName string, roleName string, accountNumber string, roleArn string,
+		region string, parentId string, parentType string, namedProfileId string) error
 	GetSessionById(id string) (*alibaba_ram_role_chained.AlibabaRamRoleChainedSession, error)
-	SetSessionById(newSession *alibaba_ram_role_chained.AlibabaRamRoleChainedSession) error
-	SetSessionStatusToPending(id string) error
-	SetSessionStatusToActive(id string) error
-	SetSessionStatusToInactive(id string) error
+	SetSessionById(newSession *alibaba_ram_role_chained.AlibabaRamRoleChainedSession)
+	StartingSession(id string) error
+	StartSession(id string) error
+	StopSession(id string) error
 }

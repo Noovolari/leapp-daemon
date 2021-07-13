@@ -33,22 +33,10 @@ func (actions *AlibabaRamRoleChainedSessionActions) Create(parentId string, acco
 	sessions := actions.AlibabaRamRoleChainedSessionsFacade.GetSessions()
 
 	for _, sess := range sessions {
-		account := sess.Account
-		if sess.ParentId == parentId && account.AccountNumber == accountNumber && account.Role.Name == roleName {
+		if sess.ParentId == parentId && sess.AccountNumber == accountNumber && sess.RoleName == roleName {
 			err := http_error.NewConflictError(fmt.Errorf("a session with the same parent, account number and role name already exists"))
 			return err
 		}
-	}
-
-	alibabaRamRoleChainedAccount := alibaba_ram_role_chained.AlibabaRamRoleChainedAccount{
-		AccountNumber: accountNumber,
-		Name:          accountName,
-		Role: &alibaba_ram_role_federated.AlibabaRamRole{
-			Name: roleName,
-			Arn:  fmt.Sprintf("acs:ram::%s:role/%s", accountNumber, roleName),
-		},
-		Region:         region,
-		NamedProfileId: namedProfile.Id,
 	}
 
 	sess := alibaba_ram_role_chained.AlibabaRamRoleChainedSession{
@@ -57,7 +45,12 @@ func (actions *AlibabaRamRoleChainedSessionActions) Create(parentId string, acco
 		StartTime:  "",
 		ParentId:   parentSession.GetId(),
 		ParentType: parentSession.GetTypeString(),
-		Account:    &alibabaRamRoleChainedAccount,
+		AccountNumber: accountNumber,
+		Name:          accountName,
+		RoleName: roleName,
+		RoleArn:  fmt.Sprintf("acs:ram::%s:role/%s", accountNumber, roleName),
+		Region:         region,
+		NamedProfileId: namedProfile.Id,
 	}
 
 	actions.AlibabaRamRoleChainedSessionsFacade.SetSessions(append(sessions, sess))
@@ -85,31 +78,22 @@ func (actions *AlibabaRamRoleChainedSessionActions) Update(id string, parentId s
 		return err //TODO: return right error
 	}
 
-	alibabaRamRoleChainedAccount := alibaba_ram_role_chained.AlibabaRamRoleChainedAccount{
-		AccountNumber: accountNumber,
-		Name:          accountName,
-		Role: &alibaba_ram_role_federated.AlibabaRamRole{
-			Name: roleName,
-			Arn:  fmt.Sprintf("acs:ram::%s:role/%s", accountNumber, roleName),
-		},
-		Region:         regionName,
-		NamedProfileId: np.Id,
-	}
-
 	sess := alibaba_ram_role_chained.AlibabaRamRoleChainedSession{
 		Id:     id,
 		Status: domain_alibaba.NotActive,
 		//StartTime string
-		ParentId:   parentId,
-		ParentType: parentSession.GetTypeString(),
-		Account:    &alibabaRamRoleChainedAccount,
-		Profile:    profileName,
+		ParentId:       parentId,
+		ParentType:     parentSession.GetTypeString(),
+		AccountNumber:  accountNumber,
+		Name:           accountName,
+		RoleName:       roleName,
+		RoleArn:        fmt.Sprintf("acs:ram::%s:role/%s", accountNumber, roleName),
+		Region:         regionName,
+		NamedProfileId: np.Id,
+		Profile:        profileName,
 	}
 
-	err = actions.AlibabaRamRoleChainedSessionsFacade.SetSessionById(&sess)
-	if err != nil {
-		return err //TODO: return right error
-	}
+	actions.AlibabaRamRoleChainedSessionsFacade.SetSessionById(&sess)
 	return nil
 }
 
@@ -155,7 +139,7 @@ func (actions *AlibabaRamRoleChainedSessionActions) Start(sessionId string) erro
 	if err != nil {
 		return err
 	}
-	region := sess.Account.Region
+	region := sess.Region
 	label := sess.ParentId + "-alibaba-ram-" + sess.ParentType + "-session-access-key-id"
 	accessKeyId, err := actions.Keychain.GetSecret(label)
 	if err != nil {
@@ -187,7 +171,7 @@ func (actions *AlibabaRamRoleChainedSessionActions) Start(sessionId string) erro
 
 	request := sts.CreateAssumeRoleRequest()
 	request.Scheme = "https"
-	request.RoleArn = sess.Account.Role.Arn
+	request.RoleArn = sess.RoleArn
 	request.RoleSessionName = "leapp" // TODO: is this ok?
 	response, err := client.AssumeRole(request)
 	if err != nil {
@@ -208,12 +192,12 @@ func (actions *AlibabaRamRoleChainedSessionActions) Start(sessionId string) erro
 		return http_error.NewInternalServerError(err)
 	}
 
-	err = alibaba_ram_role_chained.GetAlibabaRamRoleChainedSessionsFacade().SetSessionStatusToPending(sessionId)
+	err = alibaba_ram_role_chained.GetAlibabaRamRoleChainedSessionsFacade().StartingSession(sessionId)
 	if err != nil {
 		return err
 	}
 
-	err = alibaba_ram_role_chained.GetAlibabaRamRoleChainedSessionsFacade().SetSessionStatusToActive(sessionId)
+	err = alibaba_ram_role_chained.GetAlibabaRamRoleChainedSessionsFacade().StartSession(sessionId)
 	if err != nil {
 		return err
 	}
@@ -222,7 +206,7 @@ func (actions *AlibabaRamRoleChainedSessionActions) Start(sessionId string) erro
 }
 
 func (actions *AlibabaRamRoleChainedSessionActions) Stop(sessionId string) error {
-	err := alibaba_ram_role_chained.GetAlibabaRamRoleChainedSessionsFacade().SetSessionStatusToInactive(sessionId)
+	err := alibaba_ram_role_chained.GetAlibabaRamRoleChainedSessionsFacade().StopSession(sessionId)
 	if err != nil {
 		return err
 	}
