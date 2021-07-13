@@ -69,7 +69,6 @@ type NamedProfilesFacade interface {
 	GetNamedProfileById(id string) (named_profile.NamedProfile, error)
 	GetNamedProfileByName(name string) (named_profile.NamedProfile, error)
 	AddNamedProfile(namedProfile named_profile.NamedProfile) error
-	DeleteNamedProfile(profileId string) error
 }
 
 type NamedProfilesActionsInterface interface {
