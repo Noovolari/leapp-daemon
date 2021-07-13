@@ -53,4 +53,3 @@ func (actions *NamedProfilesActions) DeleteNamedProfile(profileId string) error 
 		return nil
 	}
 }
-

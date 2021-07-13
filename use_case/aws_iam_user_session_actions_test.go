@@ -1,7 +1,6 @@
 package use_case
 
 import (
-	"github.com/aws/aws-sdk-go/service/sts"
 	"leapp_daemon/domain/domain_aws"
 	"leapp_daemon/domain/domain_aws/aws_iam_user"
 	"leapp_daemon/domain/named_profile"
@@ -11,6 +10,8 @@ import (
 	"reflect"
 	"testing"
 	"time"
+
+	"github.com/aws/aws-sdk-go/service/sts"
 )
 
 var (

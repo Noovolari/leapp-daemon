@@ -14,6 +14,7 @@ type NamedProfilesFacadeMock struct {
 	ExpErrorOnAddNamedProfile       bool
 	ExpErrorOnGetNamedProfileByName bool
 	ExpErrorOnGetNamedProfileById   bool
+	ExpErrorOnDeleteNamedProfile    bool
 }
 
 func NewNamedProfilesFacadeMock() NamedProfilesFacadeMock {
@@ -62,4 +63,13 @@ func (facade *NamedProfilesFacadeMock) GetNamedProfileById(id string) (named_pro
 	}
 
 	return facade.ExpNamedProfile, nil
+}
+
+func (facade *NamedProfilesFacadeMock) DeleteNamedProfile(id string) error {
+	facade.calls = append(facade.calls, fmt.Sprintf("DeleteNamedProfile(%v)", id))
+	if facade.ExpErrorOnDeleteNamedProfile {
+		return http_error.NewNotFoundError(errors.New("named profile not found"))
+	}
+
+	return nil
 }
